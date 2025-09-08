@@ -1,0 +1,463 @@
+/* Global styles for VocabPWA */
+:root {
+  /* Light theme colors */
+  --evergreen-primary: #1070ca;
+  --evergreen-primary-rgb: 16, 112, 202;
+  --evergreen-primary-shade: #0e5aa3;
+  --evergreen-primary-tint: #3d8bd4;
+  
+  /* Light theme variables */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Light theme accent colors */
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #2563eb;
+  --accent-secondary: #06b6d4;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --info-color: #3b82f6;
+}
+
+/* Dark theme variables - More user-friendly colors */
+[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  
+  /* Enhanced dark theme colors for better UX */
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #2563eb;
+  --accent-secondary: #06b6d4;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --info-color: #3b82f6;
+}
+
+/* Ensure proper app structure */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Mobile PWA optimizations */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  #root {
+    overflow-x: hidden;
+  }
+  
+  /* Hide scrollbars on mobile */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+  
+  /* Ensure no horizontal overflow */
+  * {
+    max-width: 100%;
+  }
+  
+  /* Improve touch targets for mobile */
+  button, .evergreen-button {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+  
+  /* Improve form inputs on mobile */
+  input, textarea, select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Memory Level Chart Styles */
+.memory-chart {
+  margin: 16px 0;
+}
+
+.memory-level-item {
+  margin-bottom: 12px;
+}
+
+.memory-level-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.memory-level-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.memory-level-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.memory-level-count {
+  font-size: 12px;
+  color: #66788a;
+}
+
+.memory-level-bar {
+  height: 8px;
+  background-color: #f7f9fc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.memory-level-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.memory-chart-summary {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e4e7eb;
+  text-align: center;
+  font-size: 14px;
+  color: #66788a;
+}
+
+/* Bottom Navigation Styles */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Page content padding for bottom nav */
+.page-content {
+  padding-bottom: 60px;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Custom card styles */
+.card {
+  margin: 16px 0;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* List item customizations */
+.list .item-content {
+  padding: 16px;
+}
+
+.list .item-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.list .item-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.list .item-text {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Button customizations */
+.button {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.button-small {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Form customizations */
+.form-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #234361;
+}
+
+.form-input {
+  border-radius: 6px;
+  border: 1px solid #e4e7eb;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.form-input:focus {
+  border-color: var(--evergreen-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 112, 202, 0.1);
+}
+
+/* Popup customizations */
+.popup {
+  border-radius: 16px 16px 0 0;
+}
+
+/* Statistics cards */
+.stats-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.stats-card h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--evergreen-primary);
+}
+
+.stats-card p {
+  margin: 0;
+  color: #66788a;
+  font-size: 14px;
+}
+
+/* Loading states */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.loading-container .preloader {
+  margin-bottom: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .card {
+    margin: 12px 0;
+  }
+  
+  .list .item-content {
+    padding: 12px;
+  }
+  
+  .button-small {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Enhanced dark theme adjustments */
+[data-theme="dark"] .memory-level-bar {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .card {
+  box-shadow: var(--shadow);
+  border-color: var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+[data-theme="dark"] .stats-card h3 {
+  color: var(--accent-primary);
+}
+
+[data-theme="dark"] .stats-card p {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .memory-chart-summary {
+  border-top-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .memory-level-count {
+  color: var(--text-muted);
+}
+
+/* Improved form elements for dark mode */
+[data-theme="dark"] .form-input {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .form-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+[data-theme="dark"] .form-label {
+  color: var(--text-secondary);
+}
+
+
+/* Custom range slider styles */
+.range-slider {
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  background: var(--accent-primary-hover);
+  transform: scale(1.1);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+}
+
+.range-slider::-moz-range-thumb:hover {
+  background: var(--accent-primary-hover);
+  transform: scale(1.1);
+}
+
+/* Theme selector improvements */
+.theme-selector {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-selector:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.theme-selector:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+
+/* Better contrast for headings */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Improved link colors */
+[data-theme="dark"] a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+[data-theme="dark"] a:hover {
+  color: var(--accent-primary-hover);
+  text-decoration: underline;
+}
+
+
+/* Animation for smooth transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

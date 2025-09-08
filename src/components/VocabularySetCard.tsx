@@ -1,0 +1,82 @@
+import React from 'react';
+import { Card, Pane, Heading, Text, Button } from 'evergreen-ui';
+import { Trash, Play } from 'phosphor-react';
+
+interface VocabularySet {
+  id: string;
+  name: string;
+  description: string;
+  wordCount: number;
+}
+
+interface VocabularySetCardProps {
+  set: VocabularySet;
+  onView: (setId: string) => void;
+  onDelete: (setId: string) => void;
+  onStartStudy: (setId: string) => void;
+}
+
+const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
+  set,
+  onView,
+  onDelete,
+  onStartStudy,
+}) => {
+  return (
+    <Card
+      marginBottom={16}
+      cursor="pointer"
+      onClick={() => onView(set.id)}
+      hoverElevation={1}
+      transition="all 0.2s ease"
+    >
+      <Pane
+        padding={24}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Pane flex={1}>
+          <Heading size={500} marginBottom={8}>
+            {set.name}
+          </Heading>
+          <Text color="muted" marginBottom={4}>
+            {set.description}
+          </Text>
+          <Text size={300} color="muted">
+            {set.wordCount} words
+          </Text>
+        </Pane>
+        <Pane display="flex" alignItems="center" gap={8}>
+          <Button
+            size="small"
+            appearance="primary"
+            intent="success"
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onStartStudy(set.id);
+            }}
+            iconBefore={<Play size={16} />}
+          >
+            Start Study
+          </Button>
+          <Button
+            size="small"
+            appearance="primary"
+            intent="danger"
+            paddingX={16}
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onDelete(set.id);
+            }}
+            iconBefore={<Trash size={16} />}
+          >
+            Delete
+          </Button>
+        </Pane>
+      </Pane>
+    </Card>
+  );
+};
+
+export default VocabularySetCard;

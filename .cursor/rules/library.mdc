@@ -1,0 +1,5 @@
+---
+description: Ưu tiên sử dụng thư viện có sẵn
+globs:
+alwaysApply: true
+---
