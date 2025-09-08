@@ -1,6 +1,5 @@
+import { Button, Card, Heading, Pane, Text } from 'evergreen-ui';
 import React from 'react';
-import { Card, Pane, Heading, Text, Button } from 'evergreen-ui';
-import { Trash, Play } from 'phosphor-react';
 
 interface VocabularySet {
   id: string;
@@ -56,7 +55,6 @@ const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
               e.stopPropagation();
               onStartStudy(set.id);
             }}
-            iconBefore={<Play size={16} />}
           >
             Start Study
           </Button>
@@ -69,7 +67,6 @@ const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
               e.stopPropagation();
               onDelete(set.id);
             }}
-            iconBefore={<Trash size={16} />}
           >
             Delete
           </Button>

@@ -5,10 +5,12 @@ import { loadMemoryLevelDistribution } from '@/store/slices/userProgressSlice';
 
 interface MemoryLevelChartProps {
   vocabularySetId?: string;
+  showTotal?: boolean;
 }
 
 const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
   vocabularySetId,
+  showTotal = true,
 }) => {
   const dispatch = useAppDispatch();
   const { memoryLevelDistribution } = useAppSelector(
@@ -143,17 +145,19 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
             );
           })}
         </Pane>
-        <Pane
-          className="memory-chart-summary"
-          marginTop={16}
-          paddingTop={16}
-          borderTop="1px solid #e4e7eb"
-          textAlign="center"
-        >
-          <Text fontSize={14} color="muted">
-            Total: {totalWords} words
-          </Text>
-        </Pane>
+        {showTotal && (
+          <Pane
+            className="memory-chart-summary"
+            marginTop={16}
+            paddingTop={16}
+            borderTop="1px solid #e4e7eb"
+            textAlign="center"
+          >
+            <Text fontSize={14} color="muted">
+              Total: {totalWords} words
+            </Text>
+          </Pane>
+        )}
       </Pane>
     </Card>
   );

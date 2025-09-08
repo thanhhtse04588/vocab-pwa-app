@@ -38,4 +38,3 @@ const VocabularySetActions: React.FC<VocabularySetActionsProps> = ({
 };
 
 export default VocabularySetActions;
-

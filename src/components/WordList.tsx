@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Pane,
   Heading,
@@ -27,6 +27,31 @@ const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
   const dispatch = useAppDispatch();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [wordToDelete, setWordToDelete] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const PAGE_SIZE = 20;
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(words.length / PAGE_SIZE)),
+    [words.length]
+  );
+  const clampedPage = Math.min(currentPage, totalPages);
+  const startIndex = (clampedPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const pagedWords = useMemo(
+    () => words.slice(startIndex, endIndex),
+    [words, startIndex, endIndex]
+  );
+
+  useEffect(() => {
+    // Clamp current page when words change (e.g., after delete or new import)
+    setCurrentPage((prev) => {
+      const next = Math.max(
+        1,
+        Math.min(prev, Math.max(1, Math.ceil(words.length / PAGE_SIZE)))
+      );
+      return next;
+    });
+  }, [words.length]);
 
   const getMemoryLevelLabel = (level: number) => {
     const labels = [
@@ -138,7 +163,7 @@ const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
         </Badge>
       </Pane>
 
-      {words.map((word) => (
+      {pagedWords.map((word) => (
         <Card key={word.id} marginBottom={16} hoverElevation={1}>
           <Pane padding={24}>
             <Pane display="flex" flexDirection="column" gap={16}>
@@ -199,6 +224,34 @@ const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
           </Pane>
         </Card>
       ))}
+
+      {/* Pagination controls */}
+      {words.length > PAGE_SIZE && (
+        <Pane
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          marginTop={16}
+        >
+          <Button
+            disabled={clampedPage <= 1}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+
+          <Text size={300} color="muted">
+            Page {clampedPage} of {totalPages}
+          </Text>
+
+          <Button
+            disabled={clampedPage >= totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next
+          </Button>
+        </Pane>
+      )}
 
       <Dialog
         isShown={deleteDialogOpen}

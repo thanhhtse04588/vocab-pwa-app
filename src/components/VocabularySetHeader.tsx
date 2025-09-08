@@ -34,4 +34,3 @@ const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
 };
 
 export default VocabularySetHeader;
-

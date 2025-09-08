@@ -126,7 +126,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         />
 
         {/* Memory Levels Distribution */}
-        <MemoryLevelChart vocabularySetId={setId} />
+        <MemoryLevelChart vocabularySetId={setId} showTotal={false} />
 
         {/* Action Buttons */}
         <VocabularySetActions

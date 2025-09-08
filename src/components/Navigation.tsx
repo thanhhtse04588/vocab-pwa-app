@@ -21,7 +21,9 @@ const Navigation: React.FC = () => {
       zIndex={1000}
       background="var(--bg-primary)"
       borderTop="1px solid var(--border-color)"
-      padding={8}
+      paddingX={8}
+      paddingTop={8}
+      paddingBottom={24}
       display="flex"
       justifyContent="space-around"
       className="bottom-nav"
