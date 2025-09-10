@@ -1,4 +1,12 @@
-import { Button, Card, Heading, Pane, Text } from 'evergreen-ui';
+import {
+  PlayIcon,
+  Card,
+  Heading,
+  IconButton,
+  Pane,
+  Text,
+  TrashIcon,
+} from 'evergreen-ui';
 import React from 'react';
 
 interface VocabularySet {
@@ -46,30 +54,23 @@ const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
             {set.wordCount} words
           </Text>
         </Pane>
-        <Pane display="flex" alignItems="center" gap={8}>
-          <Button
-            size="small"
-            appearance="primary"
+        <Pane display="flex" alignItems="center" gap={16}>
+          <IconButton
+            icon={PlayIcon}
             intent="success"
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               onStartStudy(set.id);
             }}
-          >
-            Start Study
-          </Button>
-          <Button
-            size="small"
-            appearance="primary"
+          />
+          <IconButton
+            icon={TrashIcon}
             intent="danger"
-            paddingX={16}
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               onDelete(set.id);
             }}
-          >
-            Delete
-          </Button>
+          />
         </Pane>
       </Pane>
     </Card>
