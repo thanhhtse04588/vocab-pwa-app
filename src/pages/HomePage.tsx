@@ -8,6 +8,7 @@ import {
 import { loadVocabularySets } from '@/store/slices/vocabularySlice';
 import { setActiveTab } from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
+import StorageWarning from '@/components/StorageWarning';
 import MemoryLevelChart from '@/components/MemoryLevelChart';
 
 const HomePage: React.FC = () => {
@@ -59,6 +60,9 @@ const HomePage: React.FC = () => {
         <Heading size={500} marginBottom={16}>
           Welcome Back!
         </Heading>
+
+        {/* Storage quota warning */}
+        <StorageWarning />
 
         {/* Review Card */}
         <Card marginBottom={24}>

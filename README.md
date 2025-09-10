@@ -11,6 +11,7 @@ A Progressive Web App for vocabulary learning with spaced repetition algorithm, 
 - **Offline support** (PWA) with IndexedDB storage
 - **Redux** state management with persistence (no React Router)
 - **Spaced Repetition System** with 8 memory levels
+ - **Storage usage warning**: App ước lượng dung lượng IndexedDB qua `navigator.storage.estimate()` và cảnh báo trên Home khi sử dụng ≥ 85% (hiển thị MB đã dùng/tổng). Vào Settings → Data Management để sao lưu và dọn dẹp dữ liệu nếu cần.
 
 ### Spaced Repetition Schedule
 - Level 0: 10 minutes
