@@ -65,7 +65,6 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
       onCloseComplete={onClose}
       hasFooter={false}
       width="90vw"
-      maxWidth={1200}
     >
       <Pane>
         {publicLoading ? (
@@ -98,8 +97,8 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
             {/* Presets Grid */}
             <Pane
               display="grid"
-              gridTemplateColumns="repeat(auto-fill, minmax(280px, 1fr))"
-              gap={12}
+              gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+              gap={10}
               padding={16}
               maxHeight="65vh"
               overflowY="auto"
@@ -124,15 +123,15 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
                   <Card
                     key={preset.id}
                     elevation={1}
-                    padding={16}
+                    padding={12}
                     display="flex"
                     flexDirection="column"
                     justifyContent="space-between"
-                    minHeight={120}
+                    minHeight={110}
                     hoverElevation={2}
                     transition="all 0.2s ease"
                     border="1px solid var(--border-color)"
-                    borderRadius={8}
+                    borderRadius={6}
                   >
                     {/* Header */}
                     <Pane>
@@ -144,14 +143,14 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
                       <Pane
                         display="flex"
                         alignItems="center"
-                        marginBottom={8}
+                        marginBottom={6}
                         flexWrap="wrap"
-                        gap={4}
+                        gap={3}
                       >
                         <Badge color="blue" size="small">
                           {preset.sourceLanguage}
                         </Badge>
-                        <Text size={300} marginX={6} color="muted">
+                        <Text size={300} marginX={4} color="muted">
                           →
                         </Text>
                         <Badge color="green" size="small">
@@ -166,7 +165,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
                     </Pane>
 
                     {/* Import button */}
-                    <Pane marginTop={12}>
+                    <Pane marginTop={8}>
                       <Button
                         appearance="primary"
                         onClick={() => handleImport(preset.id)}
