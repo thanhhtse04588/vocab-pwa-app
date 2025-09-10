@@ -1,16 +1,15 @@
 import React, { useRef } from 'react';
 import { Pane, Card, Text, Button } from 'evergreen-ui';
-import { backupService } from '@/services/backupService';
 
 interface DataManagementCardProps {
   onBackup: () => void;
-  onRestore: () => void;
+  onRestore?: () => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const DataManagementCard: React.FC<DataManagementCardProps> = ({
   onBackup,
-  onRestore,
+  onRestore: _onRestore,
   onFileUpload,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

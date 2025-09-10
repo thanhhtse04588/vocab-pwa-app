@@ -47,19 +47,28 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
                 ? 'var(--accent-primary)'
                 : 'var(--border-color)'
             }
-            _hover={{
-              backgroundColor:
-                currentTheme === theme.value
-                  ? 'var(--accent-primary-hover)'
-                  : 'var(--bg-tertiary)',
-              transform: 'translateY(-1px)',
-              boxShadow: 'var(--shadow)',
-            }}
             style={{
               minWidth: '60px',
               textAlign: 'center',
               fontSize: '12px',
               fontWeight: currentTheme === theme.value ? '600' : '400',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor =
+                currentTheme === theme.value
+                  ? 'var(--accent-primary-hover)'
+                  : 'var(--bg-tertiary)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = 'var(--shadow)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor =
+                currentTheme === theme.value
+                  ? 'var(--accent-primary)'
+                  : 'var(--bg-secondary)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
             <Pane marginBottom={4} fontSize="16px">

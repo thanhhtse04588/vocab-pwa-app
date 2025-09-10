@@ -52,7 +52,8 @@ A Progressive Web App for vocabulary learning with spaced repetition algorithm, 
 - **Frontend**: React 19 + TypeScript
 - **UI Framework**: Evergreen UI v7.1.9 (modern React components)
 - **State Management**: Redux Toolkit + Redux Persist
-- **Database**: Dexie (IndexedDB wrapper)
+- **Database**: Dexie (IndexedDB wrapper) + Firebase Firestore
+- **Backend**: Firebase (Firestore, Hosting, Cloud Functions)
 - **Build Tool**: Vite
 - **PWA**: Vite PWA Plugin
 - **Date Handling**: Day.js
@@ -107,6 +108,7 @@ Each word has a memory level (0-7) that determines review frequency:
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
+- Firebase CLI (for full functionality)
 
 ### Installation
 
@@ -121,17 +123,43 @@ cd vocab-pwa-app
 npm install
 ```
 
-3. Start development server:
+3. **Setup Firebase** (Optional but recommended):
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Login to Firebase
+firebase login
+
+# Initialize Firebase project
+firebase init
+```
+
+4. **Configure environment variables**:
+Create `.env.local` file with your Firebase configuration (see Firebase Setup section above).
+
+5. **Add sample data to Firestore** (Optional):
+```bash
+# Run the seed script to add sample vocabulary sets
+node scripts/seed-firestore.js
+```
+
+6. Start development server:
 ```bash
 npm run dev
 ```
 
-4. Build for production:
+7. Build for production:
 ```bash
 npm run build
 ```
 
-5. Preview production build:
+8. Deploy to Firebase:
+```bash
+firebase deploy
+```
+
+9. Preview production build locally:
 ```bash
 npm run preview
 ```
@@ -139,33 +167,169 @@ npm run preview
 ## 📁 Project Structure
 
 ```
-src/
-├── components/          # Reusable UI components
-│   ├── Navigation.tsx   # Bottom navigation
-│   ├── MemoryLevelChart.tsx
-│   └── StudySession.tsx
-├── pages/              # Main application pages
-│   ├── HomePage.tsx
-│   ├── VocabularyPage.tsx
-│   ├── LearnPage.tsx
-│   └── SettingsPage.tsx
-├── store/              # Redux store configuration
-│   ├── index.ts
-│   └── slices/         # Redux slices
-├── services/           # External services
-│   ├── database.ts     # Dexie database
-│   ├── pwaService.ts   # PWA features
-│   └── backupService.ts
-├── types/              # TypeScript type definitions
-├── utils/              # Utility functions
-├── hooks/              # Custom React hooks
-└── App.tsx             # Main app component
+vocab-pwa-app/
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── Navigation.tsx   # Bottom navigation
+│   │   ├── MemoryLevelChart.tsx
+│   │   └── StudySession.tsx
+│   ├── pages/              # Main application pages
+│   │   ├── HomePage.tsx
+│   │   ├── VocabularyPage.tsx
+│   │   ├── LearnPage.tsx
+│   │   └── SettingsPage.tsx
+│   ├── store/              # Redux store configuration
+│   │   ├── index.ts
+│   │   └── slices/         # Redux slices
+│   ├── services/           # External services
+│   │   ├── database.ts     # Dexie database
+│   │   ├── firebaseService.ts # Firebase integration
+│   │   ├── pwaService.ts   # PWA features
+│   │   └── backupService.ts
+│   ├── types/              # TypeScript type definitions
+│   ├── utils/              # Utility functions
+│   ├── hooks/              # Custom React hooks
+│   └── App.tsx             # Main app component
+├── functions/              # Firebase Cloud Functions
+│   ├── src/
+│   │   └── index.ts        # Cloud Functions entry point
+│   ├── package.json
+│   └── tsconfig.json
+├── scripts/                # Utility scripts
+│   └── seed-firestore.js   # Firestore data seeding
+├── public/                 # Static assets
+├── dist/                   # Vite build output (Firebase hosting)
+├── firebase.json           # Firebase configuration
+├── firestore.rules         # Firestore security rules
+├── firestore.indexes.json  # Firestore indexes
+├── storage.rules           # Cloud Storage rules
+├── .firebaserc             # Firebase project aliases
+└── .env.local              # Environment variables (create this)
 ```
 
 ## 🔧 Configuration
 
-### Environment Variables
-No environment variables required for basic functionality.
+## 🔥 Firebase Setup
+
+### Prerequisites
+- Node.js 18+
+- Firebase CLI installed globally
+- Firebase project created
+
+### Installation & Setup
+
+1. **Install Firebase CLI**:
+```bash
+npm install -g firebase-tools
+```
+
+2. **Login to Firebase**:
+```bash
+firebase login
+```
+
+3. **Initialize Firebase project**:
+```bash
+firebase init
+```
+Select the following features:
+- Firestore: Configure security rules and indexes
+- Functions: Configure Cloud Functions (TypeScript)
+- Hosting: Configure files for Firebase Hosting
+- Storage: Configure security rules for Cloud Storage
+
+4. **Configure environment variables**:
+Create a `.env.local` file in the project root:
+```
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+5. **Deploy Firestore rules**:
+```bash
+firebase deploy --only firestore:rules
+```
+
+### Firebase Features
+
+#### Firestore Database
+- **Collection**: `publicVocabularySets`
+- **Purpose**: Store preset vocabulary sets for import
+- **Security**: Public read access for preset sets
+
+#### Cloud Functions
+- **Language**: TypeScript
+- **Purpose**: Backend logic and API endpoints
+- **Deployment**: `firebase deploy --only functions`
+
+#### Firebase Hosting
+- **Public Directory**: `dist` (Vite build output)
+- **SPA Configuration**: All routes redirect to `/index.html`
+- **Deployment**: `firebase deploy --only hosting`
+
+#### Cloud Storage
+- **Purpose**: Store user data backups and media files
+- **Security**: User-specific access rules
+
+### Firestore Data Structure
+
+```
+publicVocabularySets (collection)
+  └── <setId> (document)
+        name: string
+        description: string
+        sourceLanguage: string
+        targetLanguage: string
+        wordCount: number
+        createdAt: string (ISO)
+        words: Array<{ 
+          word: string
+          meaning: string
+          pronunciation?: string
+          example?: string
+        }>
+```
+
+### Deployment Commands
+
+```bash
+# Deploy everything
+firebase deploy
+
+# Deploy specific services
+firebase deploy --only hosting
+firebase deploy --only firestore:rules
+firebase deploy --only functions
+
+# Build and deploy
+npm run build && firebase deploy --only hosting
+```
+
+### Development Workflow
+
+1. **Start development server**:
+```bash
+npm run dev
+```
+
+2. **Test Firebase connection**:
+- Open http://localhost:5173
+- Navigate to Vocabulary page
+- Try importing preset sets
+
+3. **Deploy to Firebase**:
+```bash
+npm run build
+firebase deploy
+```
+
+### Firebase Console
+Access your project at: https://console.firebase.google.com/project/vocab-pwa-app
 
 ### PWA Configuration
 PWA settings are configured in `vite.config.ts`:
@@ -291,9 +455,58 @@ This project is licensed under the MIT License.
 4. Add tests if applicable
 5. Submit a pull request
 
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Firebase Connection Issues
+- **Problem**: "Missing or insufficient permissions" error
+- **Solution**: Ensure Firestore rules are deployed: `firebase deploy --only firestore:rules`
+
+#### Environment Variables Not Loading
+- **Problem**: Firebase config not found
+- **Solution**: 
+  - Ensure `.env.local` file exists in project root
+  - Restart development server after adding environment variables
+  - Check that variable names start with `VITE_`
+
+#### Build Issues
+- **Problem**: Build fails with Firebase errors
+- **Solution**: 
+  - Ensure all environment variables are set
+  - Check Firebase project configuration
+  - Verify Firebase CLI is logged in: `firebase login`
+
+#### PWA Not Working
+- **Problem**: App doesn't install or work offline
+- **Solution**:
+  - Ensure HTTPS in production (Firebase Hosting provides this)
+  - Check service worker registration
+  - Clear browser cache and reload
+
+### Development Tips
+
+1. **Firebase Emulator**: Use Firebase emulators for local development:
+```bash
+firebase emulators:start
+```
+
+2. **Debug Firestore**: Use Firebase Console to monitor database changes
+
+3. **Test PWA Features**: Use Chrome DevTools > Application tab to test PWA functionality
+
+4. **Environment Variables**: Use `.env.local` for local development (not committed to git)
+
 ## 📞 Support
 
 For support and questions, please open an issue in the repository.
+
+## 🚀 Live Demo
+
+The app is deployed on Firebase Hosting:
+- **URL**: https://vocab-pwa-app.web.app
+- **Features**: Full PWA functionality with offline support
+- **Data**: Sample vocabulary sets available for import
 
 ---
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pane, Heading, Card, Button, Spinner, Text } from 'evergreen-ui';
-import { Plus } from 'phosphor-react';
+import { Plus, CloudArrowDown } from 'phosphor-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadVocabularySets,
@@ -15,6 +15,7 @@ import {
 import { startStudySession } from '@/store/slices/studySlice';
 import VocabularySetCard from '@/components/VocabularySetCard';
 import CreateSetDialog from '@/components/CreateSetDialog';
+import ImportPresetDialog from '@/components/ImportPresetDialog';
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
 
 const VocabularyPage: React.FC = () => {
@@ -23,6 +24,7 @@ const VocabularyPage: React.FC = () => {
   const { settings } = useAppSelector((state) => state.settings);
 
   const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [setToDelete, setSetToDelete] = useState<string | null>(null);
 
@@ -92,12 +94,20 @@ const VocabularyPage: React.FC = () => {
           marginBottom={24}
         >
           <Heading size={600}>Vocabulary Sets</Heading>
-          <Button
-            iconBefore={<Plus size={16} />}
-            onClick={() => setShowCreatePopup(true)}
-          >
-            New Set
-          </Button>
+          <Pane display="flex" gap={8}>
+            <Button
+              iconBefore={<CloudArrowDown size={16} />}
+              onClick={() => setShowImportDialog(true)}
+            >
+              Import Preset
+            </Button>
+            <Button
+              iconBefore={<Plus size={16} />}
+              onClick={() => setShowCreatePopup(true)}
+            >
+              New Set
+            </Button>
+          </Pane>
         </Pane>
 
         {loading ? (
@@ -157,6 +167,11 @@ const VocabularyPage: React.FC = () => {
         isShown={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={confirmDelete}
+      />
+
+      <ImportPresetDialog
+        isShown={showImportDialog}
+        onClose={() => setShowImportDialog(false)}
       />
     </Pane>
   );

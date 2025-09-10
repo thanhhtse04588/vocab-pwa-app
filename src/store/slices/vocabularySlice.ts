@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { VocabularySet, VocabularyWord, CSVWordData } from '@/types';
 import { db } from '@/services/database';
+import { fetchPublicVocabularySets, fetchPublicVocabularySetWithWords, type PublicVocabularySetMeta } from '@/services/firebaseService';
 
 interface VocabularyState {
   sets: VocabularySet[];
@@ -9,6 +10,8 @@ interface VocabularyState {
   loading: boolean;
   error: string | null;
   totalWordsToReview: number;
+  publicSets: PublicVocabularySetMeta[];
+  publicLoading: boolean;
 }
 
 const initialState: VocabularyState = {
@@ -18,6 +21,8 @@ const initialState: VocabularyState = {
   loading: false,
   error: null,
   totalWordsToReview: 0,
+  publicSets: [],
+  publicLoading: false,
 };
 
 // Async thunks
@@ -26,6 +31,61 @@ export const loadVocabularySets = createAsyncThunk(
   async () => {
     const setsWithStats = await db.getVocabularySetsWithStats();
     return setsWithStats;
+  }
+);
+
+export const fetchPublicSets = createAsyncThunk(
+  'vocabulary/fetchPublicSets',
+  async () => {
+    const sets = await fetchPublicVocabularySets();
+    return sets;
+  }
+);
+
+export const downloadPublicSet = createAsyncThunk(
+  'vocabulary/downloadPublicSet',
+  async (publicSetId: string) => {
+    const { set, words } = await fetchPublicVocabularySetWithWords(publicSetId);
+
+    // Create local set
+    const newSetId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+    const localSet: VocabularySet = {
+      id: newSetId,
+      name: set.name,
+      description: set.description,
+      sourceLanguage: set.sourceLanguage,
+      targetLanguage: set.targetLanguage,
+      createdAt: new Date().toISOString(),
+      lastStudiedAt: undefined,
+      wordCount: words.length,
+      isActive: true,
+    };
+
+    await db.vocabularySets.add(localSet);
+
+    // Insert words
+    const now = new Date();
+    const nextReview = new Date(now.getTime() + 10 * 60 * 1000).toISOString();
+    const localWords: VocabularyWord[] = words.map((w) => ({
+      id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2),
+      vocabularySetId: newSetId,
+      word: w.word,
+      meaning: w.meaning,
+      pronunciation: w.pronunciation,
+      example: w.example,
+      memoryLevel: 0,
+      nextReviewAt: nextReview,
+      correctCount: 0,
+      incorrectCount: 0,
+      createdAt: new Date().toISOString(),
+      lastReviewedAt: undefined,
+    }));
+
+    if (localWords.length > 0) {
+      await db.vocabularyWords.bulkAdd(localWords);
+    }
+
+    return { set: localSet, words: localWords };
   }
 );
 
@@ -242,6 +302,19 @@ const vocabularySlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to load vocabulary sets';
       })
+      // Fetch public sets
+      .addCase(fetchPublicSets.pending, (state) => {
+        state.publicLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchPublicSets.fulfilled, (state, action) => {
+        state.publicLoading = false;
+        state.publicSets = action.payload;
+      })
+      .addCase(fetchPublicSets.rejected, (state, action) => {
+        state.publicLoading = false;
+        state.error = action.error.message || 'Failed to fetch public sets';
+      })
       
       // Load words
       .addCase(loadVocabularyWords.pending, (state) => {
@@ -327,6 +400,22 @@ const vocabularySlice = createSlice({
         if (action.payload.errors.length > 0) {
           state.error = `Import completed with ${action.payload.errors.length} errors`;
         }
+      })
+      // Download public set
+      .addCase(downloadPublicSet.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(downloadPublicSet.fulfilled, (state, action) => {
+        state.loading = false;
+        state.sets.push(action.payload.set);
+        if (state.currentSet?.id === action.payload.set.id) {
+          state.words.push(...action.payload.words);
+        }
+      })
+      .addCase(downloadPublicSet.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to download public set';
       })
       
       // Load total words to review

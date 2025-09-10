@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Dialog, Pane, Button, Text, Table, Badge, Alert } from 'evergreen-ui';
 import { useAppDispatch } from '@/hooks/redux';
 import { importCSVWords } from '@/store/slices/vocabularySlice';
-import { parseCSV, validateCSVFile, CSVParseResult } from '@/utils/csvParser';
-import type { CSVWordData } from '@/types';
+import { parseCSV, validateCSVFile } from '@/utils/csvParser';
+import type { CSVParseResult } from '@/utils/csvParser';
 
 interface ImportCSVDialogProps {
   isShown: boolean;
@@ -145,9 +145,9 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
       <Pane marginTop={16}>
         {previewData.errors.length > 0 && (
           <Alert intent="danger" title="Errors" marginBottom={12}>
-            <Pane as="ul" paddingLeft={20}>
+            <Pane is="ul" paddingLeft={20}>
               {previewData.errors.map((error, index) => (
-                <Text key={index} as="li" display="block" marginBottom={4}>
+                <Text key={index} is="li" display="block" marginBottom={4}>
                   {error}
                 </Text>
               ))}
@@ -157,14 +157,14 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
 
         {previewData.warnings.length > 0 && (
           <Alert intent="warning" title="Warnings" marginBottom={12}>
-            <Pane as="ul" paddingLeft={20}>
+            <Pane is="ul" paddingLeft={20}>
               {previewData.warnings.slice(0, 5).map((warning, index) => (
-                <Text key={index} as="li" display="block" marginBottom={4}>
+                <Text key={index} is="li" display="block" marginBottom={4}>
                   {warning}
                 </Text>
               ))}
               {previewData.warnings.length > 5 && (
-                <Text as="li" display="block" marginTop={8} fontWeight={600}>
+                <Text is="li" display="block" marginTop={8} fontWeight={600}>
                   ... and {previewData.warnings.length - 5} more warnings
                 </Text>
               )}
@@ -246,7 +246,6 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
         onCancel={handleCancel}
         isConfirmDisabled={currentStep === 'preview' && !previewData?.success}
         width="90vw"
-        maxWidth={800}
       >
         <Pane>
           {currentStep === 'select' && (
@@ -254,20 +253,20 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
               <Text marginBottom={16}>
                 Your CSV file should have the following columns:
               </Text>
-              <Pane as="ul" paddingLeft={20} marginBottom={16}>
-                <Text as="li" display="block" marginBottom={8}>
+              <Pane is="ul" paddingLeft={20} marginBottom={16}>
+                <Text is="li" display="block" marginBottom={8}>
                   <Text fontWeight={600}>word</Text> - The vocabulary word
                   (required)
                 </Text>
-                <Text as="li" display="block" marginBottom={8}>
+                <Text is="li" display="block" marginBottom={8}>
                   <Text fontWeight={600}>meaning</Text> - The
                   meaning/translation (required)
                 </Text>
-                <Text as="li" display="block" marginBottom={8}>
+                <Text is="li" display="block" marginBottom={8}>
                   <Text fontWeight={600}>pronunciation</Text> - Pronunciation
                   guide (optional)
                 </Text>
-                <Text as="li" display="block" marginBottom={8}>
+                <Text is="li" display="block" marginBottom={8}>
                   <Text fontWeight={600}>example</Text> - Example sentence
                   (optional)
                 </Text>

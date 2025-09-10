@@ -87,4 +87,18 @@ export default defineConfig({
       '@/services': path.resolve(process.cwd(), './src/services'),
     },
   },
+  build: {
+    target: 'es2015',
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          redux: ['@reduxjs/toolkit', 'react-redux', 'redux-persist'],
+          ui: ['evergreen-ui', 'phosphor-react'],
+          utils: ['dayjs', 'lodash', 'dexie']
+        }
+      }
+    }
+  },
 })
