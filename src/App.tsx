@@ -83,9 +83,12 @@ function AppContent() {
   return (
     <Pane
       height="100vh"
+      maxHeight="100vh"
       display="flex"
       flexDirection="column"
       overflow="hidden"
+      width="100%"
+      maxWidth="100%"
     >
       <Pane flex={1} overflowY="auto" overflowX="hidden" paddingBottom={80}>
         {renderCurrentPage()}

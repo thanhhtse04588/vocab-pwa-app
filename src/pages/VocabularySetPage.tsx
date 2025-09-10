@@ -8,6 +8,7 @@ import {
 import { setActiveTab } from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
 import { resetProgress } from '@/store/slices/userProgressSlice';
+import type { VocabularyWord } from '@/types';
 import AddWordDialog from '@/components/AddWordDialog';
 import ImportCSVDialog from '@/components/ImportCSVDialog';
 import ResetProgressDialog from '@/components/ResetProgressDialog';
@@ -33,6 +34,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isStartingStudy, setIsStartingStudy] = useState(false);
+  const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
 
   useEffect(() => {
     if (setId) {
@@ -46,7 +48,13 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
     }
   }, [setId, dispatch, sets]);
 
-  const handleEditWord = () => {
+  const handleEditWord = (word: VocabularyWord) => {
+    setEditingWord(word);
+    setShowAddWordDialog(true);
+  };
+
+  const handleAddWord = () => {
+    setEditingWord(null);
     setShowAddWordDialog(true);
   };
 
@@ -109,8 +117,13 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
   }
 
   return (
-    <Pane className="page-content">
-      <Pane padding={24}>
+    <Pane
+      className="page-content"
+      width="100%"
+      maxWidth="100%"
+      boxSizing="border-box"
+    >
+      <Pane padding={24} width="100%" maxWidth="100%" boxSizing="border-box">
         {/* Header */}
         <VocabularySetHeader
           set={currentSet}
@@ -131,7 +144,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         {/* Action Buttons */}
         <VocabularySetActions
           onImportCSV={() => setShowImportDialog(true)}
-          onAddWord={() => setShowAddWordDialog(true)}
+          onAddWord={handleAddWord}
         />
 
         {/* Words List */}
@@ -143,8 +156,10 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         isShown={showAddWordDialog}
         onClose={() => {
           setShowAddWordDialog(false);
+          setEditingWord(null);
         }}
         setId={setId!}
+        editingWord={editingWord}
       />
 
       {/* Import CSV Dialog */}

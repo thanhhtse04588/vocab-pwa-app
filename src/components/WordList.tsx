@@ -20,7 +20,7 @@ import AudioButton from '@/components/AudioButton';
 interface WordListProps {
   words: VocabularyWord[];
   loading: boolean;
-  onEditWord: (wordId: string) => void;
+  onEditWord: (word: VocabularyWord) => void;
 }
 
 const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
@@ -201,7 +201,7 @@ const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
                       appearance="minimal"
                       intent="none"
                       iconBefore={<PencilSimple size={16} />}
-                      onClick={() => onEditWord(word.id)}
+                      onClick={() => onEditWord(word)}
                       size="small"
                     >
                       Edit

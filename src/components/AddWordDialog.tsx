@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, Pane, TextInput } from 'evergreen-ui';
 import { useAppDispatch } from '@/hooks/redux';
-import { addVocabularyWord } from '@/store/slices/vocabularySlice';
+import {
+  addVocabularyWord,
+  updateVocabularyWord,
+} from '@/store/slices/vocabularySlice';
+import type { VocabularyWord } from '@/types';
 
 interface AddWordDialogProps {
   isShown: boolean;
   onClose: () => void;
   setId: string;
+  editingWord?: VocabularyWord | null;
 }
 
 const AddWordDialog: React.FC<AddWordDialogProps> = ({
   isShown,
   onClose,
   setId,
+  editingWord,
 }) => {
   const dispatch = useAppDispatch();
   const [newWordData, setNewWordData] = useState({
@@ -24,26 +30,53 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
 
   useEffect(() => {
     if (isShown) {
-      setNewWordData({
-        word: '',
-        meaning: '',
-        pronunciation: '',
-        example: '',
-      });
+      if (editingWord) {
+        // Pre-fill form with existing word data for editing
+        setNewWordData({
+          word: editingWord.word,
+          meaning: editingWord.meaning,
+          pronunciation: editingWord.pronunciation || '',
+          example: editingWord.example || '',
+        });
+      } else {
+        // Clear form for adding new word
+        setNewWordData({
+          word: '',
+          meaning: '',
+          pronunciation: '',
+          example: '',
+        });
+      }
     }
-  }, [isShown]);
+  }, [isShown, editingWord]);
 
-  const handleAddWord = () => {
+  const handleSaveWord = () => {
     if (newWordData.word.trim() && newWordData.meaning.trim()) {
-      dispatch(
-        addVocabularyWord({
-          vocabularySetId: setId,
-          word: newWordData.word.trim(),
-          meaning: newWordData.meaning.trim(),
-          pronunciation: newWordData.pronunciation.trim() || undefined,
-          example: newWordData.example.trim() || undefined,
-        })
-      );
+      if (editingWord) {
+        // Update existing word
+        dispatch(
+          updateVocabularyWord({
+            id: editingWord.id,
+            updates: {
+              word: newWordData.word.trim(),
+              meaning: newWordData.meaning.trim(),
+              pronunciation: newWordData.pronunciation.trim() || undefined,
+              example: newWordData.example.trim() || undefined,
+            },
+          })
+        );
+      } else {
+        // Add new word
+        dispatch(
+          addVocabularyWord({
+            vocabularySetId: setId,
+            word: newWordData.word.trim(),
+            meaning: newWordData.meaning.trim(),
+            pronunciation: newWordData.pronunciation.trim() || undefined,
+            example: newWordData.example.trim() || undefined,
+          })
+        );
+      }
       setNewWordData({
         word: '',
         meaning: '',
@@ -57,11 +90,11 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
   return (
     <Dialog
       isShown={isShown}
-      title="Add New Word"
+      title={editingWord ? 'Edit Word' : 'Add New Word'}
       onCloseComplete={onClose}
-      confirmLabel="Add Word"
+      confirmLabel={editingWord ? 'Update Word' : 'Add Word'}
       cancelLabel="Cancel"
-      onConfirm={handleAddWord}
+      onConfirm={handleSaveWord}
       onCancel={onClose}
       isConfirmDisabled={
         !newWordData.word.trim() || !newWordData.meaning.trim()

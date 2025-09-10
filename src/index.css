@@ -58,7 +58,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-overflow-scrolling: touch;
   background-color: var(--bg-primary);
   color: var(--text-primary);
@@ -75,6 +75,48 @@ html, body {
   position: relative;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+/* Desktop/Web optimizations */
+@media (min-width: 769px) {
+  #root {
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    min-height: 100vh;
+    position: relative;
+  }
+  .nav-menu {
+     max-width: 480px;
+  }
+  /* Center the app on larger screens */
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  /* Add subtle scrollbar for desktop */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
 }
 
 /* Mobile PWA optimizations */
@@ -168,6 +210,23 @@ html, body {
   color: #66788a;
 }
 
+/* Page content responsive styles */
+.page-content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: calc(100vh - 80px); /* Account for bottom navigation */
+}
+
+/* Desktop page content adjustments */
+@media (min-width: 769px) {
+  .page-content {
+    min-height: calc(100vh - 80px);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+}
+
 /* Bottom Navigation Styles */
 .bottom-nav {
   position: fixed;
@@ -178,8 +237,6 @@ html, body {
   width: 100%;
   max-width: 100vw;
   box-sizing: border-box;
-  background-color: var(--bg-primary);
-  border-top: 1px solid var(--border-color);
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
