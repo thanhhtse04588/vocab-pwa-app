@@ -43,9 +43,6 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const totalSets = sets.length;
-  const totalWords = sets.reduce((sum, set) => sum + set.wordCount, 0);
-
   return (
     <Pane
       className="page-content"
@@ -95,35 +92,6 @@ const HomePage: React.FC = () => {
         <Heading size={500} marginBottom={16}>
           Your Progress
         </Heading>
-        <Pane
-          display="flex"
-          gap={16}
-          marginBottom={24}
-          width="100%"
-          maxWidth="100vw"
-          boxSizing="border-box"
-        >
-          <Pane flex={1}>
-            <Card>
-              <Pane padding={24} textAlign="center">
-                <Heading size={600} color="info" marginBottom={8}>
-                  {totalSets}
-                </Heading>
-                <Text>Vocabulary Sets</Text>
-              </Pane>
-            </Card>
-          </Pane>
-          <Pane flex={1}>
-            <Card>
-              <Pane padding={24} textAlign="center">
-                <Heading size={600} color="info" marginBottom={8}>
-                  {totalWords}
-                </Heading>
-                <Text>Total Words</Text>
-              </Pane>
-            </Card>
-          </Pane>
-        </Pane>
 
         {/* Memory Levels Chart */}
         {sets.length > 0 && <MemoryLevelChart />}

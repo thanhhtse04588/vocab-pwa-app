@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pane, Card, Text } from 'evergreen-ui';
+import { Layers } from 'lucide-react';
 import type { UserSettings } from '@/types';
 
 interface StudySettingsCardProps {
@@ -12,7 +13,7 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
   onBatchSizeChange,
 }) => {
   return (
-    <Card marginBottom={24}>
+    <Card marginBottom={24} elevation={1}>
       <Pane padding={24}>
         <Pane
           display="flex"
@@ -20,8 +21,25 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
           alignItems="center"
           marginBottom={16}
         >
-          <Text>Words per batch</Text>
-          <Text>{settings.batchSize} words</Text>
+          <Pane display="flex" alignItems="center">
+            <Layers
+              size={16}
+              style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+            />
+            <Text fontWeight={500}>Words per batch</Text>
+          </Pane>
+          <Pane
+            display="flex"
+            alignItems="center"
+            backgroundColor="tint1"
+            paddingX={12}
+            paddingY={4}
+            borderRadius={4}
+          >
+            <Text size={300} fontWeight={600}>
+              {settings.batchSize} words
+            </Text>
+          </Pane>
         </Pane>
         <input
           type="range"
@@ -39,6 +57,14 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
           }}
           className="range-slider"
         />
+        <Pane display="flex" justifyContent="space-between" marginTop={8}>
+          <Text size={300} color="muted">
+            5 words
+          </Text>
+          <Text size={300} color="muted">
+            50 words
+          </Text>
+        </Pane>
       </Pane>
     </Card>
   );

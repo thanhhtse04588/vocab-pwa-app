@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Pane, Card, Text, Button } from 'evergreen-ui';
+import { Download, Upload } from 'lucide-react';
 
 interface DataManagementCardProps {
   onBackup: () => void;
@@ -9,7 +10,7 @@ interface DataManagementCardProps {
 
 const DataManagementCard: React.FC<DataManagementCardProps> = ({
   onBackup,
-  onRestore: _onRestore,
+  onRestore: _onRestore, // eslint-disable-line @typescript-eslint/no-unused-vars
   onFileUpload,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,19 +25,24 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
     <>
       <Pane display="flex" gap={16} marginBottom={24}>
         <Pane flex={1}>
-          <Card>
+          <Card elevation={1}>
             <Pane padding={24}>
-              <Text fontWeight={600} marginBottom={8}>
-                Backup data
-              </Text>
+              <Pane display="flex" alignItems="center" marginBottom={12}>
+                <Download
+                  size={20}
+                  style={{ marginRight: '8px', color: '#0066cc' }}
+                />
+                <Text fontWeight={600}>Backup data</Text>
+              </Pane>
               <Text color="muted" marginBottom={16}>
-                Export your vocabulary data
+                Export your vocabulary data to a JSON file
               </Text>
               <Button
                 appearance="primary"
                 intent="none"
                 onClick={onBackup}
                 width="100%"
+                iconBefore={<Download size={16} />}
               >
                 Backup
               </Button>
@@ -44,19 +50,24 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
           </Card>
         </Pane>
         <Pane flex={1}>
-          <Card>
+          <Card elevation={1}>
             <Pane padding={24}>
-              <Text fontWeight={600} marginBottom={8}>
-                Restore data
-              </Text>
+              <Pane display="flex" alignItems="center" marginBottom={12}>
+                <Upload
+                  size={20}
+                  style={{ marginRight: '8px', color: '#ff8800' }}
+                />
+                <Text fontWeight={600}>Restore data</Text>
+              </Pane>
               <Text color="muted" marginBottom={16}>
-                Import vocabulary data from backup
+                Import vocabulary data from backup file
               </Text>
               <Button
                 appearance="primary"
                 intent="warning"
                 onClick={handleRestore}
                 width="100%"
+                iconBefore={<Upload size={16} />}
               >
                 Restore
               </Button>

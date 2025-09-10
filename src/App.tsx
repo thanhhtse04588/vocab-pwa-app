@@ -11,7 +11,6 @@ import {
   setTheme,
   updateThemeFromSystem,
 } from '@/store/slices/navigationSlice';
-
 // Import pages
 import HomePage from '@/pages/HomePage';
 import VocabularyPage from '@/pages/VocabularyPage';
@@ -19,6 +18,7 @@ import VocabularySetPage from '@/pages/VocabularySetPage';
 import LearnPage from '@/pages/LearnPage';
 import SettingsPage from '@/pages/SettingsPage';
 import Navigation from '@/components/Navigation';
+import AuthInitializer from '@/components/AuthInitializer';
 
 function AppContent() {
   const dispatch = useAppDispatch();
@@ -90,6 +90,7 @@ function AppContent() {
       width="100%"
       maxWidth="100%"
     >
+      <AuthInitializer />
       <Pane flex={1} overflowY="auto" overflowX="hidden" paddingBottom={80}>
         {renderCurrentPage()}
       </Pane>

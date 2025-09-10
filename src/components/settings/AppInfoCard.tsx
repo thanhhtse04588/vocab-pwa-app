@@ -1,22 +1,43 @@
 import React from 'react';
 import { Pane, Card, Text } from 'evergreen-ui';
+import { Code, Smartphone, Layers, Database } from 'lucide-react';
 
 const AppInfoCard: React.FC = () => {
   return (
-    <Card marginBottom={24}>
+    <Card marginBottom={24} elevation={1}>
       <Pane padding={24}>
-        <Pane display="flex" gap={16}>
+        <Pane display="flex" gap={24}>
           <Pane flex={1}>
-            <Text fontWeight={600} marginBottom={8}>
-              Version: 1.0.0
-            </Text>
-            <Text fontWeight={600}>Build: PWA</Text>
+            <Pane display="flex" alignItems="center" marginBottom={12}>
+              <Code
+                size={16}
+                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+              />
+              <Text fontWeight={600}>Version: 1.0.0</Text>
+            </Pane>
+            <Pane display="flex" alignItems="center">
+              <Smartphone
+                size={16}
+                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+              />
+              <Text fontWeight={600}>Build: PWA</Text>
+            </Pane>
           </Pane>
           <Pane flex={1}>
-            <Text fontWeight={600} marginBottom={8}>
-              Framework: Evergreen UI
-            </Text>
-            <Text fontWeight={600}>Storage: IndexedDB</Text>
+            <Pane display="flex" alignItems="center" marginBottom={12}>
+              <Layers
+                size={16}
+                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+              />
+              <Text fontWeight={600}>Framework: Evergreen UI</Text>
+            </Pane>
+            <Pane display="flex" alignItems="center">
+              <Database
+                size={16}
+                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+              />
+              <Text fontWeight={600}>Storage: IndexedDB</Text>
+            </Pane>
           </Pane>
         </Pane>
       </Pane>

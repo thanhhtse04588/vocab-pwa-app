@@ -8,6 +8,7 @@ import studySlice from '@/store/slices/studySlice';
 import settingsSlice from '@/store/slices/settingsSlice';
 import navigationSlice from '@/store/slices/navigationSlice';
 import userProgressSlice from '@/store/slices/userProgressSlice';
+import authSlice from '@/store/slices/authSlice';
 
 const persistConfig = {
   key: 'root',
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   settings: settingsSlice,
   navigation: navigationSlice,
   userProgress: userProgressSlice,
+  auth: authSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -1,5 +1,15 @@
 import React, { useEffect } from 'react';
 import { Pane, Heading, Text, Spinner, Dialog, Card } from 'evergreen-ui';
+import {
+  Settings,
+  Book,
+  Paintbrush,
+  Bell,
+  Volume2,
+  Database,
+  Info,
+  Lightbulb,
+} from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadSettings,
@@ -150,81 +160,103 @@ const SettingsPage: React.FC = () => {
 
   return (
     <Pane className="page-content">
-      <Pane padding={24}>
-        <Heading size={600} marginBottom={24}>
-          Settings
-        </Heading>
+      <Pane padding={24} maxWidth={800} marginX="auto">
+        <Pane display="flex" alignItems="center" marginBottom={32}>
+          <Settings size={24} style={{ marginRight: '12px' }} />
+          <Heading size={600}>Settings</Heading>
+        </Pane>
 
         {/* Study Settings */}
-        <Heading size={500} marginBottom={16}>
-          Study Settings
-        </Heading>
-        <StudySettingsCard
-          settings={settings}
-          onBatchSizeChange={handleBatchSizeChange}
-        />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Book size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>Study Settings</Heading>
+          </Pane>
+          <StudySettingsCard
+            settings={settings}
+            onBatchSizeChange={handleBatchSizeChange}
+          />
+        </Pane>
 
         {/* Appearance */}
-        <Heading size={500} marginBottom={16}>
-          Appearance
-        </Heading>
-        <Card marginBottom={24}>
-          <Pane padding={24}>
-            <ThemeToggle
-              currentTheme={settings.theme}
-              onThemeChange={handleThemeChange}
-            />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Paintbrush size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>Appearance</Heading>
           </Pane>
-        </Card>
+          <Card marginBottom={24}>
+            <Pane padding={24}>
+              <ThemeToggle
+                currentTheme={settings.theme}
+                onThemeChange={handleThemeChange}
+              />
+            </Pane>
+          </Card>
+        </Pane>
 
         {/* Notifications */}
-        <Heading size={500} marginBottom={16}>
-          Notifications
-        </Heading>
-        <NotificationSettingsCard
-          settings={settings}
-          onNotificationToggle={handleNotificationToggle}
-          onNotificationTimeChange={handleNotificationTimeChange}
-        />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Bell size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>Notifications</Heading>
+          </Pane>
+          <NotificationSettingsCard
+            settings={settings}
+            onNotificationToggle={handleNotificationToggle}
+            onNotificationTimeChange={handleNotificationTimeChange}
+          />
+        </Pane>
 
         {/* Sound & Vibration */}
-        <Heading size={500} marginBottom={16}>
-          Sound & Vibration
-        </Heading>
-        <SoundVibrationCard
-          settings={settings}
-          onSoundToggle={handleSoundToggle}
-          onVibrationToggle={handleVibrationToggle}
-          onAutoPlayToggle={() =>
-            dispatch(
-              updateSettings({
-                autoPlayPronunciation: !settings.autoPlayPronunciation,
-              })
-            )
-          }
-        />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Volume2 size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>Sound & Vibration</Heading>
+          </Pane>
+          <SoundVibrationCard
+            settings={settings}
+            onSoundToggle={handleSoundToggle}
+            onVibrationToggle={handleVibrationToggle}
+            onAutoPlayToggle={() =>
+              dispatch(
+                updateSettings({
+                  autoPlayPronunciation: !settings.autoPlayPronunciation,
+                })
+              )
+            }
+          />
+        </Pane>
 
         {/* Data Management */}
-        <Heading size={500} marginBottom={16}>
-          Data Management
-        </Heading>
-        <DataManagementCard
-          onBackup={handleBackup}
-          onRestore={() => {}} // Handled inside DataManagementCard
-          onFileUpload={handleFileUpload}
-        />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Database size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>Data Management</Heading>
+          </Pane>
+          <DataManagementCard
+            onBackup={handleBackup}
+            onRestore={() => {}} // Handled inside DataManagementCard
+            onFileUpload={handleFileUpload}
+          />
+        </Pane>
 
         {/* App Information */}
-        <Heading size={500} marginBottom={16}>
-          App Information
-        </Heading>
-        <AppInfoCard />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Info size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>App Information</Heading>
+          </Pane>
+          <AppInfoCard />
+        </Pane>
 
         {/* Study Tips */}
-        <Heading size={500} marginBottom={16}>
-          Study Tips
-        </Heading>
-        <StudyTipsCard />
+        <Pane marginBottom={32}>
+          <Pane display="flex" alignItems="center" marginBottom={16}>
+            <Lightbulb size={20} style={{ marginRight: '8px' }} />
+            <Heading size={500}>Study Tips</Heading>
+          </Pane>
+          <StudyTipsCard />
+        </Pane>
       </Pane>
 
       {/* Alert Dialog */}

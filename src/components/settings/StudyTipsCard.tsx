@@ -1,38 +1,54 @@
 import React from 'react';
 import { Pane, Card, Text, Heading } from 'evergreen-ui';
+import { Lightbulb } from 'lucide-react';
 
 const StudyTipsCard: React.FC = () => {
   return (
-    <Card>
+    <Card elevation={1}>
       <Pane padding={24}>
-        <Heading size={400} marginBottom={16}>
-          Spaced Repetition Schedule
-        </Heading>
-        <Pane is="ul" paddingLeft={20}>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 0: 10 minutes
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 1: 15 minutes
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 2: 1 day
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 3: 3 days
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 4: 1 week
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 5: 2 weeks
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 6: 1 month
-          </Text>
-          <Text is="li" display="block" marginBottom={8}>
-            Level 7: 3 months
-          </Text>
+        <Pane display="flex" alignItems="center" marginBottom={16}>
+          <Lightbulb
+            size={20}
+            style={{ marginRight: '8px', color: '#fbbf24' }}
+          />
+          <Heading size={400}>Spaced Repetition Schedule</Heading>
+        </Pane>
+        <Text color="muted" marginBottom={20}>
+          Words are reviewed at increasing intervals based on your performance
+        </Text>
+        <Pane is="ul" paddingLeft={0}>
+          {[
+            { level: 0, time: '10 minutes', color: 'red' },
+            { level: 1, time: '15 minutes', color: 'orange' },
+            { level: 2, time: '1 day', color: 'yellow' },
+            { level: 3, time: '3 days', color: 'green' },
+            { level: 4, time: '1 week', color: 'blue' },
+            { level: 5, time: '2 weeks', color: 'purple' },
+            { level: 6, time: '1 month', color: 'teal' },
+            { level: 7, time: '3 months', color: 'dark' },
+          ].map(({ level, time, color }) => (
+            <Pane
+              key={level}
+              display="flex"
+              alignItems="center"
+              marginBottom={12}
+              padding={12}
+              backgroundColor="tint1"
+              borderRadius={6}
+            >
+              <Pane
+                width={8}
+                height={8}
+                borderRadius="50%"
+                backgroundColor={color}
+                marginRight={12}
+              />
+              <Text fontWeight={500} marginRight={8}>
+                Level {level}:
+              </Text>
+              <Text color="muted">{time}</Text>
+            </Pane>
+          ))}
         </Pane>
       </Pane>
     </Card>

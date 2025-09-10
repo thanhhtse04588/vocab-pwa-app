@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pane, Text } from 'evergreen-ui';
+import { Sun, Moon, RefreshCw } from 'lucide-react';
 
 interface ThemeToggleProps {
   currentTheme: 'light' | 'dark' | 'auto';
@@ -11,9 +12,9 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   onThemeChange,
 }) => {
   const themes = [
-    { value: 'light', label: 'Light', icon: '☀️' },
-    { value: 'dark', label: 'Dark', icon: '🌙' },
-    { value: 'auto', label: 'Auto', icon: '🔄' },
+    { value: 'light', label: 'Light', icon: Sun },
+    { value: 'dark', label: 'Dark', icon: Moon },
+    { value: 'auto', label: 'Auto', icon: RefreshCw },
   ] as const;
 
   return (
@@ -71,8 +72,13 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <Pane marginBottom={4} fontSize="16px">
-              {theme.icon}
+            <Pane
+              marginBottom={4}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <theme.icon size={16} />
             </Pane>
             <Text size={300}>{theme.label}</Text>
           </Pane>

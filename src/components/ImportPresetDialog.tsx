@@ -8,12 +8,14 @@ import {
   Card,
   Heading,
   Badge,
+  SearchInput,
 } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   fetchPublicSets,
   downloadPublicSet,
 } from '@/store/slices/vocabularySlice';
+import { useState } from 'react';
 
 interface ImportPresetDialogProps {
   isShown: boolean;
@@ -36,6 +38,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
   const { publicSets, publicLoading } = useAppSelector(
     (state) => state.vocabulary
   );
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (isShown) {
@@ -48,12 +51,21 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
     onClose();
   };
 
+  const filteredSets = publicSets.filter(
+    (preset: PresetSet) =>
+      preset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      preset.sourceLanguage.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      preset.targetLanguage.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Dialog
       isShown={isShown}
       title="Import Preset Vocabulary Set"
       onCloseComplete={onClose}
       hasFooter={false}
+      width="90vw"
+      maxWidth={1200}
     >
       <Pane>
         {publicLoading ? (
@@ -61,64 +73,115 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
             display="flex"
             alignItems="center"
             justifyContent="center"
-            padding={24}
+            padding={32}
           >
             <Spinner />
-            <Text marginLeft={8}>Loading presets...</Text>
+            <Text marginLeft={12} size={400}>
+              Loading presets...
+            </Text>
           </Pane>
         ) : (
-          <Pane
-            display="grid"
-            gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-            gap={16}
-            padding={16}
-            maxHeight="60vh"
-            overflowY="auto"
-          >
-            {publicSets.map((preset: PresetSet) => (
-              <Card
-                key={preset.id}
-                elevation={1}
-                padding={20}
-                display="flex"
-                flexDirection="column"
-                justifyContent="space-between"
-                minHeight={140}
-                hoverElevation={2}
-                transition="all 0.2s ease"
-              >
-                <Pane>
-                  <Heading size={500} marginBottom={8}>
-                    {preset.name}
-                  </Heading>
+          <>
+            {/* Search Bar */}
+            <Pane padding={16} borderBottom="1px solid var(--border-color)">
+              <SearchInput
+                placeholder="Search presets by name or language..."
+                value={searchQuery}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value)
+                }
+                width="100%"
+                height={36}
+              />
+            </Pane>
 
-                  <Pane display="flex" alignItems="center" marginBottom={12}>
-                    <Badge color="blue" marginRight={8}>
-                      {preset.sourceLanguage}
-                    </Badge>
-                    <Text size={300} marginX={8}>
-                      →
-                    </Text>
-                    <Badge color="green">{preset.targetLanguage}</Badge>
-                  </Pane>
-
+            {/* Presets Grid */}
+            <Pane
+              display="grid"
+              gridTemplateColumns="repeat(auto-fill, minmax(280px, 1fr))"
+              gap={12}
+              padding={16}
+              maxHeight="65vh"
+              overflowY="auto"
+            >
+              {filteredSets.length === 0 ? (
+                <Pane
+                  gridColumn="1 / -1"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  padding={32}
+                  textAlign="center"
+                >
                   <Text size={400} color="muted">
-                    {preset.wordCount} từ
+                    {searchQuery
+                      ? 'No presets found matching your search.'
+                      : 'No presets available.'}
                   </Text>
                 </Pane>
-
-                <Pane marginTop={16}>
-                  <Button
-                    appearance="primary"
-                    onClick={() => handleImport(preset.id)}
-                    width="100%"
+              ) : (
+                filteredSets.map((preset: PresetSet) => (
+                  <Card
+                    key={preset.id}
+                    elevation={1}
+                    padding={16}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="space-between"
+                    minHeight={120}
+                    hoverElevation={2}
+                    transition="all 0.2s ease"
+                    border="1px solid var(--border-color)"
+                    borderRadius={8}
                   >
-                    Import
-                  </Button>
-                </Pane>
-              </Card>
-            ))}
-          </Pane>
+                    {/* Header */}
+                    <Pane>
+                      <Heading size={400} marginBottom={8} lineHeight={1.3}>
+                        {preset.name}
+                      </Heading>
+
+                      {/* Language badges */}
+                      <Pane
+                        display="flex"
+                        alignItems="center"
+                        marginBottom={8}
+                        flexWrap="wrap"
+                        gap={4}
+                      >
+                        <Badge color="blue" size="small">
+                          {preset.sourceLanguage}
+                        </Badge>
+                        <Text size={300} marginX={6} color="muted">
+                          →
+                        </Text>
+                        <Badge color="green" size="small">
+                          {preset.targetLanguage}
+                        </Badge>
+                      </Pane>
+
+                      {/* Word count */}
+                      <Text size={300} color="muted">
+                        {preset.wordCount} từ
+                      </Text>
+                    </Pane>
+
+                    {/* Import button */}
+                    <Pane marginTop={12}>
+                      <Button
+                        appearance="primary"
+                        onClick={() => handleImport(preset.id)}
+                        width="100%"
+                        height={32}
+                        size="small"
+                      >
+                        Import
+                      </Button>
+                    </Pane>
+                  </Card>
+                ))
+              )}
+            </Pane>
+          </>
         )}
       </Pane>
     </Dialog>
