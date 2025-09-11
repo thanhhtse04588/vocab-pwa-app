@@ -51,9 +51,6 @@ const HomePage: React.FC = () => {
       boxSizing="border-box"
     >
       <Pane padding={24} width="100%" maxWidth="100vw" boxSizing="border-box">
-        <Heading size={700} marginBottom={24}>
-          VocabPWA
-        </Heading>
         <Heading size={500} marginBottom={16}>
           Welcome Back!
         </Heading>

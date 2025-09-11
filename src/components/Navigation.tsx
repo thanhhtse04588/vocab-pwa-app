@@ -1,15 +1,12 @@
-import React from 'react';
-import { Pane, Button } from 'evergreen-ui';
-import { House, BookOpen, Gear } from 'phosphor-react';
-import { useAppSelector, useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setActiveTab } from '@/store/slices/navigationSlice';
-import LoginButton from './LoginButton';
-import UserProfile from './UserProfile';
+import { Button, Pane } from 'evergreen-ui';
+import { BookOpen, Gear, House } from 'phosphor-react';
+import React from 'react';
 
 const Navigation: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeTab } = useAppSelector((state) => state.navigation);
-  const { user } = useAppSelector((state) => state.auth);
 
   const handleTabChange = (tabId: string) => {
     dispatch(setActiveTab(tabId as any));
@@ -71,11 +68,6 @@ const Navigation: React.FC = () => {
           <Gear size={20} />
           <span style={{ fontSize: '12px', marginTop: '2px' }}>Settings</span>
         </Button>
-      </Pane>
-
-      {/* Auth Section - Top Right Corner */}
-      <Pane position="fixed" top={16} right={16} zIndex={1000}>
-        {user ? <UserProfile /> : <LoginButton />}
       </Pane>
     </Pane>
   );

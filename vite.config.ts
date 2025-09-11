@@ -19,10 +19,10 @@ export default defineConfig({
         'apple-splash-*.png'
       ],
       manifest: {
-        name: 'Vocab PWA App',
-        short_name: 'VocabPWA',
+        name: 'BeeVocab',
+        short_name: 'BeeVocab',
         description: 'Progressive Web App for vocabulary learning with React + Vite + TS',
-        theme_color: '#ffffff',
+        theme_color: '#f7ac15',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
@@ -32,27 +32,33 @@ export default defineConfig({
         categories: ['education', 'productivity'],
         icons: [
           {
-            src: '/pwa-192x192.png',
+            src: '/bee-icon-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/bee-icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/bee-icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
           },
           {
-            src: '/apple-touch-icon.png',
+            src: '/bee-icon-180.png',
             sizes: '180x180',
             type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/bee-icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
             purpose: 'any'
           }
         ]

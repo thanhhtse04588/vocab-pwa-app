@@ -57,7 +57,7 @@ const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
         <Pane display="flex" alignItems="center" gap={16}>
           <IconButton
             icon={PlayIcon}
-            intent="success"
+            intent="primary"
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               onStartStudy(set.id);

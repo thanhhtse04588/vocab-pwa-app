@@ -1,4 +1,4 @@
-# VocabPWA - Vocabulary Learning PWA
+# BeeVocab - Vocabulary Learning PWA
 
 A Progressive Web App for vocabulary learning with spaced repetition algorithm, built with React, TypeScript, Evergreen UI, and Redux.
 
@@ -11,7 +11,7 @@ A Progressive Web App for vocabulary learning with spaced repetition algorithm, 
 - **Offline support** (PWA) with IndexedDB storage
 - **Redux** state management with persistence (no React Router)
 - **Spaced Repetition System** with 8 memory levels
- - **Storage usage warning**: App ước lượng dung lượng IndexedDB qua `navigator.storage.estimate()` và cảnh báo trên Home khi sử dụng ≥ 85% (hiển thị MB đã dùng/tổng). Vào Settings → Data Management để sao lưu và dọn dẹp dữ liệu nếu cần.
+ - **Storage usage warning**: App estimates IndexedDB usage via `navigator.storage.estimate()` and warns on Home when using ≥ 85% (shows MB used/total). Go to Settings → Data Management to backup and clean up data if needed.
 
 ### Spaced Repetition Schedule
 - Level 0: 10 minutes
@@ -116,7 +116,7 @@ Each word has a memory level (0-7) that determines review frequency:
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd vocab-pwa-app
+cd bee-vocab-app
 ```
 
 2. Install dependencies:
@@ -168,7 +168,7 @@ npm run preview
 ## 📁 Project Structure
 
 ```
-vocab-pwa-app/
+bee-vocab-app/
 ├── src/
 │   ├── components/          # Reusable UI components
 │   │   ├── Navigation.tsx   # Bottom navigation
@@ -330,7 +330,7 @@ firebase deploy
 ```
 
 ### Firebase Console
-Access your project at: https://console.firebase.google.com/project/vocab-pwa-app
+Access your project at: https://console.firebase.google.com/project/bee-vocab-app
 
 ### PWA Configuration
 PWA settings are configured in `vite.config.ts`:
@@ -505,7 +505,7 @@ For support and questions, please open an issue in the repository.
 ## 🚀 Live Demo
 
 The app is deployed on Firebase Hosting:
-- **URL**: https://vocab-pwa-app.web.app
+- **URL**: https://bee-vocab-app.web.app
 - **Features**: Full PWA functionality with offline support
 - **Data**: Sample vocabulary sets available for import
 

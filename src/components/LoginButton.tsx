@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button, Spinner } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { signIn } from '@/store/slices/authSlice';
+import { IconButton, Pane, Spinner } from 'evergreen-ui';
+import React from 'react';
 
 // Google Icon SVG Component
 const GoogleIcon: React.FC<{ size?: number }> = ({ size = 16 }) => (
@@ -40,26 +40,25 @@ const LoginButton: React.FC = () => {
     } catch (error: unknown) {
       if (error instanceof Error) {
         // Don't show alert for user cancellation
-        if (error.message === 'Đăng nhập bị hủy bởi người dùng.') {
+        if (error.message === 'Login cancelled by user.') {
           return; // Silent handling for user cancellation
         }
         alert(error.message);
       } else {
-        alert('Đăng nhập thất bại. Vui lòng thử lại.');
+        alert('Login failed. Please try again.');
       }
     }
   };
 
   return (
-    <Button
-      appearance="primary"
-      intent="success"
-      onClick={handleSignIn}
-      disabled={loading}
-      iconBefore={loading ? <Spinner size={16} /> : <GoogleIcon size={16} />}
-    >
-      {loading ? 'Signing in...' : 'Sign in with Google'}
-    </Button>
+    <Pane display="flex" alignItems="center" gap={8}>
+      <IconButton
+        disabled={loading}
+        onClick={handleSignIn}
+        icon={loading ? Spinner : GoogleIcon}
+        className={loading ? 'loading' : ''}
+      />
+    </Pane>
   );
 };
 

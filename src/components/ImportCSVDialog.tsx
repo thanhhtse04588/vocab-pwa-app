@@ -83,7 +83,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
 
   const downloadCSVTemplate = () => {
     const csvContent =
-      'word,meaning,pronunciation,example\nhello,xin chào,həˈloʊ,Xin chào, tôi là John\nworld,thế giới,wɜːrld,Thế giới rất đẹp';
+      'word,meaning,pronunciation,example\nhello,greeting,həˈloʊ,Hello, how are you?\nworld,planet,wɜːrld,The world is beautiful';
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);

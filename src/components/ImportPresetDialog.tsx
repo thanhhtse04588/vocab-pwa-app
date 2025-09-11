@@ -160,7 +160,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
 
                       {/* Word count */}
                       <Text size={300} color="muted">
-                        {preset.wordCount} từ
+                        {preset.wordCount} words
                       </Text>
                     </Pane>
 

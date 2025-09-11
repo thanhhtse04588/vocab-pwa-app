@@ -31,7 +31,7 @@ const UserProfile: React.FC = () => {
         <Menu>
           <Menu.Group>
             <Menu.Item>
-              <Pane padding={8}>
+              <Pane padding={12}>
                 <Text size={300} fontWeight={600}>
                   {user.displayName || 'User'}
                 </Text>
@@ -51,16 +51,31 @@ const UserProfile: React.FC = () => {
       }
       position={Position.BOTTOM_RIGHT}
     >
-      <Button appearance="minimal" height={40} paddingX={8} disabled={loading}>
+      <Button
+        appearance="minimal"
+        height={40}
+        paddingX={12}
+        paddingY={8}
+        disabled={loading}
+        className={loading ? 'loading' : ''}
+        borderRadius={8}
+        transition="all 0.2s ease"
+      >
         <Pane display="flex" alignItems="center" gap={8}>
           <Avatar
             src={user.photoURL || undefined}
             name={user.displayName || 'User'}
-            size={24}
+            size={28}
+            borderRadius={6}
           />
-          <Text size={300} fontWeight={500}>
-            {user.displayName || 'User'}
-          </Text>
+          <Pane display="flex" flexDirection="column" alignItems="flex-start">
+            <Text size={300} fontWeight={500} margin={0}>
+              {user.displayName || 'User'}
+            </Text>
+            <Text size={200} color="muted" margin={0}>
+              Profile
+            </Text>
+          </Pane>
         </Pane>
       </Button>
     </Popover>

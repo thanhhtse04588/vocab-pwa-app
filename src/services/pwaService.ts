@@ -89,7 +89,7 @@ class PWAService {
       const [_hours, _minutes] = settings.notificationTime.split(':').map(Number);
       
       // Schedule daily notification
-      await this.registration.showNotification('VocabPWA - Study Time!', {
+      await this.registration.showNotification('BeeVocab - Study Time!', {
         body: 'Time to review your vocabulary words!',
         icon: '/pwa-192x192.png',
         badge: '/pwa-192x192.png',
@@ -133,7 +133,7 @@ class PWAService {
     if (!this.registration) return;
 
     try {
-      await this.registration.showNotification('VocabPWA - Study Time!', {
+      await this.registration.showNotification('BeeVocab - Study Time!', {
         body: 'Time to review your vocabulary words!',
         icon: '/pwa-192x192.png',
         badge: '/pwa-192x192.png',

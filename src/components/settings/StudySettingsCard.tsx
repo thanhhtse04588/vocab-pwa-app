@@ -13,7 +13,7 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
   onBatchSizeChange,
 }) => {
   return (
-    <Card marginBottom={24} elevation={1}>
+    <Card marginBottom={24}>
       <Pane padding={24}>
         <Pane
           display="flex"
@@ -57,14 +57,6 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
           }}
           className="range-slider"
         />
-        <Pane display="flex" justifyContent="space-between" marginTop={8}>
-          <Text size={300} color="muted">
-            5 words
-          </Text>
-          <Text size={300} color="muted">
-            50 words
-          </Text>
-        </Pane>
       </Pane>
     </Card>
   );

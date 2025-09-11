@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pane, Text } from 'evergreen-ui';
+import { Pane, Text, Select } from 'evergreen-ui';
 import { Sun, Moon, RefreshCw } from 'lucide-react';
 
 interface ThemeToggleProps {
@@ -17,6 +17,8 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
     { value: 'auto', label: 'Auto', icon: RefreshCw },
   ] as const;
 
+  const selectedOption = themes.find((theme) => theme.value === currentTheme);
+
   return (
     <Pane
       display="flex"
@@ -24,65 +26,26 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
       alignItems="center"
       marginBottom={16}
     >
-      <Text>Theme</Text>
-      <Pane display="flex" gap={8}>
-        {themes.map((theme) => (
-          <Pane
-            key={theme.value}
-            onClick={() => onThemeChange(theme.value)}
-            padding={8}
-            borderRadius={8}
-            cursor="pointer"
-            transition="all 0.2s ease"
-            backgroundColor={
-              currentTheme === theme.value
-                ? 'var(--accent-primary)'
-                : 'var(--bg-secondary)'
-            }
-            color={
-              currentTheme === theme.value ? 'white' : 'var(--text-primary)'
-            }
-            border="1px solid"
-            borderColor={
-              currentTheme === theme.value
-                ? 'var(--accent-primary)'
-                : 'var(--border-color)'
-            }
-            style={{
-              minWidth: '60px',
-              textAlign: 'center',
-              fontSize: '12px',
-              fontWeight: currentTheme === theme.value ? '600' : '400',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor =
-                currentTheme === theme.value
-                  ? 'var(--accent-primary-hover)'
-                  : 'var(--bg-tertiary)';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = 'var(--shadow)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor =
-                currentTheme === theme.value
-                  ? 'var(--accent-primary)'
-                  : 'var(--bg-secondary)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <Pane
-              marginBottom={4}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <theme.icon size={16} />
-            </Pane>
-            <Text size={300}>{theme.label}</Text>
-          </Pane>
-        ))}
+      <Pane display="flex" alignItems="center" gap={8}>
+        <Text>Theme</Text>
+        {selectedOption && (
+          <selectedOption.icon size={16} color="var(--text-secondary)" />
+        )}
+      </Pane>
+      <Pane width={120}>
+        <Select
+          value={currentTheme}
+          onChange={(e) =>
+            onThemeChange(e.target.value as 'light' | 'dark' | 'auto')
+          }
+          width="100%"
+        >
+          {themes.map((theme) => (
+            <option key={theme.value} value={theme.value}>
+              {theme.label}
+            </option>
+          ))}
+        </Select>
       </Pane>
     </Pane>
   );

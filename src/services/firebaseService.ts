@@ -47,14 +47,36 @@ let auth: Auth | null = null;
 function ensureFirebase(): { db: Firestore; auth: Auth } {
   if (firestoreDb && auth) return { db: firestoreDb, auth };
 
+  // Validate that all required environment variables are present
+  const requiredEnvVars = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  };
+
+  // Check for missing environment variables
+  const missingVars = Object.entries(requiredEnvVars)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+
+  if (missingVars.length > 0) {
+    throw new Error(
+      `Missing required Firebase environment variables: ${missingVars.join(', ')}. ` +
+      'Please check your .env file and ensure all VITE_FIREBASE_* variables are set.'
+    );
+  }
+
   const firebaseConfig = {
-    apiKey: "AIzaSyAg1z2yvrWIH3hD1q6UQIJKfR2eHphlplg",
-    authDomain: "vocab-pwa-app.firebaseapp.com",
-    projectId: "vocab-pwa-app",
-    storageBucket: "vocab-pwa-app.appspot.com",
-    messagingSenderId: "910242230942",
-    appId: "1:910242230942:web:stj8g24dqjpgo9i8ob7iuetnj8p053j1",
-    measurementId: "G-XXXXXXXXXX",
+    apiKey: requiredEnvVars.apiKey,
+    authDomain: requiredEnvVars.authDomain,
+    projectId: requiredEnvVars.projectId,
+    storageBucket: requiredEnvVars.storageBucket,
+    messagingSenderId: requiredEnvVars.messagingSenderId,
+    appId: requiredEnvVars.appId,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || undefined,
   } as const;
 
   firebaseApp = initializeApp(firebaseConfig);
@@ -87,25 +109,25 @@ export async function signInWithGoogle(): Promise<User> {
       
       switch (firebaseError.code) {
         case 'auth/popup-blocked':
-          throw new Error('Popup bị chặn. Vui lòng cho phép popup và thử lại.');
+          throw new Error('Popup blocked. Please allow popups and try again.');
         case 'auth/popup-closed-by-user':
           // Don't show error if user closes popup - they might have cancelled intentionally
-          throw new Error('Đăng nhập bị hủy bởi người dùng.');
+          throw new Error('Login cancelled by user.');
         case 'auth/cancelled-popup-request':
-          throw new Error('Yêu cầu đăng nhập bị hủy. Vui lòng thử lại.');
+          throw new Error('Login request cancelled. Please try again.');
         case 'auth/account-exists-with-different-credential':
-          throw new Error('Tài khoản đã tồn tại với phương thức đăng nhập khác.');
+          throw new Error('Account already exists with different login method.');
         case 'auth/operation-not-allowed':
-          throw new Error('Phương thức đăng nhập này không được phép.');
+          throw new Error('This login method is not allowed.');
         case 'auth/unauthorized-domain':
-          throw new Error('Domain này không được phép đăng nhập.');
+          throw new Error('This domain is not authorized for login.');
         default:
-          throw new Error(`Lỗi đăng nhập: ${firebaseError.message}`);
+          throw new Error(`Login error: ${firebaseError.message}`);
       }
     }
     
     // Generic error
-    throw new Error('Đăng nhập thất bại. Vui lòng thử lại.');
+    throw new Error('Login failed. Please try again.');
   }
 }
 

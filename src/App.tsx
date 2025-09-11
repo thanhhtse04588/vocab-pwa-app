@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { Pane } from 'evergreen-ui';
+import { Pane, ThemeProvider } from 'evergreen-ui';
+import { customTheme } from '@/theme/customTheme';
 import { store, persistor } from '@/store';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { loadSettings } from '@/store/slices/settingsSlice';
@@ -19,6 +20,7 @@ import LearnPage from '@/pages/LearnPage';
 import SettingsPage from '@/pages/SettingsPage';
 import Navigation from '@/components/Navigation';
 import AuthInitializer from '@/components/AuthInitializer';
+import Header from './components/Header';
 
 function AppContent() {
   const dispatch = useAppDispatch();
@@ -91,7 +93,14 @@ function AppContent() {
       maxWidth="100%"
     >
       <AuthInitializer />
-      <Pane flex={1} overflowY="auto" overflowX="hidden" paddingBottom={80}>
+      <Header />
+      <Pane
+        flex={1}
+        overflowX="hidden"
+        overflowY="auto"
+        paddingBottom={80}
+        paddingTop={65}
+      >
         {renderCurrentPage()}
       </Pane>
       <Navigation />
@@ -103,7 +112,9 @@ function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <AppContent />
+        <ThemeProvider value={customTheme}>
+          <AppContent />
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   );

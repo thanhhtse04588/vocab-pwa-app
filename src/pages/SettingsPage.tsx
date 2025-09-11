@@ -1,15 +1,6 @@
 import React, { useEffect } from 'react';
-import { Pane, Heading, Text, Spinner, Dialog, Card } from 'evergreen-ui';
-import {
-  Settings,
-  Book,
-  Paintbrush,
-  Bell,
-  Volume2,
-  Database,
-  Info,
-  Lightbulb,
-} from 'lucide-react';
+import { Pane, Heading, Text, Spinner, Dialog } from 'evergreen-ui';
+import { Settings } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadSettings,
@@ -23,13 +14,13 @@ import {
 import { setTheme } from '@/store/slices/navigationSlice';
 import { backupService } from '@/services/backupService';
 import { useSettingsDialogs } from '@/hooks/useSettingsDialogs';
-import ThemeToggle from '@/components/ThemeToggle';
-import StudySettingsCard from '@/components/settings/StudySettingsCard';
-import NotificationSettingsCard from '@/components/settings/NotificationSettingsCard';
-import SoundVibrationCard from '@/components/settings/SoundVibrationCard';
-import DataManagementCard from '@/components/settings/DataManagementCard';
-import AppInfoCard from '@/components/settings/AppInfoCard';
-import StudyTipsCard from '@/components/settings/StudyTipsCard';
+import StudySettingsSection from '@/components/settings/StudySettingsSection';
+import AppearanceSection from '@/components/settings/AppearanceSection';
+import NotificationSection from '@/components/settings/NotificationSection';
+import SoundVibrationSection from '@/components/settings/SoundVibrationSection';
+import DataManagementSection from '@/components/settings/DataManagementSection';
+import AppInfoSection from '@/components/settings/AppInfoSection';
+import StudyTipsSection from '@/components/settings/StudyTipsSection';
 
 const SettingsPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -167,96 +158,50 @@ const SettingsPage: React.FC = () => {
         </Pane>
 
         {/* Study Settings */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Book size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>Study Settings</Heading>
-          </Pane>
-          <StudySettingsCard
-            settings={settings}
-            onBatchSizeChange={handleBatchSizeChange}
-          />
-        </Pane>
+        <StudySettingsSection
+          settings={settings}
+          onBatchSizeChange={handleBatchSizeChange}
+        />
 
         {/* Appearance */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Paintbrush size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>Appearance</Heading>
-          </Pane>
-          <Card marginBottom={24}>
-            <Pane padding={24}>
-              <ThemeToggle
-                currentTheme={settings.theme}
-                onThemeChange={handleThemeChange}
-              />
-            </Pane>
-          </Card>
-        </Pane>
+        <AppearanceSection
+          settings={settings}
+          onThemeChange={handleThemeChange}
+        />
 
         {/* Notifications */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Bell size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>Notifications</Heading>
-          </Pane>
-          <NotificationSettingsCard
-            settings={settings}
-            onNotificationToggle={handleNotificationToggle}
-            onNotificationTimeChange={handleNotificationTimeChange}
-          />
-        </Pane>
+        <NotificationSection
+          settings={settings}
+          onNotificationToggle={handleNotificationToggle}
+          onNotificationTimeChange={handleNotificationTimeChange}
+        />
 
         {/* Sound & Vibration */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Volume2 size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>Sound & Vibration</Heading>
-          </Pane>
-          <SoundVibrationCard
-            settings={settings}
-            onSoundToggle={handleSoundToggle}
-            onVibrationToggle={handleVibrationToggle}
-            onAutoPlayToggle={() =>
-              dispatch(
-                updateSettings({
-                  autoPlayPronunciation: !settings.autoPlayPronunciation,
-                })
-              )
-            }
-          />
-        </Pane>
+        <SoundVibrationSection
+          settings={settings}
+          onSoundToggle={handleSoundToggle}
+          onVibrationToggle={handleVibrationToggle}
+          onAutoPlayToggle={() =>
+            dispatch(
+              updateSettings({
+                autoPlayPronunciation: !settings.autoPlayPronunciation,
+              })
+            )
+          }
+        />
 
         {/* Data Management */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Database size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>Data Management</Heading>
-          </Pane>
-          <DataManagementCard
-            onBackup={handleBackup}
-            onRestore={() => {}} // Handled inside DataManagementCard
-            onFileUpload={handleFileUpload}
-          />
-        </Pane>
+        <DataManagementSection
+          onBackup={handleBackup}
+          onRestore={() => {}} // Handled inside DataManagementCard
+          onFileUpload={handleFileUpload}
+        />
 
         {/* App Information */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Info size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>App Information</Heading>
-          </Pane>
-          <AppInfoCard />
-        </Pane>
+        <AppInfoSection />
 
         {/* Study Tips */}
-        <Pane marginBottom={32}>
-          <Pane display="flex" alignItems="center" marginBottom={16}>
-            <Lightbulb size={20} style={{ marginRight: '8px' }} />
-            <Heading size={500}>Study Tips</Heading>
-          </Pane>
-          <StudyTipsCard />
-        </Pane>
+        <StudyTipsSection />
       </Pane>
 
       {/* Alert Dialog */}

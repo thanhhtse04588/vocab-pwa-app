@@ -171,7 +171,7 @@ export const validateCSVFile = (file: File): { valid: boolean; error?: string } 
 };
 
 export const downloadCSVTemplate = (): void => {
-  const template = 'word,meaning,pronunciation,example\n"hello","xin chào","/həˈloʊ/","Hello, how are you?"\n"goodbye","tạm biệt","/ɡʊdˈbaɪ/","Goodbye, see you later!"';
+  const template = 'word,meaning,pronunciation,example\n"hello","greeting","/həˈloʊ/","Hello, how are you?"\n"goodbye","farewell","/ɡʊdˈbaɪ/","Goodbye, see you later!"';
   
   const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');

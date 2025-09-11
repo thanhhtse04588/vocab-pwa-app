@@ -4,7 +4,7 @@ import { Code, Smartphone, Layers, Database } from 'lucide-react';
 
 const AppInfoCard: React.FC = () => {
   return (
-    <Card marginBottom={24} elevation={1}>
+    <Card marginBottom={24}>
       <Pane padding={24}>
         <Pane display="flex" gap={24}>
           <Pane flex={1}>

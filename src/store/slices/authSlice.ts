@@ -22,7 +22,7 @@ export const signIn = createAsyncThunk(
       const user = await signInWithGoogle();
       return user;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Đăng nhập thất bại';
+      const errorMessage = error instanceof Error ? error.message : 'Login failed';
       return rejectWithValue(errorMessage);
     }
   }
@@ -35,7 +35,7 @@ export const signOut = createAsyncThunk(
       await signOutUser();
       return null;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Đăng xuất thất bại';
+      const errorMessage = error instanceof Error ? error.message : 'Logout failed';
       return rejectWithValue(errorMessage);
     }
   }

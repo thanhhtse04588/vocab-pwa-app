@@ -15,7 +15,7 @@ const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({
   onNotificationTimeChange,
 }) => {
   return (
-    <Card marginBottom={24} elevation={1}>
+    <Card marginBottom={24}>
       <Pane padding={24}>
         <Pane
           display="flex"

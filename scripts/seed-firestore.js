@@ -4,9 +4,9 @@ import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAg1z2yvrWIH3hD1q6UQIJKfR2eHphlplg',
-  authDomain: 'vocab-pwa-app.firebaseapp.com',
-  projectId: 'vocab-pwa-app',
-  storageBucket: 'vocab-pwa-app.firebasestorage.app',
+  authDomain: 'bee-vocab-app.firebaseapp.com',
+  projectId: 'bee-vocab-app',
+  storageBucket: 'bee-vocab-app.firebasestorage.app',
   messagingSenderId: '901327519207',
   appId: '1:901327519207:web:ec9a3b8dd23cbd7f105142',
 };

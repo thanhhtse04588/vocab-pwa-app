@@ -15,7 +15,7 @@ export class VocabDatabase extends Dexie {
   userSettings!: Table<UserSettings>;
 
   constructor() {
-    super('VocabPWA');
+    super('BeeVocab');
     
     this.version(1).stores({
       vocabularySets: 'id, name, description, sourceLanguage, targetLanguage, createdAt, lastStudiedAt, wordCount, isActive',
