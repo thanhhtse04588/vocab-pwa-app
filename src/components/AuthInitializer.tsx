@@ -18,3 +18,4 @@ const AuthInitializer: React.FC = () => {
 };
 
 export default AuthInitializer;
+

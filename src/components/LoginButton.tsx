@@ -32,7 +32,7 @@ const GoogleIcon: React.FC<{ size?: number }> = ({ size = 16 }) => (
 
 const LoginButton: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.auth);
 
   const handleSignIn = async () => {
     try {
