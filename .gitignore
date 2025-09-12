@@ -31,10 +31,6 @@ vite.svg
 # Coverage
 coverage/
 
-# Firebase service account keys
-functions/service-account-key.json
-**/service-account-key.json
-
 # Misc
 *.log
 *.tmp
