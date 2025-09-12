@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Dialog, Pane, Text, TextInput, Textarea, Select } from 'evergreen-ui';
+import { Dialog, Pane, Text, Select } from 'evergreen-ui';
+import AppTextInput from './AppTextInput';
+import AppTextarea from './AppTextarea';
 
 interface NewSetData {
   name: string;
@@ -36,6 +38,10 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
     sourceLanguage: 'en',
     targetLanguage: 'vi',
   });
+
+  const handleInputChange = (field: keyof NewSetData, value: string) => {
+    setNewSetData({ ...newSetData, [field]: value });
+  };
 
   const handleCreate = () => {
     if (newSetData.name.trim()) {
@@ -76,15 +82,10 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
           <Text display="block" marginBottom={8} fontWeight={500}>
             Set Name *
           </Text>
-          <TextInput
+          <AppTextInput
             placeholder="Enter set name"
             value={newSetData.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewSetData({
-                ...newSetData,
-                name: e.target.value,
-              })
-            }
+            onChange={(value) => handleInputChange('name', value)}
             width="100%"
           />
         </Pane>
@@ -93,15 +94,10 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
           <Text display="block" marginBottom={8} fontWeight={500}>
             Description
           </Text>
-          <Textarea
+          <AppTextarea
             placeholder="Enter description (optional)"
             value={newSetData.description}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setNewSetData({
-                ...newSetData,
-                description: e.target.value,
-              })
-            }
+            onChange={(value) => handleInputChange('description', value)}
             width="100%"
           />
         </Pane>

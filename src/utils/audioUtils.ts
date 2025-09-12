@@ -11,6 +11,7 @@ import {
   audioService,
   type AudioServiceOptions,
 } from '@/services/audioService';
+import { CHARACTER_LIMIT } from '@/constants';
 
 export interface AudioOptions {
   lang?: string;
@@ -27,6 +28,11 @@ export const playAudio = async (
   text: string,
   options: AudioOptions = {}
 ): Promise<void> => {
+  // Check if text exceeds character limit and warn user
+  if (text.length > CHARACTER_LIMIT) {
+    text = text.slice(0, CHARACTER_LIMIT);
+  }
+
   const audioOptions: AudioServiceOptions = {
     lang: options.lang,
     rate: options.rate,
@@ -72,6 +78,19 @@ export const playAudioWithVoice = async (
   voiceName: string,
   options: AudioOptions = {}
 ): Promise<void> => {
+  // Check if text exceeds character limit and warn user
+  if (text.length > CHARACTER_LIMIT) {
+    // Show user-friendly warning
+    if (typeof window !== 'undefined' && window.confirm) {
+      const shouldContinue = window.confirm(
+        `The text is quite long (${text.length} characters). This may take a while to process. Do you want to continue?`
+      );
+      if (!shouldContinue) {
+        return;
+      }
+    }
+  }
+
   const audioOptions: AudioServiceOptions = {
     lang: options.lang,
     rate: options.rate,

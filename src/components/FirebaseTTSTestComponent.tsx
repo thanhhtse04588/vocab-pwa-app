@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  Text,
-  Button,
-  Select,
-  TextInput,
-  Alert,
-  Spinner,
-} from 'evergreen-ui';
+import { Card, Text, Button, Select, Alert, Spinner } from 'evergreen-ui';
 import {
   firebaseTTSService,
   type WaveNetVoice,
 } from '@/services/firebaseTTSService';
 import { useAppSelector } from '@/hooks/redux';
+import AppTextInput from './AppTextInput';
 
 const FirebaseTTSTestComponent: React.FC = () => {
   const { settings } = useAppSelector((state) => state.settings);
@@ -36,7 +29,6 @@ const FirebaseTTSTestComponent: React.FC = () => {
     try {
       const voices = await firebaseTTSService.getAvailableVoices();
       setAvailableVoices(voices);
-      console.log('Loaded voices:', voices);
     } catch (error) {
       console.error('Failed to load voices:', error);
       setError('Failed to load voices from Firebase function');
@@ -59,7 +51,6 @@ const FirebaseTTSTestComponent: React.FC = () => {
         pitch: 0.0,
         volumeGainDb: 0, // Default volume
       });
-      console.log('TTS test completed successfully');
     } catch (error) {
       console.error('Failed to play audio:', error);
       setError('Failed to play audio via Firebase function');
@@ -96,9 +87,9 @@ const FirebaseTTSTestComponent: React.FC = () => {
         <Text size={400} fontWeight={500} marginBottom={8} display="block">
           Test Text
         </Text>
-        <TextInput
+        <AppTextInput
           value={testText}
-          onChange={(e) => setTestText(e.target.value)}
+          onChange={setTestText}
           placeholder="Enter text to test..."
           width="100%"
         />

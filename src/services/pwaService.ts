@@ -209,13 +209,10 @@ class PWAService {
       const audio = new Audio(url);
 
       // Check if the audio can be loaded
-      audio.addEventListener('error', () => {
-        console.warn('Audio file not found or cannot be loaded:', url);
-      });
+      audio.addEventListener('error', () => {});
 
       await audio.play();
     } catch (error) {
-      console.warn('Error playing sound:', error);
       // Don't throw error, just log warning to avoid breaking the app
     }
   }

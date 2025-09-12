@@ -1,6 +1,7 @@
-import { Card, Pane, Text, TextInput, Button } from 'evergreen-ui';
+import { Card, Pane, Text, Button } from 'evergreen-ui';
 import { Microphone, XCircle } from 'phosphor-react';
 import React from 'react';
+import AppTextInput from './AppTextInput';
 
 interface AnswerInputProps {
   userAnswer: string;
@@ -32,19 +33,18 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
           What is the word for "{wordMeaning}"?
         </Text>
 
-        <Pane display="flex" gap={8} marginBottom={16} alignItems="center">
+        <Pane display="flex" gap={8} marginBottom={8} alignItems="center">
           <Pane position="relative" flex={1}>
-            <TextInput
+            <AppTextInput
               placeholder="Enter your answer..."
               value={userAnswer}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                onAnswerChange(e.target.value)
-              }
+              onChange={onAnswerChange}
               disabled={isSubmitting}
               width="100%"
               paddingRight={userAnswer ? 40 : 12}
               height={42}
               minWidth={42}
+              showCharacterCount={false}
             />
             {userAnswer && (
               <Button
@@ -72,6 +72,12 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
           >
             <Microphone size={20} />
           </Button>
+        </Pane>
+
+        <Pane display="flex" justifyContent="flex-end" marginBottom={16}>
+          <Text size={300} color="muted">
+            {userAnswer.length}/126 characters
+          </Text>
         </Pane>
 
         {isListening && (

@@ -1,9 +1,10 @@
 import { useAppDispatch } from '@/hooks/redux';
-import { setTTSRate, setTTSGender } from '@/store/slices/settingsSlice';
+import { updateSettings } from '@/store/slices/settingsSlice';
 import type { UserSettings } from '@/types';
-import { Card, Pane, Select, Switch, Text } from 'evergreen-ui';
-import { Gauge, Play, Smartphone, User, Volume2 } from 'lucide-react';
-import React from 'react';
+import { Card, Pane, Select, Switch, Text, Button } from 'evergreen-ui';
+import { Gauge, Play, Smartphone, User, Volume2, Speaker } from 'lucide-react';
+import React, { useState } from 'react';
+import { playAudio } from '@/utils/audioUtils';
 
 interface SoundVibrationCardProps {
   settings: UserSettings;
@@ -19,6 +20,25 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
   onAutoPlayToggle,
 }) => {
   const dispatch = useAppDispatch();
+  const [isTestingTTS, setIsTestingTTS] = useState(false);
+
+  const handleTestTTS = async () => {
+    if (isTestingTTS) return;
+
+    setIsTestingTTS(true);
+    try {
+      await playAudio('Hello, this is a test of the text-to-speech system.', {
+        lang: 'en-US',
+        rate: settings.ttsRate || 1.0,
+        gender: settings.ttsGender || 'neutral',
+      });
+    } catch (error) {
+      console.error('Failed to play TTS test:', error);
+    } finally {
+      setIsTestingTTS(false);
+    }
+  };
+
   return (
     <Card marginBottom={0}>
       <Pane paddingX={24}>
@@ -108,13 +128,16 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
               </Text>
             </Pane>
             <Select
+              key={`gender-${settings.ttsGender}`}
               value={settings.ttsGender || 'neutral'}
-              onChange={(e) =>
-                dispatch(
-                  setTTSGender(e.target.value as 'male' | 'female' | 'neutral')
-                )
-              }
-              maxWidth={120}
+              onChange={(e) => {
+                const newGender = e.target.value as
+                  | 'male'
+                  | 'female'
+                  | 'neutral';
+                dispatch(updateSettings({ ttsGender: newGender }));
+              }}
+              maxWidth={130}
             >
               <option value="neutral">Neutral Voice</option>
               <option value="male">Male Voice</option>
@@ -124,7 +147,7 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
 
           {/* Speech Rate */}
           <Pane
-            marginBottom={0}
+            marginBottom={20}
             display="flex"
             alignItems="center"
             justifyContent="space-between"
@@ -144,17 +167,34 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
               </Text>
             </Pane>
             <Select
-              value={(settings.ttsRate || 1.0).toString()}
-              onChange={(e) => dispatch(setTTSRate(parseFloat(e.target.value)))}
-              maxWidth="120px"
+              key={`rate-${settings.ttsRate}`}
+              value={(settings.ttsRate || 1).toString()}
+              onChange={(e) => {
+                const newRate = parseFloat(e.target.value);
+                dispatch(updateSettings({ ttsRate: newRate }));
+              }}
+              maxWidth={130}
             >
               <option value="0.5">0.5x (Very Slow)</option>
               <option value="0.75">0.75x (Slow)</option>
-              <option value="1.0">1.0x (Normal)</option>
+              <option value="1">1.0x (Normal)</option>
               <option value="1.25">1.25x (Fast)</option>
               <option value="1.5">1.5x (Very Fast)</option>
-              <option value="2.0">2.0x (Extremely Fast)</option>
+              <option value="2">2.0x (Extremely Fast)</option>
             </Select>
+          </Pane>
+
+          {/* Test TTS Button */}
+          <Pane marginBottom={0} display="flex" justifyContent="end">
+            <Button
+              intent="none"
+              size="small"
+              onClick={handleTestTTS}
+              disabled={isTestingTTS}
+              iconBefore={<Speaker size={16} />}
+            >
+              {isTestingTTS ? 'Testing...' : 'Test sound'}
+            </Button>
           </Pane>
         </Pane>
       </Pane>

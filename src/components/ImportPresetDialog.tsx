@@ -8,7 +8,6 @@ import {
   Card,
   Heading,
   Badge,
-  SearchInput,
 } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
@@ -16,6 +15,7 @@ import {
   downloadPublicSet,
 } from '@/store/slices/vocabularySlice';
 import { useState } from 'react';
+import { SearchInput } from 'evergreen-ui';
 
 interface ImportPresetDialogProps {
   isShown: boolean;
@@ -86,11 +86,15 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
               <SearchInput
                 placeholder="Search presets by name or language..."
                 value={searchQuery}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearchQuery(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  if (value.length <= 126) {
+                    setSearchQuery(value);
+                  }
+                }}
                 width="100%"
                 height={36}
+                maxLength={126}
               />
             </Pane>
 

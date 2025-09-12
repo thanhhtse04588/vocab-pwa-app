@@ -43,12 +43,7 @@ class AudioService {
     try {
       // Firebase TTS is always ready, no initialization needed
       this.isFirebaseTTSInitialized = true;
-      console.log('Firebase TTS service initialized successfully');
     } catch (error) {
-      console.warn(
-        'Failed to initialize Firebase TTS, falling back to Web Speech API:',
-        error
-      );
       this.isFirebaseTTSInitialized = false;
     }
   }
@@ -98,7 +93,6 @@ class AudioService {
       }
     } catch (error) {
       console.error('Failed to play audio with WaveNet:', error);
-      console.log('Falling back to Web Speech API');
 
       try {
         await this.playWithWebSpeech(text, {
@@ -107,10 +101,6 @@ class AudioService {
           pitch: this.convertGenderToPitch(options.gender || 'neutral'), // Convert gender to pitch
         });
       } catch (fallbackError) {
-        console.error(
-          'Failed to play audio with Web Speech API:',
-          fallbackError
-        );
         throw fallbackError;
       }
     }
@@ -133,10 +123,13 @@ class AudioService {
     let voiceName = options.voiceName || '';
     let ssmlGender: 'NEUTRAL' | 'MALE' | 'FEMALE' = 'NEUTRAL';
 
-    if (options.voiceName === 'male') {
+    // Check both voiceName and gender for mapping
+    const voiceType = options.voiceName || options.gender;
+
+    if (voiceType === 'male') {
       voiceName = 'en-US-Wavenet-D'; // Male voice
       ssmlGender = 'MALE';
-    } else if (options.voiceName === 'female') {
+    } else if (voiceType === 'female') {
       voiceName = 'en-US-Wavenet-C'; // Female voice
       ssmlGender = 'FEMALE';
     }

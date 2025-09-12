@@ -1,13 +1,13 @@
 import {
   PlayIcon,
   Card,
-  Heading,
   IconButton,
   Pane,
   Text,
   TrashIcon,
 } from 'evergreen-ui';
 import React from 'react';
+import TextOverflow from './TextOverflow';
 
 interface VocabularySet {
   id: string;
@@ -43,13 +43,13 @@ const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        <Pane flex={1}>
-          <Heading size={500} marginBottom={8}>
+        <Pane width="70%" display="flex" flexDirection="column" gap={8}>
+          <TextOverflow size={500} maxWidth="100%" fontWeight="bold">
             {set.name}
-          </Heading>
-          <Text color="muted" marginBottom={4}>
+          </TextOverflow>
+          <TextOverflow size={300} maxWidth="100%" color="muted">
             {set.description}
-          </Text>
+          </TextOverflow>
           <Text size={300} color="muted">
             {set.wordCount} words
           </Text>

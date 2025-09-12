@@ -42,3 +42,4 @@ Thêm secret `FIREBASE_SERVICE_ACCOUNT_BEE_VOCAB` với nội dung của file `s
 - Không bao giờ commit file này lên GitHub
 - Rotate service account keys định kỳ
 - Monitor usage trong Google Cloud Console
+

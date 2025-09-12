@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, Pane, TextInput } from 'evergreen-ui';
+import { Dialog, Pane } from 'evergreen-ui';
 import { useAppDispatch } from '@/hooks/redux';
 import {
   addVocabularyWord,
   updateVocabularyWord,
 } from '@/store/slices/vocabularySlice';
 import type { VocabularyWord } from '@/types';
+import AppTextInput from './AppTextInput';
 
 interface AddWordDialogProps {
   isShown: boolean;
@@ -49,6 +50,13 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
       }
     }
   }, [isShown, editingWord]);
+
+  const handleInputChange = (
+    field: keyof typeof newWordData,
+    value: string
+  ) => {
+    setNewWordData({ ...newWordData, [field]: value });
+  };
 
   const handleSaveWord = () => {
     if (newWordData.word.trim() && newWordData.meaning.trim()) {
@@ -101,41 +109,41 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
       }
     >
       <Pane>
-        <TextInput
-          placeholder="Word"
-          value={newWordData.word}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setNewWordData({ ...newWordData, word: e.target.value })
-          }
-          marginBottom={16}
-          width="100%"
-        />
-        <TextInput
-          placeholder="Meaning"
-          value={newWordData.meaning}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setNewWordData({ ...newWordData, meaning: e.target.value })
-          }
-          marginBottom={16}
-          width="100%"
-        />
-        <TextInput
-          placeholder="Pronunciation (optional)"
-          value={newWordData.pronunciation}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setNewWordData({ ...newWordData, pronunciation: e.target.value })
-          }
-          marginBottom={16}
-          width="100%"
-        />
-        <TextInput
-          placeholder="Example sentence (optional)"
-          value={newWordData.example}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setNewWordData({ ...newWordData, example: e.target.value })
-          }
-          width="100%"
-        />
+        <Pane marginBottom={16}>
+          <AppTextInput
+            placeholder="Word"
+            value={newWordData.word}
+            onChange={(value) => handleInputChange('word', value)}
+            width="100%"
+          />
+        </Pane>
+
+        <Pane marginBottom={16}>
+          <AppTextInput
+            placeholder="Meaning"
+            value={newWordData.meaning}
+            onChange={(value) => handleInputChange('meaning', value)}
+            width="100%"
+          />
+        </Pane>
+
+        <Pane marginBottom={16}>
+          <AppTextInput
+            placeholder="Pronunciation (optional)"
+            value={newWordData.pronunciation}
+            onChange={(value) => handleInputChange('pronunciation', value)}
+            width="100%"
+          />
+        </Pane>
+
+        <Pane>
+          <AppTextInput
+            placeholder="Example sentence (optional)"
+            value={newWordData.example}
+            onChange={(value) => handleInputChange('example', value)}
+            width="100%"
+          />
+        </Pane>
       </Pane>
     </Dialog>
   );

@@ -56,10 +56,6 @@ export function ensureFirebase(): { db: Firestore; auth: Auth } {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID,
   };
-  console.log('Environment variables check:');
-  console.log('VITE_FIREBASE_API_KEY:', import.meta.env.VITE_FIREBASE_API_KEY);
-  console.log('All env vars:', import.meta.env);
-  console.log('requiredEnvVars:', requiredEnvVars);
   // Check for missing environment variables
   const missingVars = Object.entries(requiredEnvVars)
     .filter(([_, value]) => !value)
@@ -167,12 +163,13 @@ export async function fetchPublicVocabularySets(): Promise<
     const data = docSnap.data() as DocumentData;
     result.push({
       id: docSnap.id,
-      name: data.name,
-      description: data.description ?? '',
-      sourceLanguage: data.sourceLanguage,
-      targetLanguage: data.targetLanguage,
-      wordCount: data.wordCount ?? 0,
-      createdAt: data.createdAt ?? new Date().toISOString(),
+      name: data.set?.name ?? data.name ?? '',
+      description: data.set?.description ?? data.description ?? '',
+      sourceLanguage: data.set?.sourceLanguage ?? data.sourceLanguage ?? '',
+      targetLanguage: data.set?.targetLanguage ?? data.targetLanguage ?? '',
+      wordCount: data.set?.wordCount ?? data.wordCount ?? 0,
+      createdAt:
+        data.set?.createdAt ?? data.createdAt ?? new Date().toISOString(),
     });
   });
   return result;
@@ -207,12 +204,13 @@ export async function fetchPublicVocabularySetWithWords(
 
   const set: PublicVocabularySetMeta = {
     id: docSnap.id,
-    name: data.name,
-    description: data.description ?? '',
-    sourceLanguage: data.sourceLanguage,
-    targetLanguage: data.targetLanguage,
-    wordCount: data.wordCount ?? words.length,
-    createdAt: data.createdAt ?? new Date().toISOString(),
+    name: data.set?.name ?? data.name ?? '',
+    description: data.set?.description ?? data.description ?? '',
+    sourceLanguage: data.set?.sourceLanguage ?? data.sourceLanguage ?? '',
+    targetLanguage: data.set?.targetLanguage ?? data.targetLanguage ?? '',
+    wordCount: data.set?.wordCount ?? data.wordCount ?? words.length,
+    createdAt:
+      data.set?.createdAt ?? data.createdAt ?? new Date().toISOString(),
   };
 
   return { set, words };

@@ -5,7 +5,11 @@ import {
   loadVocabularyWords,
   setCurrentSet,
 } from '@/store/slices/vocabularySlice';
-import { setActiveTab } from '@/store/slices/navigationSlice';
+import {
+  setActiveTab,
+  setVocabularySetId,
+  setCurrentPage,
+} from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
 import { resetProgress } from '@/store/slices/userProgressSlice';
 import type { VocabularyWord } from '@/types';
@@ -101,6 +105,13 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
     }
   };
 
+  const handleBackToVocabulary = () => {
+    // Clear vocabulary set ID and navigate to vocabulary page
+    dispatch(setVocabularySetId(undefined));
+    dispatch(setCurrentPage('vocabulary'));
+    dispatch(setActiveTab('vocabulary'));
+  };
+
   // Handle error states and loading
   if (!setId || (loading && !currentSet) || (!loading && !currentSet)) {
     return (
@@ -128,6 +139,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         <VocabularySetHeader
           set={currentSet}
           onResetProgress={() => setShowResetDialog(true)}
+          onBack={handleBackToVocabulary}
         />
 
         {/* Set Info */}

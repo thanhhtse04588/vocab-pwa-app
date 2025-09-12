@@ -7,6 +7,7 @@ import {
   checkSessionCompletion,
   loadMoreWords,
 } from '@/store/slices/studySlice';
+import { setActiveTab } from '@/store/slices/navigationSlice';
 import { Pane, Spinner, Text } from 'evergreen-ui';
 import React, { useEffect, useState, useCallback } from 'react';
 import { playAudio } from '@/utils/audioUtils';
@@ -47,7 +48,7 @@ const playFeedbackSound = (isCorrect: boolean) => {
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.2);
   } catch (error) {
-    console.warn('Could not play feedback sound:', error);
+    console.error('Error playing feedback sound:', error);
   }
 };
 
@@ -110,14 +111,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         gender: settings?.ttsGender || 'neutral',
       });
     }
-  }, [
-    showAnswer,
-    settings?.autoPlayPronunciation,
-    currentWord,
-    currentVocabularySet?.targetLanguage,
-    settings?.ttsRate,
-    settings?.ttsGender,
-  ]);
+  }, [showAnswer]);
 
   // Auto complete session when study is finished
   useEffect(() => {
@@ -259,6 +253,10 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
     }
   };
 
+  const handleBackToVocabulary = () => {
+    dispatch(setActiveTab('vocabulary'));
+  };
+
   if (!currentWord) {
     return (
       <Pane
@@ -282,6 +280,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         totalWords={currentBatch.length}
         incorrectWordsCount={incorrectWords.length}
         progress={progress}
+        onBack={handleBackToVocabulary}
       />
 
       <WordCard

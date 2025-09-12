@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
         <StorageWarning />
 
         {/* Review Card */}
-        <Card marginBottom={24}>
+        <Card marginBottom={24} elevation={1}>
           <Pane
             padding={24}
             display="flex"
@@ -70,10 +70,14 @@ const HomePage: React.FC = () => {
               <Heading size={500} marginBottom={8}>
                 Review Time
               </Heading>
-              <Text>{totalWordsToReview} words need review</Text>
+              <Text>
+                <Text fontWeight={600}>{totalWordsToReview}</Text> words need
+                review
+              </Text>
             </Pane>
             <Pane>
               <Button
+                size="large"
                 appearance="primary"
                 intent="none"
                 onClick={handleStartReview}
@@ -100,7 +104,7 @@ const HomePage: React.FC = () => {
               Recent Activity
             </Heading>
             <Card>
-              <Pane padding={24}>
+              <Pane paddingX={24}>
                 <Heading size={400} marginBottom={16}>
                   Recent Vocabulary Sets
                 </Heading>

@@ -55,10 +55,6 @@ class FirebaseTTSService {
         'getAvailableVoices'
       );
     } catch (error) {
-      console.warn(
-        'Firebase not configured, TTS functions will not be available:',
-        error
-      );
       // Functions will remain null, and methods will handle this gracefully
     }
   }
@@ -79,7 +75,6 @@ class FirebaseTTSService {
    */
   async getAvailableVoices(): Promise<WaveNetVoice[]> {
     if (!this.getVoicesFunction) {
-      console.warn('Firebase TTS not available - returning empty voice list');
       return [];
     }
 

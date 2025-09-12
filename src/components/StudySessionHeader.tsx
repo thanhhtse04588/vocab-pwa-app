@@ -1,4 +1,5 @@
-import { Pane, Heading, Text } from 'evergreen-ui';
+import { Pane, Heading, Text, Button } from 'evergreen-ui';
+import { ArrowLeft } from 'phosphor-react';
 import React from 'react';
 
 interface StudySessionHeaderProps {
@@ -6,6 +7,7 @@ interface StudySessionHeaderProps {
   totalWords: number;
   incorrectWordsCount: number;
   progress: number;
+  onBack?: () => void;
 }
 
 const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
@@ -13,6 +15,7 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
   totalWords,
   incorrectWordsCount,
   progress,
+  onBack,
 }) => {
   return (
     <>
@@ -22,7 +25,19 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
         alignItems="center"
         marginBottom={24}
       >
-        <Heading size={600}>Study Session</Heading>
+        <Pane display="flex" alignItems="center" gap={12}>
+          {onBack && (
+            <Button
+              appearance="minimal"
+              onClick={onBack}
+              padding={8}
+              borderRadius={8}
+            >
+              <ArrowLeft size={20} />
+            </Button>
+          )}
+          <Heading size={600}>Study Session</Heading>
+        </Pane>
         <Text color="muted">
           {currentWordIndex + 1} / {totalWords}
           {incorrectWordsCount > 0 && (
