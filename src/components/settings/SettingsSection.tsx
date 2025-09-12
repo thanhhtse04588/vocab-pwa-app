@@ -16,9 +16,9 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
   className,
 }) => {
   return (
-    <Pane marginBottom={32} className={className}>
-      <Pane display="flex" alignItems="center" marginBottom={16}>
-        <Icon size={20} style={{ marginRight: '8px' }} />
+    <Pane marginBottom={40} className={className}>
+      <Pane display="flex" alignItems="center" marginBottom={20}>
+        <Icon size={20} style={{ marginRight: '12px' }} />
         <Heading size={500}>{title}</Heading>
       </Pane>
       {children}

@@ -46,6 +46,12 @@ A Progressive Web App for vocabulary learning with spaced repetition algorithm, 
 - Notification settings
 - Theme selection (light/dark/auto)
 - Sound and vibration controls
+- **Text-to-Speech (TTS) Settings**:
+  - Choose between Web Speech API (browser) or Google Cloud TTS (WaveNet)
+  - High-quality WaveNet voices via Firebase Cloud Functions
+  - Multiple languages support (English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese)
+  - Voice customization (rate, pitch, volume)
+  - Secure server-side API key management
 - Backup and restore data
 
 ## 🛠️ Tech Stack
@@ -55,6 +61,7 @@ A Progressive Web App for vocabulary learning with spaced repetition algorithm, 
 - **State Management**: Redux Toolkit + Redux Persist
 - **Database**: Dexie (IndexedDB wrapper) + Firebase Firestore
 - **Backend**: Firebase (Firestore, Hosting, Cloud Functions)
+- **Text-to-Speech**: Google Cloud TTS via Firebase Cloud Functions
 - **Build Tool**: Vite
 - **PWA**: Vite PWA Plugin
 - **Date Handling**: Day.js
@@ -193,7 +200,7 @@ bee-vocab-app/
 │   └── App.tsx             # Main app component
 ├── functions/              # Firebase Cloud Functions
 │   ├── src/
-│   │   └── index.ts        # Cloud Functions entry point
+│   │   └── index.ts        # Cloud Functions entry point (includes TTS functions)
 │   ├── package.json
 │   └── tsconfig.json
 ├── scripts/                # Utility scripts
@@ -266,6 +273,8 @@ firebase deploy --only firestore:rules
 #### Cloud Functions
 - **Language**: TypeScript
 - **Purpose**: Backend logic and API endpoints
+- **TTS Integration**: Google Cloud Text-to-Speech with WaveNet voices
+- **Security**: Server-side API key management
 - **Deployment**: `firebase deploy --only functions`
 
 #### Firebase Hosting
@@ -331,6 +340,73 @@ firebase deploy
 
 ### Firebase Console
 Access your project at: https://console.firebase.google.com/project/bee-vocab-app
+
+## 🔊 Text-to-Speech (TTS) Integration
+
+The app features advanced text-to-speech capabilities with Google Cloud TTS WaveNet voices via Firebase Cloud Functions for enhanced security.
+
+### TTS Features
+- **Dual TTS Support**: Choose between Web Speech API (browser) or Google Cloud TTS (WaveNet)
+- **High-Quality Voices**: Access to Google Cloud's WaveNet voices for natural-sounding speech
+- **Multiple Languages**: Support for 10+ languages including English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, and Chinese
+- **Voice Customization**: Adjust speech rate, pitch, and volume
+- **Secure Architecture**: API keys stored server-side on Firebase Cloud Functions
+- **Fallback Support**: Automatic fallback to Web Speech API if Firebase TTS fails
+
+### TTS Setup
+
+#### 1. Google Cloud Configuration
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable the **Text-to-Speech API**
+4. Create a **Service Account** with the following roles:
+   - `Cloud Functions Invoker`
+   - `Text-to-Speech API User`
+5. Download the service account key (JSON format)
+
+#### 2. Firebase Functions Setup
+1. Install Google Cloud TTS SDK in functions:
+```bash
+cd functions
+npm install @google-cloud/text-to-speech
+```
+
+2. Add service account key to functions directory:
+```bash
+# Copy your service account key file to functions/
+cp path/to/service-account-key.json functions/
+```
+
+3. Deploy Firebase Functions:
+```bash
+firebase deploy --only functions
+```
+
+#### 3. App Configuration
+1. Open the app settings
+2. Navigate to "Text-to-Speech" section
+3. Select "Google Cloud TTS (WaveNet) via Firebase" as the provider
+4. Choose your preferred language and voice
+5. Adjust speech rate, pitch, and volume as needed
+6. No API key configuration needed - handled server-side
+
+### TTS Architecture
+- **Client**: Firebase TTS service calls Cloud Functions
+- **Server**: Firebase Cloud Functions handle Google Cloud TTS API
+- **Security**: API keys never exposed to client-side code
+- **Authentication**: Functions protected by Firebase Authentication
+
+### Supported Voices
+The app supports 25+ WaveNet voices across multiple languages:
+- **English**: 6 voices (Male/Female variants)
+- **Spanish**: 3 voices
+- **French**: 3 voices
+- **German**: 3 voices
+- **Italian**: 2 voices
+- **Portuguese**: 2 voices
+- **Japanese**: 3 voices
+- **Korean**: 2 voices
+- **Chinese**: 3 voices
 
 ### PWA Configuration
 PWA settings are configured in `vite.config.ts`:
@@ -485,6 +561,23 @@ This project is licensed under the MIT License.
   - Check service worker registration
   - Clear browser cache and reload
 
+#### TTS Not Working
+- **Problem**: "Firebase TTS not available" error
+- **Solution**:
+  - Ensure Firebase functions are deployed: `firebase deploy --only functions`
+  - Check Firebase authentication status
+  - Verify Google Cloud TTS API is enabled
+  - Ensure service account is properly configured
+  - Check Firebase function logs for errors
+
+#### TTS Voice Issues
+- **Problem**: "Voice not found" or poor audio quality
+- **Solution**:
+  - Refresh voices list in TTS settings
+  - Check if language matches selected voice
+  - Try default voice option
+  - Verify internet connection for Firebase TTS
+
 ### Development Tips
 
 1. **Firebase Emulator**: Use Firebase emulators for local development:
@@ -507,6 +600,7 @@ For support and questions, please open an issue in the repository.
 The app is deployed on Firebase Hosting:
 - **URL**: https://bee-vocab-app.web.app
 - **Features**: Full PWA functionality with offline support
+- **TTS**: High-quality WaveNet voices via Firebase Cloud Functions
 - **Data**: Sample vocabulary sets available for import
 
 ---

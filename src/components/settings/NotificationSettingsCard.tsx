@@ -15,13 +15,13 @@ const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({
   onNotificationTimeChange,
 }) => {
   return (
-    <Card marginBottom={24}>
-      <Pane padding={24}>
+    <Card marginBottom={0}>
+      <Pane paddingX={24}>
         <Pane
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          marginBottom={20}
+          marginBottom={24}
         >
           <Pane display="flex" alignItems="center">
             <Bell
@@ -30,9 +30,6 @@ const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({
             />
             <Pane>
               <Text fontWeight={500}>Enable notifications</Text>
-              <Text size={300} color="muted">
-                Get study reminders
-              </Text>
             </Pane>
           </Pane>
           <Switch
@@ -48,9 +45,6 @@ const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({
             />
             <Pane>
               <Text fontWeight={500}>Notification time</Text>
-              <Text size={300} color="muted">
-                Daily reminder time
-              </Text>
             </Pane>
           </Pane>
           <input

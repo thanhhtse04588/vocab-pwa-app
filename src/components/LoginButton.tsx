@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { signIn } from '@/store/slices/authSlice';
-import { IconButton, Pane, Spinner } from 'evergreen-ui';
+import { Button, Spinner } from 'evergreen-ui';
 import React from 'react';
 
 // Google Icon SVG Component
@@ -51,14 +51,18 @@ const LoginButton: React.FC = () => {
   };
 
   return (
-    <Pane display="flex" alignItems="center" gap={8}>
-      <IconButton
-        disabled={loading}
-        onClick={handleSignIn}
-        icon={loading ? Spinner : GoogleIcon}
-        className={loading ? 'loading' : ''}
-      />
-    </Pane>
+    <Button
+      appearance="minimal"
+      height={40}
+      paddingX={14}
+      disabled={loading}
+      className={loading ? 'loading' : ''}
+      borderRadius={8}
+      transition="all 0.2s ease"
+      onClick={handleSignIn}
+    >
+      {loading ? <Spinner size={20} /> : <GoogleIcon size={20} />}
+    </Button>
   );
 };
 

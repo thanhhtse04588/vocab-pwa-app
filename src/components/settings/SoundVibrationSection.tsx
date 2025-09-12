@@ -18,7 +18,7 @@ const SoundVibrationSection: React.FC<SoundVibrationSectionProps> = ({
   onAutoPlayToggle,
 }) => {
   return (
-    <SettingsSection icon={Volume2} title="Sound & Vibration">
+    <SettingsSection icon={Volume2} title="Sound, Vibration & TTS">
       <SoundVibrationCard
         settings={settings}
         onSoundToggle={onSoundToggle}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pane, Card, Text } from 'evergreen-ui';
+import { Pane, Card, Text, TextInput } from 'evergreen-ui';
 import { Layers } from 'lucide-react';
 import type { UserSettings } from '@/types';
 
@@ -13,13 +13,13 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
   onBatchSizeChange,
 }) => {
   return (
-    <Card marginBottom={24}>
-      <Pane padding={24}>
+    <Card marginBottom={0}>
+      <Pane paddingX={24}>
         <Pane
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          marginBottom={16}
+          marginBottom={0}
         >
           <Pane display="flex" alignItems="center">
             <Layers
@@ -28,35 +28,21 @@ const StudySettingsCard: React.FC<StudySettingsCardProps> = ({
             />
             <Text fontWeight={500}>Words per batch</Text>
           </Pane>
-          <Pane
-            display="flex"
-            alignItems="center"
-            backgroundColor="tint1"
-            paddingX={12}
-            paddingY={4}
-            borderRadius={4}
-          >
-            <Text size={300} fontWeight={600}>
-              {settings.batchSize} words
+          <Pane display="flex" alignItems="center" gap={8}>
+            <TextInput
+              type="number"
+              min={5}
+              max={50}
+              value={settings.batchSize.toString()}
+              onChange={(e) => onBatchSizeChange(parseInt(e.target.value) || 5)}
+              width={80}
+              textAlign="center"
+            />
+            <Text size={300} color="muted">
+              words
             </Text>
           </Pane>
         </Pane>
-        <input
-          type="range"
-          min={5}
-          max={50}
-          value={settings.batchSize}
-          onChange={(e) => onBatchSizeChange(parseInt(e.target.value))}
-          style={{
-            width: '100%',
-            marginTop: '8px',
-            background: 'transparent',
-            outline: 'none',
-            WebkitAppearance: 'none',
-            appearance: 'none',
-          }}
-          className="range-slider"
-        />
       </Pane>
     </Card>
   );

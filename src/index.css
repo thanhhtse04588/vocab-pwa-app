@@ -5,7 +5,7 @@
   --evergreen-primary-rgb: 247, 172, 21;
   --evergreen-primary-shade: #e69a0e;
   --evergreen-primary-tint: #f9b833;
-  
+
   /* Light theme variables */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
@@ -15,8 +15,9 @@
   --text-muted: #64748b;
   --border-color: #e2e8f0;
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
   /* Light theme accent colors */
   --accent-primary: #f7ac15;
   --accent-primary-hover: #e69a0e;
@@ -28,7 +29,7 @@
 }
 
 /* Dark theme variables - More user-friendly colors */
-[data-theme="dark"] {
+[data-theme='dark'] {
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
@@ -37,8 +38,9 @@
   --text-muted: #94a3b8;
   --border-color: #334155;
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -2px rgba(0, 0, 0, 0.3);
+
   /* Enhanced dark theme colors for better UX */
   --accent-primary: #f7ac15;
   --accent-primary-hover: #e69a0e;
@@ -54,7 +56,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -70,7 +73,9 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   overflow-x: hidden;
   position: relative;
   background-color: var(--bg-primary);
@@ -87,8 +92,9 @@ html, body {
     min-height: 100vh;
     position: relative;
   }
-  .nav-menu, .header {
-     max-width: 480px;
+  .nav-menu,
+  .header {
+    max-width: 480px;
   }
   /* Center the app on larger screens */
   body {
@@ -99,21 +105,21 @@ html, body {
     justify-content: center;
     padding: 20px;
   }
-  
+
   /* Add subtle scrollbar for desktop */
   ::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   ::-webkit-scrollbar-track {
     background: var(--bg-tertiary);
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background: var(--text-muted);
     border-radius: 3px;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
   }
@@ -121,35 +127,39 @@ html, body {
 
 /* Mobile PWA optimizations */
 @media (max-width: 768px) {
-  html, body {
+  html,
+  body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   #root {
     overflow-x: hidden;
   }
-  
+
   /* Hide scrollbars on mobile */
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
   }
-  
+
   /* Ensure no horizontal overflow */
   * {
     max-width: 100%;
   }
-  
+
   /* Improve touch targets for mobile */
-  button, .evergreen-button {
+  button,
+  .evergreen-button {
     /* min-height: 44px;
     min-width: 44px; */
     touch-action: manipulation;
   }
-  
+
   /* Improve form inputs on mobile */
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     font-size: 16px; /* Prevents zoom on iOS */
   }
 }
@@ -240,7 +250,8 @@ html, body {
   width: 100%;
   max-width: 100vw;
   box-sizing: border-box;
-  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .header {
@@ -254,21 +265,21 @@ html, body {
     padding-left: 12px;
     padding-right: 12px;
   }
-  
+
   .header .brand-section {
     gap: 8px;
   }
-  
+
   .header .brand-logo {
     width: 28px;
     height: 28px;
     font-size: 14px;
   }
-  
+
   .header .brand-text h1 {
     font-size: 18px;
   }
-  
+
   .header .brand-text p {
     font-size: 11px;
   }
@@ -279,21 +290,21 @@ html, body {
     padding-left: 8px;
     padding-right: 8px;
   }
-  
+
   .header .brand-section {
     gap: 6px;
   }
-  
+
   .header .brand-logo {
     width: 24px;
     height: 24px;
     font-size: 12px;
   }
-  
+
   .header .brand-text h1 {
     font-size: 16px;
   }
-  
+
   .header .brand-text p {
     display: none; /* Hide tagline on very small screens */
   }
@@ -321,17 +332,22 @@ html, body {
 
 /* Loading animation for auth buttons */
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .header .loading {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-
-[data-theme="dark"] .header-container {
+[data-theme='dark'] .header-container {
   background: rgba(15, 23, 42, 0.95);
 }
 
@@ -363,49 +379,48 @@ html {
 }
 
 /* Enhanced dark theme adjustments */
-[data-theme="dark"] .memory-level-bar {
+[data-theme='dark'] .memory-level-bar {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] .card {
+[data-theme='dark'] .card {
   box-shadow: var(--shadow);
   border-color: var(--border-color);
   background-color: var(--bg-secondary);
 }
 
-[data-theme="dark"] .stats-card h3 {
+[data-theme='dark'] .stats-card h3 {
   color: var(--accent-primary);
 }
 
-[data-theme="dark"] .stats-card p {
+[data-theme='dark'] .stats-card p {
   color: var(--text-muted);
 }
 
-[data-theme="dark"] .memory-chart-summary {
+[data-theme='dark'] .memory-chart-summary {
   border-top-color: var(--border-color);
   color: var(--text-muted);
 }
 
-[data-theme="dark"] .memory-level-count {
+[data-theme='dark'] .memory-level-count {
   color: var(--text-muted);
 }
 
 /* Improved form elements for dark mode */
-[data-theme="dark"] .form-input {
+[data-theme='dark'] .form-input {
   background-color: var(--bg-secondary);
   border-color: var(--border-color);
   color: var(--text-primary);
 }
 
-[data-theme="dark"] .form-input:focus {
+[data-theme='dark'] .form-input:focus {
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-[data-theme="dark"] .form-label {
+[data-theme='dark'] .form-label {
   color: var(--text-secondary);
 }
-
 
 /* Theme selector improvements */
 .theme-selector {
@@ -430,30 +445,28 @@ html {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-
 /* Better contrast for headings */
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
-[data-theme="dark"] h3,
-[data-theme="dark"] h4,
-[data-theme="dark"] h5,
-[data-theme="dark"] h6 {
+[data-theme='dark'] h1,
+[data-theme='dark'] h2,
+[data-theme='dark'] h3,
+[data-theme='dark'] h4,
+[data-theme='dark'] h5,
+[data-theme='dark'] h6 {
   color: var(--text-primary);
   font-weight: 600;
 }
 
 /* Improved link colors */
-[data-theme="dark"] a {
+[data-theme='dark'] a {
   color: var(--accent-primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-[data-theme="dark"] a:hover {
+[data-theme='dark'] a:hover {
   color: var(--accent-primary-hover);
   text-decoration: underline;
 }
-
 
 /* Animation for smooth transitions */
 .fade-in {

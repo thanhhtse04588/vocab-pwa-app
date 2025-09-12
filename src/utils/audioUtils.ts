@@ -1,6 +1,16 @@
 /**
  * Audio utilities for text-to-speech functionality
+ * This file provides backward compatibility with the old Web Speech API functions
+ * while the new audioService handles both Web Speech API and Google Cloud TTS
+ *
+ * Note: This file now only provides wrapper functions to maintain backward compatibility.
+ * The actual implementation is in audioService.ts to avoid circular dependencies.
  */
+
+import {
+  audioService,
+  type AudioServiceOptions,
+} from '@/services/audioService';
 
 export interface AudioOptions {
   lang?: string;
@@ -10,49 +20,41 @@ export interface AudioOptions {
 }
 
 /**
- * Play audio for the given text using Web Speech API
+ * Play audio for the given text using the configured TTS provider
  * @param text - The text to be spoken
  * @param options - Audio configuration options
  */
-export const playAudio = (text: string, options: AudioOptions = {}): void => {
-  if (!('speechSynthesis' in window)) {
-    console.warn('Speech synthesis not supported in this browser');
-    return;
-  }
+export const playAudio = async (
+  text: string,
+  options: AudioOptions = {}
+): Promise<void> => {
+  const audioOptions: AudioServiceOptions = {
+    lang: options.lang,
+    rate: options.rate,
+    volume: options.volume,
+    pitch: options.pitch,
+  };
 
-  // Stop any current speech
-  speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Set default options
-  utterance.lang = options.lang || 'en-US';
-  utterance.rate = options.rate || 0.8;
-  utterance.volume = options.volume || 1.0;
-  utterance.pitch = options.pitch || 1.0;
-
-  // Speak the text
-  speechSynthesis.speak(utterance);
+  await audioService.playAudio(text, audioOptions);
 };
 
 /**
  * Stop current speech synthesis
  */
 export const stopAudio = (): void => {
-  if ('speechSynthesis' in window) {
-    speechSynthesis.cancel();
-  }
+  audioService.stopAudio();
 };
 
 /**
  * Check if speech synthesis is supported
  */
 export const isAudioSupported = (): boolean => {
-  return 'speechSynthesis' in window;
+  return audioService.isAudioSupported();
 };
 
 /**
  * Get available voices
+ * @deprecated Use audioService.getAvailableVoices() instead
  */
 export const getAvailableVoices = (): SpeechSynthesisVoice[] => {
   if (!('speechSynthesis' in window)) {
@@ -67,33 +69,18 @@ export const getAvailableVoices = (): SpeechSynthesisVoice[] => {
  * @param voiceName - Name of the voice to use
  * @param options - Audio configuration options
  */
-export const playAudioWithVoice = (
-  text: string, 
-  voiceName: string, 
+export const playAudioWithVoice = async (
+  text: string,
+  voiceName: string,
   options: AudioOptions = {}
-): void => {
-  if (!('speechSynthesis' in window)) {
-    console.warn('Speech synthesis not supported in this browser');
-    return;
-  }
+): Promise<void> => {
+  const audioOptions: AudioServiceOptions = {
+    lang: options.lang,
+    rate: options.rate,
+    volume: options.volume,
+    pitch: options.pitch,
+    voiceName: voiceName,
+  };
 
-  const voices = getAvailableVoices();
-  const voice = voices.find(v => v.name === voiceName);
-  
-  if (!voice) {
-    console.warn(`Voice "${voiceName}" not found, using default voice`);
-    playAudio(text, options);
-    return;
-  }
-
-  speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = voice;
-  utterance.lang = options.lang || voice.lang;
-  utterance.rate = options.rate || 0.8;
-  utterance.volume = options.volume || 1.0;
-  utterance.pitch = options.pitch || 1.0;
-
-  speechSynthesis.speak(utterance);
+  await audioService.playAudio(text, audioOptions);
 };

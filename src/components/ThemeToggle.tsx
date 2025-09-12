@@ -20,17 +20,14 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   const selectedOption = themes.find((theme) => theme.value === currentTheme);
 
   return (
-    <Pane
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      marginBottom={16}
-    >
+    <Pane display="flex" justifyContent="space-between" alignItems="center">
       <Pane display="flex" alignItems="center" gap={8}>
-        <Text>Theme</Text>
         {selectedOption && (
           <selectedOption.icon size={16} color="var(--text-secondary)" />
         )}
+        <Text size={400} fontWeight={500}>
+          Theme
+        </Text>
       </Pane>
       <Pane width={120}>
         <Select

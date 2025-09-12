@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { loadSettings } from '@/store/slices/settingsSlice';
 import { loadVocabularySets } from '@/store/slices/vocabularySlice';
 import { loadTotalWordsToReview } from '@/store/slices/userProgressSlice';
+import { audioInitializer } from '@/services/audioInitializer';
 import {
   setTheme,
   updateThemeFromSystem,
@@ -18,6 +19,7 @@ import VocabularyPage from '@/pages/VocabularyPage';
 import VocabularySetPage from '@/pages/VocabularySetPage';
 import LearnPage from '@/pages/LearnPage';
 import SettingsPage from '@/pages/SettingsPage';
+import UserProfilePage from '@/pages/UserProfilePage';
 import Navigation from '@/components/Navigation';
 import AuthInitializer from '@/components/AuthInitializer';
 import Header from './components/Header';
@@ -34,6 +36,9 @@ function AppContent() {
     dispatch(loadSettings());
     dispatch(loadVocabularySets());
     dispatch(loadTotalWordsToReview());
+
+    // Initialize audio service
+    audioInitializer.initialize();
   }, [dispatch]);
 
   useEffect(() => {
@@ -77,6 +82,8 @@ function AppContent() {
         return <LearnPage />;
       case 'settings':
         return <SettingsPage />;
+      case 'profile':
+        return <UserProfilePage />;
       default:
         return <HomePage />;
     }

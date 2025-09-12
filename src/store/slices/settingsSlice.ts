@@ -1,4 +1,8 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 import type { UserSettings } from '@/types';
 import { db } from '@/services/database';
 
@@ -15,32 +19,26 @@ const initialState: SettingsState = {
 };
 
 // Async thunks
-export const loadSettings = createAsyncThunk(
-  'settings/load',
-  async () => {
-    const settings = await db.getSettings();
-    return settings;
-  }
-);
+export const loadSettings = createAsyncThunk('settings/load', async () => {
+  const settings = await db.getSettings();
+  return settings;
+});
 
 export const updateSettings = createAsyncThunk(
   'settings/update',
   async (updates: Partial<UserSettings>) => {
     const currentSettings = await db.getSettings();
     const updatedSettings = { ...currentSettings, ...updates };
-    
+
     await db.userSettings.put(updatedSettings);
     return updatedSettings;
   }
 );
 
-export const resetSettings = createAsyncThunk(
-  'settings/reset',
-  async () => {
-    const defaultSettings = await db.createDefaultSettings();
-    return defaultSettings;
-  }
-);
+export const resetSettings = createAsyncThunk('settings/reset', async () => {
+  const defaultSettings = await db.createDefaultSettings();
+  return defaultSettings;
+});
 
 const settingsSlice = createSlice({
   name: 'settings',
@@ -53,7 +51,8 @@ const settingsSlice = createSlice({
     },
     toggleNotifications: (state) => {
       if (state.settings) {
-        state.settings.enableNotifications = !state.settings.enableNotifications;
+        state.settings.enableNotifications =
+          !state.settings.enableNotifications;
       }
     },
     toggleSound: (state) => {
@@ -76,6 +75,41 @@ const settingsSlice = createSlice({
         state.settings.notificationTime = action.payload;
       }
     },
+    // TTS Settings - Always use google-cloud (WaveNet) as primary
+    setTTSProvider: (
+      state,
+      action: PayloadAction<'web-speech' | 'google-cloud'>
+    ) => {
+      if (state.settings) {
+        // Always set to google-cloud (WaveNet) - fallback handled in audio service
+        state.settings.ttsProvider = 'google-cloud';
+      }
+    },
+    setTTSLanguage: (state, action: PayloadAction<string>) => {
+      if (state.settings) {
+        state.settings.ttsLanguage = action.payload;
+      }
+    },
+    setTTSVoice: (state, action: PayloadAction<string>) => {
+      if (state.settings) {
+        state.settings.ttsVoice = action.payload;
+      }
+    },
+    setTTSRate: (state, action: PayloadAction<number>) => {
+      if (state.settings) {
+        state.settings.ttsRate = action.payload;
+      }
+    },
+    setTTSPitch: (state, action: PayloadAction<number>) => {
+      if (state.settings) {
+        state.settings.ttsPitch = action.payload;
+      }
+    },
+    setTTSVolume: (state, action: PayloadAction<number>) => {
+      if (state.settings) {
+        state.settings.ttsVolume = action.payload;
+      }
+    },
     clearError: (state) => {
       state.error = null;
     },
@@ -95,7 +129,7 @@ const settingsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to load settings';
       })
-      
+
       // Update settings
       .addCase(updateSettings.pending, (state) => {
         state.loading = true;
@@ -109,7 +143,7 @@ const settingsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to update settings';
       })
-      
+
       // Reset settings
       .addCase(resetSettings.fulfilled, (state, action) => {
         state.settings = action.payload;
@@ -124,6 +158,12 @@ export const {
   toggleVibration,
   setBatchSize,
   setNotificationTime,
+  setTTSProvider,
+  setTTSLanguage,
+  setTTSVoice,
+  setTTSRate,
+  setTTSPitch,
+  setTTSVolume,
   clearError,
 } = settingsSlice.actions;
 

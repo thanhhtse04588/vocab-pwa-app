@@ -44,7 +44,7 @@ let firebaseApp: FirebaseApp | null = null;
 let firestoreDb: Firestore | null = null;
 let auth: Auth | null = null;
 
-function ensureFirebase(): { db: Firestore; auth: Auth } {
+export function ensureFirebase(): { db: Firestore; auth: Auth } {
   if (firestoreDb && auth) return { db: firestoreDb, auth };
 
   // Validate that all required environment variables are present
@@ -56,7 +56,10 @@ function ensureFirebase(): { db: Firestore; auth: Auth } {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID,
   };
-
+  console.log('Environment variables check:');
+  console.log('VITE_FIREBASE_API_KEY:', import.meta.env.VITE_FIREBASE_API_KEY);
+  console.log('All env vars:', import.meta.env);
+  console.log('requiredEnvVars:', requiredEnvVars);
   // Check for missing environment variables
   const missingVars = Object.entries(requiredEnvVars)
     .filter(([_, value]) => !value)
@@ -64,8 +67,10 @@ function ensureFirebase(): { db: Firestore; auth: Auth } {
 
   if (missingVars.length > 0) {
     throw new Error(
-      `Missing required Firebase environment variables: ${missingVars.join(', ')}. ` +
-      'Please check your .env file and ensure all VITE_FIREBASE_* variables are set.'
+      `Missing required Firebase environment variables: ${missingVars.join(
+        ', '
+      )}. ` +
+        'Please check your .env file and ensure all VITE_FIREBASE_* variables are set.'
     );
   }
 
@@ -89,16 +94,16 @@ function ensureFirebase(): { db: Firestore; auth: Auth } {
 export async function signInWithGoogle(): Promise<User> {
   const { auth } = ensureFirebase();
   const provider = new GoogleAuthProvider();
-  
+
   // Add additional scopes
   provider.addScope('email');
   provider.addScope('profile');
-  
+
   // Set custom parameters to force account selection
   provider.setCustomParameters({
-    prompt: 'select_account'
+    prompt: 'select_account',
   });
-  
+
   try {
     const result = await signInWithPopup(auth, provider);
     return result.user;
@@ -106,7 +111,7 @@ export async function signInWithGoogle(): Promise<User> {
     // Handle specific Firebase Auth errors
     if (error && typeof error === 'object' && 'code' in error) {
       const firebaseError = error as { code: string; message: string };
-      
+
       switch (firebaseError.code) {
         case 'auth/popup-blocked':
           throw new Error('Popup blocked. Please allow popups and try again.');
@@ -116,7 +121,9 @@ export async function signInWithGoogle(): Promise<User> {
         case 'auth/cancelled-popup-request':
           throw new Error('Login request cancelled. Please try again.');
         case 'auth/account-exists-with-different-credential':
-          throw new Error('Account already exists with different login method.');
+          throw new Error(
+            'Account already exists with different login method.'
+          );
         case 'auth/operation-not-allowed':
           throw new Error('This login method is not allowed.');
         case 'auth/unauthorized-domain':
@@ -125,12 +132,11 @@ export async function signInWithGoogle(): Promise<User> {
           throw new Error(`Login error: ${firebaseError.message}`);
       }
     }
-    
+
     // Generic error
     throw new Error('Login failed. Please try again.');
   }
 }
-
 
 export async function signOutUser(): Promise<void> {
   const { auth } = ensureFirebase();

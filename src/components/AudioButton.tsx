@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Tooltip } from 'evergreen-ui';
 import { SpeakerHigh } from 'phosphor-react';
 import { playAudio } from '@/utils/audioUtils';
+import { useAppSelector } from '@/hooks/redux';
 
 interface AudioButtonProps {
   text: string;
@@ -30,9 +31,27 @@ const AudioButton: React.FC<AudioButtonProps> = ({
   volume,
   pitch,
 }) => {
-  const handlePlayAudio = () => {
-    if (text.trim()) {
-      playAudio(text, { lang, rate, volume, pitch });
+  const { settings } = useAppSelector((state) => state.settings);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlayAudio = async () => {
+    if (text.trim() && !isPlaying) {
+      setIsPlaying(true);
+      try {
+        // Use settings if no specific options provided
+        const audioOptions = {
+          lang: lang || settings?.ttsLanguage || 'en-US',
+          rate: rate || settings?.ttsRate || 0.8,
+          volume: volume || settings?.ttsVolume || 1.0,
+          pitch: pitch || settings?.ttsPitch || 1.0,
+        };
+
+        await playAudio(text, audioOptions);
+      } catch (error) {
+        console.error('Failed to play audio:', error);
+      } finally {
+        setIsPlaying(false);
+      }
     }
   };
 
@@ -43,7 +62,7 @@ const AudioButton: React.FC<AudioButtonProps> = ({
         intent={intent}
         size={size}
         onClick={handlePlayAudio}
-        disabled={disabled || !text.trim()}
+        disabled={disabled || !text.trim() || isPlaying}
         className={className}
       >
         <SpeakerHigh size={16} />

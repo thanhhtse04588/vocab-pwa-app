@@ -34,7 +34,7 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
                 />
                 <Text fontWeight={600}>Backup data</Text>
               </Pane>
-              <Text color="muted" marginBottom={16}>
+              <Text color="muted">
                 Export your vocabulary data to a JSON file
               </Text>
               <Button
@@ -43,6 +43,7 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
                 onClick={onBackup}
                 width="100%"
                 iconBefore={<Download size={16} />}
+                marginTop={12}
               >
                 Backup
               </Button>
@@ -68,6 +69,7 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
                 onClick={handleRestore}
                 width="100%"
                 iconBefore={<Upload size={16} />}
+                marginTop={12}
               >
                 Restore
               </Button>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 interface SpeechRecognitionInterface {
   continuous: boolean;
@@ -29,10 +29,16 @@ export const useSpeechRecognition = (
   onResult: (transcript: string) => void
 ): UseSpeechRecognitionReturn => {
   const [isListening, setIsListening] = useState(false);
-  const [speechRecognition, setSpeechRecognition] =
-    useState<SpeechRecognitionInterface | null>(null);
   const [isSupported, setIsSupported] = useState(false);
+  const speechRecognitionRef = useRef<SpeechRecognitionInterface | null>(null);
+  const onResultRef = useRef(onResult);
 
+  // Update the ref when onResult changes
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
+
+  // Initialize speech recognition only once
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition =
@@ -48,8 +54,9 @@ export const useSpeechRecognition = (
             webkitSpeechRecognition?: unknown;
           }
         ).webkitSpeechRecognition;
-      
-      const recognition = new (SpeechRecognition as new () => SpeechRecognitionInterface)() as SpeechRecognitionInterface;
+
+      const recognition =
+        new (SpeechRecognition as new () => SpeechRecognitionInterface)() as SpeechRecognitionInterface;
 
       recognition.continuous = false;
       recognition.interimResults = false;
@@ -65,7 +72,7 @@ export const useSpeechRecognition = (
         };
       }) => {
         const transcript = event.results[0][0].transcript;
-        onResult(transcript);
+        onResultRef.current(transcript);
         setIsListening(false);
       };
 
@@ -78,22 +85,22 @@ export const useSpeechRecognition = (
         setIsListening(false);
       };
 
-      setSpeechRecognition(recognition);
+      speechRecognitionRef.current = recognition;
       setIsSupported(true);
     }
-  }, [onResult]);
+  }, []); // Empty dependency array - only run once
 
-  const startListening = () => {
-    if (speechRecognition && !isListening) {
-      speechRecognition.start();
+  const startListening = useCallback(() => {
+    if (speechRecognitionRef.current && !isListening) {
+      speechRecognitionRef.current.start();
     }
-  };
+  }, [isListening]);
 
-  const stopListening = () => {
-    if (speechRecognition && isListening) {
-      speechRecognition.stop();
+  const stopListening = useCallback(() => {
+    if (speechRecognitionRef.current && isListening) {
+      speechRecognitionRef.current.stop();
     }
-  };
+  }, [isListening]);
 
   return {
     isListening,

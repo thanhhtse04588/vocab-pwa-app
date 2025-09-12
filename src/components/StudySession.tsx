@@ -8,7 +8,7 @@ import {
   loadMoreWords,
 } from '@/store/slices/studySlice';
 import { Pane, Spinner, Text } from 'evergreen-ui';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { playAudio } from '@/utils/audioUtils';
 import StudySessionHeader from '@/components/StudySessionHeader';
 import WordCard from '@/components/WordCard';
@@ -73,9 +73,13 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMarkedAsTrue, setIsMarkedAsTrue] = useState(false);
 
-  const { isListening, startListening, stopListening } = useSpeechRecognition(
-    (transcript) => setUserAnswer(transcript)
-  );
+  // Memoize the speech recognition callback to prevent infinite re-renders
+  const handleSpeechResult = useCallback((transcript: string) => {
+    setUserAnswer(transcript);
+  }, []);
+
+  const { isListening, startListening, stopListening } =
+    useSpeechRecognition(handleSpeechResult);
 
   const currentWord = currentBatch[currentWordIndex];
   const progress =
@@ -85,15 +89,24 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
 
   // Auto-play audio when answer is shown
   useEffect(() => {
-    if (showAnswer && settings?.autoPlayPronunciation) {
-      // Auto-play pronunciation of the correct answer
+    if (showAnswer && settings?.autoPlayPronunciation && currentWord) {
+      // Auto-play pronunciation of the correct answer using user's TTS settings
       playAudio(currentWord.word, {
-        lang: 'en-US',
-        rate: 0.8,
-        volume: 1.0,
+        lang: settings.ttsLanguage || 'en-US',
+        rate: settings.ttsRate || 0.8,
+        volume: settings.ttsVolume || 1.0,
+        pitch: settings.ttsPitch || 1.0,
       });
     }
-  }, [showAnswer, settings?.autoPlayPronunciation]);
+  }, [
+    showAnswer,
+    settings?.autoPlayPronunciation,
+    currentWord,
+    settings?.ttsLanguage,
+    settings?.ttsRate,
+    settings?.ttsVolume,
+    settings?.ttsPitch,
+  ]);
 
   // Auto complete session when study is finished
   useEffect(() => {

@@ -1,5 +1,5 @@
 ---
-description: Ưu tiên sử dụng thư viện có sẵn
+description: Ưu tiên sử dụng thư viện có sẵn, ưu tiên sử dụng evergreen ui
 globs:
 alwaysApply: true
 ---

@@ -1,11 +1,17 @@
-import { useAppSelector } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setActiveTab } from '@/store/slices/navigationSlice';
 import { Heading, Pane } from 'evergreen-ui';
 import React from 'react';
 import LoginButton from './LoginButton';
 import UserProfile from './UserProfile';
 
 const Header: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+
+  const handleLogoClick = () => {
+    dispatch(setActiveTab('home'));
+  };
 
   return (
     <Pane className="header-container">
@@ -26,6 +32,8 @@ const Header: React.FC = () => {
           display="flex"
           alignItems="center"
           gap={12}
+          onClick={handleLogoClick}
+          cursor="pointer"
         >
           <Pane
             className="brand-logo"

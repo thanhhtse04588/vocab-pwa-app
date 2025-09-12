@@ -64,22 +64,29 @@ export interface UserSettings {
   autoPlayPronunciation: boolean;
   reviewReminderEnabled: boolean;
   reviewReminderInterval: number; // in hours
+  // TTS Settings
+  ttsProvider: 'web-speech' | 'google-cloud';
+  ttsLanguage: string;
+  ttsVoice: string;
+  ttsRate: number;
+  ttsPitch: number;
+  ttsVolume: number;
 }
 
 // Spaced repetition intervals (in minutes for first few, then days)
 export const SPACED_REPETITION_INTERVALS: Record<MemoryLevel, number> = {
-  0: 10,    // 10 minutes
-  1: 15,    // 15 minutes  
-  2: 1440,  // 1 day (24 * 60 minutes)
-  3: 4320,  // 3 days (3 * 24 * 60 minutes)
+  0: 10, // 10 minutes
+  1: 15, // 15 minutes
+  2: 1440, // 1 day (24 * 60 minutes)
+  3: 4320, // 3 days (3 * 24 * 60 minutes)
   4: 10080, // 7 days (7 * 24 * 60 minutes)
   5: 20160, // 14 days (14 * 24 * 60 minutes)
   6: 43200, // 30 days (30 * 24 * 60 minutes)
-  7: 129600 // 90 days (90 * 24 * 60 minutes)
+  7: 129600, // 90 days (90 * 24 * 60 minutes)
 };
 
 // Navigation types
-export type TabId = 'home' | 'vocabulary' | 'learn' | 'settings';
+export type TabId = 'home' | 'vocabulary' | 'learn' | 'settings' | 'profile';
 
 export interface NavigationState {
   activeTab: TabId;

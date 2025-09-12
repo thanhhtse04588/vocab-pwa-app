@@ -17,7 +17,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
   return (
     <SettingsSection icon={Paintbrush} title="Appearance">
       <Card marginBottom={24}>
-        <Pane padding={24}>
+        <Pane paddingX={24}>
           <ThemeToggle
             currentTheme={settings.theme}
             onThemeChange={onThemeChange}

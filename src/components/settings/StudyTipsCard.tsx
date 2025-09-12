@@ -5,7 +5,7 @@ import { Lightbulb } from 'lucide-react';
 const StudyTipsCard: React.FC = () => {
   return (
     <Card>
-      <Pane padding={24}>
+      <Pane paddingX={24}>
         <Pane display="flex" alignItems="center" marginBottom={16}>
           <Lightbulb
             size={20}
@@ -13,10 +13,7 @@ const StudyTipsCard: React.FC = () => {
           />
           <Heading size={400}>Spaced Repetition Schedule</Heading>
         </Pane>
-        <Text color="muted" marginBottom={20}>
-          Words are reviewed at increasing intervals based on your performance
-        </Text>
-        <Pane is="ul" paddingLeft={0}>
+        <Pane display="grid" gridTemplateColumns="1fr 1fr" paddingLeft={0}>
           {[
             { level: 0, time: '10 minutes', color: 'red' },
             { level: 1, time: '15 minutes', color: 'orange' },
@@ -25,13 +22,12 @@ const StudyTipsCard: React.FC = () => {
             { level: 4, time: '1 week', color: 'blue' },
             { level: 5, time: '2 weeks', color: 'purple' },
             { level: 6, time: '1 month', color: 'teal' },
-            { level: 7, time: '3 months', color: 'dark' },
+            { level: 7, time: '3 months', color: 'black' },
           ].map(({ level, time, color }) => (
             <Pane
               key={level}
               display="flex"
               alignItems="center"
-              marginBottom={12}
               padding={12}
               backgroundColor="tint1"
               borderRadius={6}
@@ -42,6 +38,7 @@ const StudyTipsCard: React.FC = () => {
                 borderRadius="50%"
                 backgroundColor={color}
                 marginRight={12}
+                flexShrink={0}
               />
               <Text fontWeight={500} marginRight={8}>
                 Level {level}:

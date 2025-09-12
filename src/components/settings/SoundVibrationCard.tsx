@@ -1,7 +1,9 @@
-import React from 'react';
-import { Pane, Card, Text, Switch } from 'evergreen-ui';
-import { Volume2, Smartphone, Play } from 'lucide-react';
+import { useAppDispatch } from '@/hooks/redux';
+import { setTTSRate, setTTSVoice } from '@/store/slices/settingsSlice';
 import type { UserSettings } from '@/types';
+import { Card, Pane, Select, Switch, Text } from 'evergreen-ui';
+import { Gauge, Play, Smartphone, User, Volume2 } from 'lucide-react';
+import React from 'react';
 
 interface SoundVibrationCardProps {
   settings: UserSettings;
@@ -16,14 +18,15 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
   onVibrationToggle,
   onAutoPlayToggle,
 }) => {
+  const dispatch = useAppDispatch();
   return (
-    <Card marginBottom={24}>
-      <Pane padding={24}>
+    <Card marginBottom={0}>
+      <Pane paddingX={24}>
         <Pane
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          marginBottom={20}
+          marginBottom={24}
         >
           <Pane display="flex" alignItems="center">
             <Volume2
@@ -32,9 +35,6 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
             />
             <Pane>
               <Text fontWeight={500}>Enable sound</Text>
-              <Text size={300} color="muted">
-                Audio feedback for interactions
-              </Text>
             </Pane>
           </Pane>
           <Switch checked={settings.enableSound} onChange={onSoundToggle} />
@@ -43,7 +43,7 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          marginBottom={20}
+          marginBottom={24}
         >
           <Pane display="flex" alignItems="center">
             <Smartphone
@@ -52,9 +52,6 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
             />
             <Pane>
               <Text fontWeight={500}>Enable vibration</Text>
-              <Text size={300} color="muted">
-                Haptic feedback on mobile
-              </Text>
             </Pane>
           </Pane>
           <Switch
@@ -62,7 +59,12 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
             onChange={onVibrationToggle}
           />
         </Pane>
-        <Pane display="flex" justifyContent="space-between" alignItems="center">
+        <Pane
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          marginBottom={24}
+        >
           <Pane display="flex" alignItems="center">
             <Play
               size={16}
@@ -70,15 +72,86 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
             />
             <Pane>
               <Text fontWeight={500}>Auto-play pronunciation</Text>
-              <Text size={300} color="muted">
-                Automatically play word sounds
-              </Text>
             </Pane>
           </Pane>
           <Switch
             checked={settings.autoPlayPronunciation}
             onChange={onAutoPlayToggle}
           />
+        </Pane>
+
+        {/* TTS Settings */}
+        <Pane>
+          <Text size={500} fontWeight={600} marginBottom={20} display="block">
+            Text-to-Speech
+          </Text>
+
+          {/* Voice Gender */}
+          <Pane
+            marginBottom={20}
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={16}
+          >
+            <Pane
+              display="flex"
+              alignItems="center"
+              style={{ minWidth: '120px' }}
+            >
+              <User
+                size={16}
+                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+              />
+              <Text size={400} fontWeight={500}>
+                Voice Gender
+              </Text>
+            </Pane>
+            <Select
+              value={settings.ttsVoice || ''}
+              onChange={(e) => dispatch(setTTSVoice(e.target.value))}
+              maxWidth={120}
+            >
+              <option value="">Default Voice</option>
+              <option value="male">Male Voice</option>
+              <option value="female">Female Voice</option>
+            </Select>
+          </Pane>
+
+          {/* Speech Rate */}
+          <Pane
+            marginBottom={0}
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={16}
+          >
+            <Pane
+              display="flex"
+              alignItems="center"
+              style={{ minWidth: '120px' }}
+            >
+              <Gauge
+                size={16}
+                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
+              />
+              <Text size={400} fontWeight={500}>
+                Speech Rate
+              </Text>
+            </Pane>
+            <Select
+              value={(settings.ttsRate || 1.0).toString()}
+              onChange={(e) => dispatch(setTTSRate(parseFloat(e.target.value)))}
+              maxWidth="120px"
+            >
+              <option value="0.5">0.5x (Very Slow)</option>
+              <option value="0.75">0.75x (Slow)</option>
+              <option value="1.0">1.0x (Normal)</option>
+              <option value="1.25">1.25x (Fast)</option>
+              <option value="1.5">1.5x (Very Fast)</option>
+              <option value="2.0">2.0x (Extremely Fast)</option>
+            </Select>
+          </Pane>
         </Pane>
       </Pane>
     </Card>

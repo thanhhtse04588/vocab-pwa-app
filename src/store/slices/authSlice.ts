@@ -1,9 +1,22 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 import type { User } from 'firebase/auth';
 import { signInWithGoogle, signOutUser } from '@/services/firebaseService';
 
+// Serializable user interface
+interface SerializableUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+}
+
 interface AuthState {
-  user: User | null;
+  user: SerializableUser | null;
   loading: boolean;
   error: string | null;
 }
@@ -14,15 +27,28 @@ const initialState: AuthState = {
   error: null,
 };
 
+// Helper function to convert Firebase User to SerializableUser
+const serializeUser = (user: User | null): SerializableUser | null => {
+  if (!user) return null;
+  return {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    emailVerified: user.emailVerified,
+  };
+};
+
 // Async thunks
 export const signIn = createAsyncThunk(
   'auth/signIn',
   async (_, { rejectWithValue }) => {
     try {
       const user = await signInWithGoogle();
-      return user;
+      return serializeUser(user);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Login failed';
       return rejectWithValue(errorMessage);
     }
   }
@@ -35,7 +61,8 @@ export const signOut = createAsyncThunk(
       await signOutUser();
       return null;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Logout failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Logout failed';
       return rejectWithValue(errorMessage);
     }
   }
@@ -44,7 +71,7 @@ export const signOut = createAsyncThunk(
 export const setUser = createAsyncThunk(
   'auth/setUser',
   async (user: User | null) => {
-    return user;
+    return serializeUser(user);
   }
 );
 

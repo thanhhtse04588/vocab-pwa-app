@@ -4,7 +4,7 @@ import type {
   VocabularyWord,
   StudySession,
   UserProgress,
-  UserSettings
+  UserSettings,
 } from '@/types';
 
 export class VocabDatabase extends Dexie {
@@ -16,13 +16,18 @@ export class VocabDatabase extends Dexie {
 
   constructor() {
     super('BeeVocab');
-    
+
     this.version(1).stores({
-      vocabularySets: 'id, name, description, sourceLanguage, targetLanguage, createdAt, lastStudiedAt, wordCount, isActive',
-      vocabularyWords: 'id, vocabularySetId, word, meaning, pronunciation, example, memoryLevel, nextReviewAt, correctCount, incorrectCount, createdAt, lastReviewedAt',
-      studySessions: 'id, vocabularySetId, startedAt, completedAt, totalWords, correctWords, incorrectWords, wordsStudied, isCompleted',
-      userProgress: 'id, vocabularySetId, totalWordsStudied, totalCorrectAnswers, totalIncorrectAnswers, averageAccuracy, streakDays, lastStudyDate, memoryLevelDistribution',
-      userSettings: 'id, batchSize, enableNotifications, notificationTime, theme, enableSound, enableVibration, autoPlayPronunciation, reviewReminderEnabled, reviewReminderInterval'
+      vocabularySets:
+        'id, name, description, sourceLanguage, targetLanguage, createdAt, lastStudiedAt, wordCount, isActive',
+      vocabularyWords:
+        'id, vocabularySetId, word, meaning, pronunciation, example, memoryLevel, nextReviewAt, correctCount, incorrectCount, createdAt, lastReviewedAt',
+      studySessions:
+        'id, vocabularySetId, startedAt, completedAt, totalWords, correctWords, incorrectWords, wordsStudied, isCompleted',
+      userProgress:
+        'id, vocabularySetId, totalWordsStudied, totalCorrectAnswers, totalIncorrectAnswers, averageAccuracy, streakDays, lastStudyDate, memoryLevelDistribution',
+      userSettings:
+        'id, batchSize, enableNotifications, notificationTime, theme, enableSound, enableVibration, autoPlayPronunciation, reviewReminderEnabled, reviewReminderInterval, ttsProvider, ttsLanguage, ttsVoice, ttsRate, ttsPitch, ttsVolume',
     });
 
     // Add hooks for data integrity
@@ -54,78 +59,92 @@ export class VocabDatabase extends Dexie {
   }
 
   // Helper methods for common operations
-  async getVocabularySetsWithStats(): Promise<(VocabularySet & { 
-    totalWords: number;
-    wordsToReview: number;
-    lastStudyDate?: string;
-  })[]> {
+  async getVocabularySetsWithStats(): Promise<
+    (VocabularySet & {
+      totalWords: number;
+      wordsToReview: number;
+      lastStudyDate?: string;
+    })[]
+  > {
     // Get all active sets using filter (more reliable than where with boolean)
-    const sets = await this.vocabularySets.filter(set => set.isActive).toArray();
-    
-    return Promise.all(sets.map(async (set) => {
-      const words = await this.vocabularyWords
-        .where('vocabularySetId')
-        .equals(set.id)
-        .toArray();
-      
-      const wordsToReview = words.filter(word => 
-        new Date(word.nextReviewAt) <= new Date()
-      ).length;
+    const sets = await this.vocabularySets
+      .filter((set) => set.isActive)
+      .toArray();
 
-      const progress = await this.userProgress
-        .where('vocabularySetId')
-        .equals(set.id)
-        .first();
+    return Promise.all(
+      sets.map(async (set) => {
+        const words = await this.vocabularyWords
+          .where('vocabularySetId')
+          .equals(set.id)
+          .toArray();
 
-      return {
-        ...set,
-        totalWords: words.length,
-        wordsToReview,
-        lastStudyDate: progress?.lastStudyDate
-      };
-    }));
+        const wordsToReview = words.filter(
+          (word) => new Date(word.nextReviewAt) <= new Date()
+        ).length;
+
+        const progress = await this.userProgress
+          .where('vocabularySetId')
+          .equals(set.id)
+          .first();
+
+        return {
+          ...set,
+          totalWords: words.length,
+          wordsToReview,
+          lastStudyDate: progress?.lastStudyDate,
+        };
+      })
+    );
   }
 
-  async getWordsForReview(vocabularySetId: string, limit?: number): Promise<VocabularyWord[]> {
+  async getWordsForReview(
+    vocabularySetId: string,
+    limit?: number
+  ): Promise<VocabularyWord[]> {
     const now = new Date().toISOString();
-    const  query = this.vocabularyWords
+    const query = this.vocabularyWords
       .where('vocabularySetId')
       .equals(vocabularySetId)
-      .and(word => word.nextReviewAt <= now);
-    
+      .and((word) => word.nextReviewAt <= now);
+
     if (limit) {
       return await query.limit(limit).toArray();
     }
-    
+
     return await query.toArray();
   }
 
   async getAllWordsForReview(limit?: number): Promise<VocabularyWord[]> {
     const now = new Date().toISOString();
-    const query = this.vocabularyWords
-      .where('nextReviewAt')
-      .belowOrEqual(now);
-    
+    const query = this.vocabularyWords.where('nextReviewAt').belowOrEqual(now);
+
     if (limit) {
       return await query.limit(limit).toArray();
     }
-    
+
     return await query.toArray();
   }
 
-  async getNewWords(vocabularySetId: string, limit?: number): Promise<VocabularyWord[]> {
-    
+  async getNewWords(
+    vocabularySetId: string,
+    limit?: number
+  ): Promise<VocabularyWord[]> {
     const query = this.vocabularyWords
       .where('vocabularySetId')
       .equals(vocabularySetId)
-      .and(word => word.memoryLevel === 0);
-    
-    const result = limit ? await query.limit(limit).toArray() : await query.toArray();
-    
+      .and((word) => word.memoryLevel === 0);
+
+    const result = limit
+      ? await query.limit(limit).toArray()
+      : await query.toArray();
+
     return result;
   }
 
-  async updateWordMemoryLevel(wordId: string, isCorrect: boolean): Promise<void> {
+  async updateWordMemoryLevel(
+    wordId: string,
+    isCorrect: boolean
+  ): Promise<void> {
     const word = await this.vocabularyWords.get(wordId);
     if (!word) return;
 
@@ -145,17 +164,19 @@ export class VocabDatabase extends Dexie {
     // Calculate next review time based on memory level
     const intervals = [10, 15, 1440, 4320, 10080, 20160, 43200, 129600]; // minutes
     const nextReviewInterval = intervals[newMemoryLevel];
-    
+
     const nextReview = new Date(now.getTime() + nextReviewInterval * 60 * 1000);
 
     await this.vocabularyWords.update(wordId, {
       memoryLevel: newMemoryLevel as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7,
       nextReviewAt: nextReview.toISOString(),
-      lastReviewedAt: now.toISOString()
+      lastReviewedAt: now.toISOString(),
     });
   }
 
-  async getMemoryLevelDistribution(vocabularySetId: string): Promise<Record<number, number>> {
+  async getMemoryLevelDistribution(
+    vocabularySetId: string
+  ): Promise<Record<number, number>> {
     const words = await this.vocabularyWords
       .where('vocabularySetId')
       .equals(vocabularySetId)
@@ -166,8 +187,9 @@ export class VocabDatabase extends Dexie {
       distribution[i] = 0;
     }
 
-    words.forEach(word => {
-      distribution[word.memoryLevel] = (distribution[word.memoryLevel] || 0) + 1;
+    words.forEach((word) => {
+      distribution[word.memoryLevel] =
+        (distribution[word.memoryLevel] || 0) + 1;
     });
 
     return distribution;
@@ -175,10 +197,7 @@ export class VocabDatabase extends Dexie {
 
   async getTotalWordsToReview(): Promise<number> {
     const now = new Date().toISOString();
-    return await this.vocabularyWords
-      .where('nextReviewAt')
-      .below(now)
-      .count();
+    return await this.vocabularyWords.where('nextReviewAt').below(now).count();
   }
 
   async createDefaultSettings(): Promise<UserSettings> {
@@ -192,7 +211,14 @@ export class VocabDatabase extends Dexie {
       enableVibration: true,
       autoPlayPronunciation: true,
       reviewReminderEnabled: true,
-      reviewReminderInterval: 24
+      reviewReminderInterval: 24,
+      // TTS Settings - Default to WaveNet with Web Speech API fallback
+      ttsProvider: 'google-cloud',
+      ttsLanguage: 'en-US', // Always English
+      ttsVoice: '',
+      ttsRate: 1.0, // Default to normal rate
+      ttsPitch: 0.0, // Default pitch (neutral)
+      ttsVolume: 1.0, // Default volume
     };
 
     await this.userSettings.put(defaultSettings);
@@ -214,12 +240,18 @@ export class VocabDatabase extends Dexie {
     userSettings: UserSettings;
     studySessions: StudySession[];
   }> {
-    const [vocabularySets, vocabularyWords, userProgress, userSettings, studySessions] = await Promise.all([
+    const [
+      vocabularySets,
+      vocabularyWords,
+      userProgress,
+      userSettings,
+      studySessions,
+    ] = await Promise.all([
       this.vocabularySets.toArray(),
       this.vocabularyWords.toArray(),
       this.userProgress.toArray(),
       this.getSettings(),
-      this.studySessions.toArray()
+      this.studySessions.toArray(),
     ]);
 
     return {
@@ -227,7 +259,7 @@ export class VocabDatabase extends Dexie {
       vocabularyWords,
       userProgress,
       userSettings,
-      studySessions
+      studySessions,
     };
   }
 
@@ -238,72 +270,77 @@ export class VocabDatabase extends Dexie {
     userSettings: UserSettings;
     studySessions: StudySession[];
   }): Promise<void> {
-    await this.transaction('rw', [
-      this.vocabularySets,
-      this.vocabularyWords,
-      this.userProgress,
-      this.userSettings,
-      this.studySessions
-    ], async () => {
-      // Clear existing data
-      await Promise.all([
-        this.vocabularySets.clear(),
-        this.vocabularyWords.clear(),
-        this.userProgress.clear(),
-        this.userSettings.clear(),
-        this.studySessions.clear()
-      ]);
+    await this.transaction(
+      'rw',
+      [
+        this.vocabularySets,
+        this.vocabularyWords,
+        this.userProgress,
+        this.userSettings,
+        this.studySessions,
+      ],
+      async () => {
+        // Clear existing data
+        await Promise.all([
+          this.vocabularySets.clear(),
+          this.vocabularyWords.clear(),
+          this.userProgress.clear(),
+          this.userSettings.clear(),
+          this.studySessions.clear(),
+        ]);
 
-      // Import new data
-      await Promise.all([
-        this.vocabularySets.bulkAdd(data.vocabularySets),
-        this.vocabularyWords.bulkAdd(data.vocabularyWords),
-        this.userProgress.bulkAdd(data.userProgress),
-        this.userSettings.add(data.userSettings),
-        this.studySessions.bulkAdd(data.studySessions)
-      ]);
-    });
+        // Import new data
+        await Promise.all([
+          this.vocabularySets.bulkAdd(data.vocabularySets),
+          this.vocabularyWords.bulkAdd(data.vocabularyWords),
+          this.userProgress.bulkAdd(data.userProgress),
+          this.userSettings.add(data.userSettings),
+          this.studySessions.bulkAdd(data.studySessions),
+        ]);
+      }
+    );
   }
 
   async resetProgressForSet(vocabularySetId: string): Promise<void> {
-    await this.transaction('rw', [
-      this.vocabularyWords,
-      this.userProgress,
-      this.studySessions
-    ], async () => {
-      // Reset all words in the set to memory level 0
-      const words = await this.vocabularyWords
-        .where('vocabularySetId')
-        .equals(vocabularySetId)
-        .toArray();
+    await this.transaction(
+      'rw',
+      [this.vocabularyWords, this.userProgress, this.studySessions],
+      async () => {
+        // Reset all words in the set to memory level 0
+        const words = await this.vocabularyWords
+          .where('vocabularySetId')
+          .equals(vocabularySetId)
+          .toArray();
 
-      const now = new Date();
-      const nextReview = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutes from now
+        const now = new Date();
+        const nextReview = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutes from now
 
-      await Promise.all(words.map(word => 
-        this.vocabularyWords.update(word.id, {
-          memoryLevel: 0,
-          correctCount: 0,
-          incorrectCount: 0,
-          nextReviewAt: nextReview.toISOString(),
-          lastReviewedAt: undefined
-        })
-      ));
+        await Promise.all(
+          words.map((word) =>
+            this.vocabularyWords.update(word.id, {
+              memoryLevel: 0,
+              correctCount: 0,
+              incorrectCount: 0,
+              nextReviewAt: nextReview.toISOString(),
+              lastReviewedAt: undefined,
+            })
+          )
+        );
 
-      // Delete user progress for this set
-      await this.userProgress
-        .where('vocabularySetId')
-        .equals(vocabularySetId)
-        .delete();
+        // Delete user progress for this set
+        await this.userProgress
+          .where('vocabularySetId')
+          .equals(vocabularySetId)
+          .delete();
 
-      // Delete study sessions for this set
-      await this.studySessions
-        .where('vocabularySetId')
-        .equals(vocabularySetId)
-        .delete();
-    });
+        // Delete study sessions for this set
+        await this.studySessions
+          .where('vocabularySetId')
+          .equals(vocabularySetId)
+          .delete();
+      }
+    );
   }
 }
 
 export const db = new VocabDatabase();
-
