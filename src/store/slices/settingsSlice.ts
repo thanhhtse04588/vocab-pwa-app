@@ -75,39 +75,18 @@ const settingsSlice = createSlice({
         state.settings.notificationTime = action.payload;
       }
     },
-    // TTS Settings - Always use google-cloud (WaveNet) as primary
-    setTTSProvider: (
+    // TTS Settings
+    setTTSGender: (
       state,
-      _action: PayloadAction<'web-speech' | 'google-cloud'>
+      action: PayloadAction<'male' | 'female' | 'neutral'>
     ) => {
       if (state.settings) {
-        // Always set to google-cloud (WaveNet) - fallback handled in audio service
-        state.settings.ttsProvider = 'google-cloud';
-      }
-    },
-    setTTSLanguage: (state, action: PayloadAction<string>) => {
-      if (state.settings) {
-        state.settings.ttsLanguage = action.payload;
-      }
-    },
-    setTTSVoice: (state, action: PayloadAction<string>) => {
-      if (state.settings) {
-        state.settings.ttsVoice = action.payload;
+        state.settings.ttsGender = action.payload;
       }
     },
     setTTSRate: (state, action: PayloadAction<number>) => {
       if (state.settings) {
         state.settings.ttsRate = action.payload;
-      }
-    },
-    setTTSPitch: (state, action: PayloadAction<number>) => {
-      if (state.settings) {
-        state.settings.ttsPitch = action.payload;
-      }
-    },
-    setTTSVolume: (state, action: PayloadAction<number>) => {
-      if (state.settings) {
-        state.settings.ttsVolume = action.payload;
       }
     },
     clearError: (state) => {
@@ -158,12 +137,8 @@ export const {
   toggleVibration,
   setBatchSize,
   setNotificationTime,
-  setTTSProvider,
-  setTTSLanguage,
-  setTTSVoice,
+  setTTSGender,
   setTTSRate,
-  setTTSPitch,
-  setTTSVolume,
   clearError,
 } = settingsSlice.actions;
 

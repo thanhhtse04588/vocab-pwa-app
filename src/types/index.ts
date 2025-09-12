@@ -65,12 +65,8 @@ export interface UserSettings {
   reviewReminderEnabled: boolean;
   reviewReminderInterval: number; // in hours
   // TTS Settings
-  ttsProvider: 'web-speech' | 'google-cloud';
-  ttsLanguage: string;
-  ttsVoice: string;
+  ttsGender: 'male' | 'female' | 'neutral';
   ttsRate: number;
-  ttsPitch: number;
-  ttsVolume: number;
 }
 
 // Spaced repetition intervals (in minutes for first few, then days)

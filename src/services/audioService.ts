@@ -14,12 +14,14 @@ export interface AudioServiceOptions {
   provider?: TTSProvider;
   lang?: string;
   rate?: number;
-  volume?: number;
-  pitch?: number;
+  gender?: 'male' | 'female' | 'neutral';
   voiceName?: string;
   ssmlGender?: 'NEUTRAL' | 'MALE' | 'FEMALE';
   audioEncoding?: 'MP3' | 'LINEAR16' | 'OGG_OPUS';
   volumeGainDb?: number;
+  // Legacy support for Web Speech API
+  pitch?: number;
+  volume?: number;
 }
 
 export interface VoiceInfo {
@@ -89,8 +91,7 @@ class AudioService {
         await this.playWithFirebaseTTS(text, {
           ...options,
           lang: options.lang || 'en-US', // Default to English
-          pitch: options.pitch || 0.0, // Default neutral pitch
-          volume: options.volume || 1.0, // Default full volume
+          ssmlGender: this.convertGenderToSSML(options.gender || 'neutral'),
         });
       } else {
         throw new Error('Firebase TTS not available');
@@ -103,8 +104,7 @@ class AudioService {
         await this.playWithWebSpeech(text, {
           ...options,
           lang: options.lang || 'en-US', // Default to English
-          pitch: options.pitch || 1.0, // Web Speech API uses 1.0 as neutral
-          volume: options.volume || 1.0, // Default full volume
+          pitch: this.convertGenderToPitch(options.gender || 'neutral'), // Convert gender to pitch
         });
       } catch (fallbackError) {
         console.error(
@@ -300,6 +300,38 @@ class AudioService {
     };
 
     return languageNames[languageCode] || languageCode;
+  }
+
+  /**
+   * Convert gender to SSML gender for Firebase TTS
+   */
+  private convertGenderToSSML(
+    gender: 'male' | 'female' | 'neutral'
+  ): 'NEUTRAL' | 'MALE' | 'FEMALE' {
+    switch (gender) {
+      case 'male':
+        return 'MALE';
+      case 'female':
+        return 'FEMALE';
+      case 'neutral':
+      default:
+        return 'NEUTRAL';
+    }
+  }
+
+  /**
+   * Convert gender to pitch for Web Speech API
+   */
+  private convertGenderToPitch(gender: 'male' | 'female' | 'neutral'): number {
+    switch (gender) {
+      case 'male':
+        return 0.8; // Lower pitch for male voice
+      case 'female':
+        return 1.2; // Higher pitch for female voice
+      case 'neutral':
+      default:
+        return 1.0; // Neutral pitch
+    }
   }
 }
 

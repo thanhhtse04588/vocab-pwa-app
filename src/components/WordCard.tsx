@@ -1,13 +1,14 @@
 import { Card, Pane, Heading, Text, Strong } from 'evergreen-ui';
 import React from 'react';
 import AudioButton from '@/components/AudioButton';
-import type { VocabularyWord } from '@/types';
+import type { VocabularyWord, VocabularySet } from '@/types';
 
 interface WordCardProps {
   word: VocabularyWord;
   showAnswer: boolean;
   isCorrect: boolean | null;
   isMarkedAsTrue: boolean;
+  vocabularySet?: VocabularySet; // Optional vocabulary set to get targetLanguage
 }
 
 const WordCard: React.FC<WordCardProps> = ({
@@ -15,6 +16,7 @@ const WordCard: React.FC<WordCardProps> = ({
   showAnswer,
   isCorrect,
   isMarkedAsTrue,
+  vocabularySet,
 }) => {
   return (
     <Card marginBottom={24}>
@@ -54,7 +56,13 @@ const WordCard: React.FC<WordCardProps> = ({
               <Text size={500}>
                 <Strong>Answer:</Strong> {word.word}
               </Text>
-              <AudioButton text={word.word} lang="en-US" rate={0.8} />
+              <AudioButton
+                text={word.word}
+                targetLanguage={vocabularySet?.targetLanguage}
+                tooltip={`Play pronunciation in ${
+                  vocabularySet?.targetLanguage || 'default'
+                } language`}
+              />
             </Pane>
 
             {word.example && (

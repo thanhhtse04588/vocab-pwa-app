@@ -10,6 +10,7 @@ import {
 import { Pane, Spinner, Text } from 'evergreen-ui';
 import React, { useEffect, useState, useCallback } from 'react';
 import { playAudio } from '@/utils/audioUtils';
+import { getTTSLanguageCode } from '@/utils/languageMapping';
 import StudySessionHeader from '@/components/StudySessionHeader';
 import WordCard from '@/components/WordCard';
 import AnswerInput from '@/components/AnswerInput';
@@ -64,8 +65,10 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
     incorrectWords,
     isStudying,
     batchSize,
+    sessionSetId,
   } = useAppSelector((state) => state.study);
   const { settings } = useAppSelector((state) => state.settings);
+  const { sets } = useAppSelector((state) => state.vocabulary);
 
   const [userAnswer, setUserAnswer] = useState('');
   const [showAnswer, setShowAnswer] = useState(false);
@@ -87,25 +90,33 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
       ? ((currentWordIndex + 1) / currentBatch.length) * 100
       : 0;
 
+  // Get the vocabulary set for the current session
+  const currentVocabularySet = sessionSetId
+    ? sets.find((set) => set.id === sessionSetId)
+    : null;
+
   // Auto-play audio when answer is shown
   useEffect(() => {
     if (showAnswer && settings?.autoPlayPronunciation && currentWord) {
-      // Auto-play pronunciation of the correct answer using user's TTS settings
+      // Determine the language to use for TTS
+      const ttsLanguage = currentVocabularySet?.targetLanguage
+        ? getTTSLanguageCode(currentVocabularySet.targetLanguage)
+        : 'en-US';
+
+      // Auto-play pronunciation of the correct answer using target language and TTS settings
       playAudio(currentWord.word, {
-        lang: settings.ttsLanguage || 'en-US',
-        rate: settings.ttsRate || 0.8,
-        volume: settings.ttsVolume || 1.0,
-        pitch: settings.ttsPitch || 1.0,
+        lang: ttsLanguage,
+        rate: settings?.ttsRate || 1.0,
+        gender: settings?.ttsGender || 'neutral',
       });
     }
   }, [
     showAnswer,
     settings?.autoPlayPronunciation,
     currentWord,
-    settings?.ttsLanguage,
+    currentVocabularySet?.targetLanguage,
     settings?.ttsRate,
-    settings?.ttsVolume,
-    settings?.ttsPitch,
+    settings?.ttsGender,
   ]);
 
   // Auto complete session when study is finished
@@ -278,6 +289,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         showAnswer={showAnswer}
         isCorrect={isCorrect}
         isMarkedAsTrue={isMarkedAsTrue}
+        vocabularySet={currentVocabularySet || undefined}
       />
 
       {!showAnswer && (

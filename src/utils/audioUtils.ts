@@ -15,8 +15,7 @@ import {
 export interface AudioOptions {
   lang?: string;
   rate?: number;
-  volume?: number;
-  pitch?: number;
+  gender?: 'male' | 'female' | 'neutral';
 }
 
 /**
@@ -31,8 +30,7 @@ export const playAudio = async (
   const audioOptions: AudioServiceOptions = {
     lang: options.lang,
     rate: options.rate,
-    volume: options.volume,
-    pitch: options.pitch,
+    gender: options.gender,
   };
 
   await audioService.playAudio(text, audioOptions);
@@ -77,8 +75,7 @@ export const playAudioWithVoice = async (
   const audioOptions: AudioServiceOptions = {
     lang: options.lang,
     rate: options.rate,
-    volume: options.volume,
-    pitch: options.pitch,
+    gender: options.gender,
     voiceName: voiceName,
   };
 

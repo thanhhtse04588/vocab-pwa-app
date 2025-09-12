@@ -27,7 +27,7 @@ export class VocabDatabase extends Dexie {
       userProgress:
         'id, vocabularySetId, totalWordsStudied, totalCorrectAnswers, totalIncorrectAnswers, averageAccuracy, streakDays, lastStudyDate, memoryLevelDistribution',
       userSettings:
-        'id, batchSize, enableNotifications, notificationTime, theme, enableSound, enableVibration, autoPlayPronunciation, reviewReminderEnabled, reviewReminderInterval, ttsProvider, ttsLanguage, ttsVoice, ttsRate, ttsPitch, ttsVolume',
+        'id, batchSize, enableNotifications, notificationTime, theme, enableSound, enableVibration, autoPlayPronunciation, reviewReminderEnabled, reviewReminderInterval, ttsGender, ttsRate',
     });
 
     // Add hooks for data integrity
@@ -212,13 +212,9 @@ export class VocabDatabase extends Dexie {
       autoPlayPronunciation: true,
       reviewReminderEnabled: true,
       reviewReminderInterval: 24,
-      // TTS Settings - Default to WaveNet with Web Speech API fallback
-      ttsProvider: 'google-cloud',
-      ttsLanguage: 'en-US', // Always English
-      ttsVoice: '',
-      ttsRate: 1.0, // Default to normal rate
-      ttsPitch: 0.0, // Default pitch (neutral)
-      ttsVolume: 1.0, // Default volume
+      // TTS Settings
+      ttsGender: 'neutral',
+      ttsRate: 1.0,
     };
 
     await this.userSettings.put(defaultSettings);

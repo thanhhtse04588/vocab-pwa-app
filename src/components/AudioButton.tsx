@@ -3,6 +3,7 @@ import { Button, Tooltip } from 'evergreen-ui';
 import { SpeakerHigh } from 'phosphor-react';
 import { playAudio } from '@/utils/audioUtils';
 import { useAppSelector } from '@/hooks/redux';
+import { getTTSLanguageCode } from '@/utils/languageMapping';
 
 interface AudioButtonProps {
   text: string;
@@ -14,8 +15,8 @@ interface AudioButtonProps {
   disabled?: boolean;
   lang?: string;
   rate?: number;
-  volume?: number;
-  pitch?: number;
+  gender?: 'male' | 'female' | 'neutral';
+  targetLanguage?: string; // Language code from vocabulary set (e.g., 'en', 'vi', 'ja')
 }
 
 const AudioButton: React.FC<AudioButtonProps> = ({
@@ -28,8 +29,8 @@ const AudioButton: React.FC<AudioButtonProps> = ({
   disabled = false,
   lang,
   rate,
-  volume,
-  pitch,
+  gender,
+  targetLanguage,
 }) => {
   const { settings } = useAppSelector((state) => state.settings);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -38,12 +39,24 @@ const AudioButton: React.FC<AudioButtonProps> = ({
     if (text.trim() && !isPlaying) {
       setIsPlaying(true);
       try {
+        // Determine the language to use for TTS
+        let ttsLanguage: string;
+        if (lang) {
+          // If lang is explicitly provided, use it
+          ttsLanguage = lang;
+        } else if (targetLanguage) {
+          // If targetLanguage is provided, convert it to TTS language code
+          ttsLanguage = getTTSLanguageCode(targetLanguage);
+        } else {
+          // Fall back to default
+          ttsLanguage = 'en-US';
+        }
+
         // Use settings if no specific options provided
         const audioOptions = {
-          lang: lang || settings?.ttsLanguage || 'en-US',
-          rate: rate || settings?.ttsRate || 0.8,
-          volume: volume || settings?.ttsVolume || 1.0,
-          pitch: pitch || settings?.ttsPitch || 1.0,
+          lang: ttsLanguage,
+          rate: rate || settings?.ttsRate || 1.0,
+          gender: gender || settings?.ttsGender || 'neutral',
         };
 
         await playAudio(text, audioOptions);

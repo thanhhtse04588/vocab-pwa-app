@@ -1,5 +1,5 @@
 import { useAppDispatch } from '@/hooks/redux';
-import { setTTSRate, setTTSVoice } from '@/store/slices/settingsSlice';
+import { setTTSRate, setTTSGender } from '@/store/slices/settingsSlice';
 import type { UserSettings } from '@/types';
 import { Card, Pane, Select, Switch, Text } from 'evergreen-ui';
 import { Gauge, Play, Smartphone, User, Volume2 } from 'lucide-react';
@@ -108,11 +108,15 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
               </Text>
             </Pane>
             <Select
-              value={settings.ttsVoice || ''}
-              onChange={(e) => dispatch(setTTSVoice(e.target.value))}
+              value={settings.ttsGender || 'neutral'}
+              onChange={(e) =>
+                dispatch(
+                  setTTSGender(e.target.value as 'male' | 'female' | 'neutral')
+                )
+              }
               maxWidth={120}
             >
-              <option value="">Default Voice</option>
+              <option value="neutral">Neutral Voice</option>
               <option value="male">Male Voice</option>
               <option value="female">Female Voice</option>
             </Select>

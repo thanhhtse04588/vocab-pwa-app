@@ -35,11 +35,10 @@ const TTSTestComponent: React.FC = () => {
 
     try {
       await audioService.playAudio(testText, {
-        lang: settings?.ttsLanguage || 'en-US',
-        voiceName: selectedVoice || settings?.ttsVoice || '',
-        rate: settings?.ttsRate || 0.8,
-        pitch: settings?.ttsPitch || 1.0,
-        volume: settings?.ttsVolume || 1.0,
+        lang: 'en-US',
+        voiceName: selectedVoice || '',
+        rate: settings?.ttsRate || 1.0,
+        gender: settings?.ttsGender || 'neutral',
       });
     } catch (error) {
       console.error('Failed to play audio:', error);
@@ -98,12 +97,10 @@ const TTSTestComponent: React.FC = () => {
         <Text size={300} color="muted">
           Provider: WaveNet (with Web Speech API fallback)
           <br />
-          Language: {settings?.ttsLanguage || 'en-US'}
+          Language: Auto-detect from vocabulary set
           <br />
-          Rate: {settings?.ttsRate || 0.8}x<br />
-          Pitch: {settings?.ttsPitch || 1.0}
-          <br />
-          Volume: {Math.round((settings?.ttsVolume || 1.0) * 100)}%
+          Rate: {settings?.ttsRate || 1.0}x<br />
+          Gender: {settings?.ttsGender || 'neutral'}
         </Text>
       </div>
 

@@ -66,6 +66,21 @@ function AppContent() {
     }
   }, [dispatch, theme]);
 
+  // Auto scroll to top when page changes
+  useEffect(() => {
+    // Find the scrollable container (the main content area)
+    const scrollContainer =
+      document.querySelector('[data-scroll-container]') ||
+      document.querySelector('.page-content') ||
+      document.documentElement;
+
+    // Smooth scroll to top
+    scrollContainer.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [currentPage, vocabularySetId]); // Trigger when page or vocabulary set changes
+
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'home':
@@ -107,6 +122,7 @@ function AppContent() {
         overflowY="auto"
         paddingBottom={80}
         paddingTop={65}
+        data-scroll-container
       >
         {renderCurrentPage()}
       </Pane>

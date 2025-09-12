@@ -53,11 +53,11 @@ const FirebaseTTSTestComponent: React.FC = () => {
 
     try {
       await firebaseTTSService.playSpeech(testText, {
-        languageCode: settings?.ttsLanguage || 'en-US',
-        voiceName: selectedVoice || settings?.ttsVoice || '',
+        languageCode: 'en-US',
+        voiceName: selectedVoice || '',
         speakingRate: settings?.ttsRate || 1.0,
-        pitch: settings?.ttsPitch || 0.0,
-        volumeGainDb: (settings?.ttsVolume || 1.0) * 6 - 6, // Convert 0-1 to -6 to 0 dB
+        pitch: 0.0,
+        volumeGainDb: 0, // Default volume
       });
       console.log('TTS test completed successfully');
     } catch (error) {
@@ -144,12 +144,10 @@ const FirebaseTTSTestComponent: React.FC = () => {
         <Text size={300} color="muted">
           Provider: WaveNet (Firebase TTS)
           <br />
-          Language: {settings?.ttsLanguage || 'en-US'}
+          Language: Auto-detect from vocabulary set
           <br />
-          Rate: {settings?.ttsRate || 0.8}x<br />
-          Pitch: {settings?.ttsPitch || 1.0}
-          <br />
-          Volume: {Math.round((settings?.ttsVolume || 1.0) * 100)}%
+          Rate: {settings?.ttsRate || 1.0}x<br />
+          Gender: {settings?.ttsGender || 'neutral'}
         </Text>
       </div>
 
