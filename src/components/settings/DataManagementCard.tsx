@@ -10,7 +10,7 @@ interface DataManagementCardProps {
 
 const DataManagementCard: React.FC<DataManagementCardProps> = ({
   onBackup,
-  onRestore: _onRestore, // eslint-disable-line @typescript-eslint/no-unused-vars
+  onRestore: _onRestore,
   onFileUpload,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

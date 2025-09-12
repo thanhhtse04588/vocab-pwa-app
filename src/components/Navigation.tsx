@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setActiveTab } from '@/store/slices/navigationSlice';
+import type { TabId } from '@/types';
 import { Button, Pane } from 'evergreen-ui';
 import { BookOpen, Gear, House } from 'phosphor-react';
 import React from 'react';
@@ -9,7 +10,7 @@ const Navigation: React.FC = () => {
   const { activeTab } = useAppSelector((state) => state.navigation);
 
   const handleTabChange = (tabId: string) => {
-    dispatch(setActiveTab(tabId as any));
+    dispatch(setActiveTab(tabId as TabId));
   };
 
   return (

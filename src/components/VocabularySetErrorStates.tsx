@@ -2,10 +2,11 @@ import React from 'react';
 import { Pane, Spinner, Text, Card, Button } from 'evergreen-ui';
 import { useAppDispatch } from '@/hooks/redux';
 import { setActiveTab } from '@/store/slices/navigationSlice';
+import type { VocabularySet } from '@/types';
 
 interface VocabularySetErrorStatesProps {
   loading: boolean;
-  currentSet: any;
+  currentSet: VocabularySet | null;
   setId: string;
 }
 
@@ -90,7 +91,3 @@ const VocabularySetErrorStates: React.FC<VocabularySetErrorStatesProps> = ({
 };
 
 export default VocabularySetErrorStates;
-
-
-
-

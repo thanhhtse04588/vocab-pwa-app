@@ -8,12 +8,15 @@ import {
   Alert,
   Spinner,
 } from 'evergreen-ui';
-import { firebaseTTSService } from '@/services/firebaseTTSService';
+import {
+  firebaseTTSService,
+  type WaveNetVoice,
+} from '@/services/firebaseTTSService';
 import { useAppSelector } from '@/hooks/redux';
 
 const FirebaseTTSTestComponent: React.FC = () => {
   const { settings } = useAppSelector((state) => state.settings);
-  const [availableVoices, setAvailableVoices] = useState<any[]>([]);
+  const [availableVoices, setAvailableVoices] = useState<WaveNetVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>('');
   const [testText, setTestText] = useState(
     'Hello, this is a test of Firebase TTS integration.'
@@ -65,7 +68,7 @@ const FirebaseTTSTestComponent: React.FC = () => {
     }
   };
 
-  const getVoiceDisplayName = (voice: any) => {
+  const getVoiceDisplayName = (voice: WaveNetVoice) => {
     const parts = voice.name.split('-');
     const language = parts[0] + '-' + parts[1];
     const gender =

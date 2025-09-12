@@ -78,7 +78,7 @@ const settingsSlice = createSlice({
     // TTS Settings - Always use google-cloud (WaveNet) as primary
     setTTSProvider: (
       state,
-      action: PayloadAction<'web-speech' | 'google-cloud'>
+      _action: PayloadAction<'web-speech' | 'google-cloud'>
     ) => {
       if (state.settings) {
         // Always set to google-cloud (WaveNet) - fallback handled in audio service

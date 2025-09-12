@@ -22,6 +22,15 @@ export interface WaveNetVoice {
   naturalSampleRateHertz: number;
 }
 
+interface FirebaseVoicesResponse {
+  voices: WaveNetVoice[];
+}
+
+interface FirebaseSynthesizeResponse {
+  success: boolean;
+  audioContent: string;
+}
+
 class FirebaseTTSService {
   private functions: ReturnType<typeof getFunctions> | null = null;
   private synthesizeSpeechFunction: ReturnType<typeof httpsCallable> | null =
@@ -76,7 +85,7 @@ class FirebaseTTSService {
 
     try {
       const result = await this.getVoicesFunction();
-      return (result.data as any).voices || [];
+      return (result.data as FirebaseVoicesResponse).voices || [];
     } catch (error) {
       console.error('Failed to fetch voices from Firebase function:', error);
       throw new Error('Failed to fetch available voices');
@@ -110,11 +119,12 @@ class FirebaseTTSService {
         volumeGainDb: options.volumeGainDb || 0.0,
       });
 
-      if (!(result.data as any).success || !(result.data as any).audioContent) {
+      const response = result.data as FirebaseSynthesizeResponse;
+      if (!response.success || !response.audioContent) {
         throw new Error('Failed to synthesize speech');
       }
 
-      return (result.data as any).audioContent;
+      return response.audioContent;
     } catch (error) {
       console.error(
         'Failed to synthesize speech via Firebase function:',

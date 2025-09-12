@@ -1,8 +1,13 @@
 import type { UserSettings } from '@/types';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 class PWAService {
   private registration: ServiceWorkerRegistration | null = null;
-  private deferredPrompt: any = null;
+  private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
   constructor() {
     this.setupInstallPrompt();
@@ -14,7 +19,7 @@ class PWAService {
       // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
       // Stash the event so it can be triggered later
-      this.deferredPrompt = e;
+      this.deferredPrompt = e as BeforeInstallPromptEvent;
     });
 
     window.addEventListener('appinstalled', () => {
@@ -38,10 +43,10 @@ class PWAService {
     try {
       // Show the install prompt
       this.deferredPrompt.prompt();
-      
+
       // Wait for the user to respond to the prompt
       const { outcome } = await this.deferredPrompt.userChoice;
-      
+
       if (outcome === 'accepted') {
         return true;
       } else {
@@ -77,7 +82,7 @@ class PWAService {
 
     try {
       const permission = await this.requestNotificationPermission();
-      
+
       if (permission !== 'granted') {
         throw new Error('Notification permission not granted');
       }
@@ -86,8 +91,10 @@ class PWAService {
       await this.clearScheduledNotifications();
 
       // Parse notification time
-      const [_hours, _minutes] = settings.notificationTime.split(':').map(Number);
-      
+      const [_hours, _minutes] = settings.notificationTime
+        .split(':')
+        .map(Number);
+
       // Schedule daily notification
       await this.registration.showNotification('BeeVocab - Study Time!', {
         body: 'Time to review your vocabulary words!',
@@ -96,14 +103,13 @@ class PWAService {
         tag: 'vocab-study-reminder',
         requireInteraction: true,
         data: {
-          url: '/learn'
-        }
+          url: '/learn',
+        },
       });
 
       // Schedule recurring notification using setInterval as a fallback
       // Note: In a real app, you'd use a more sophisticated scheduling system
       this.scheduleRecurringNotification(settings);
-
     } catch (error) {
       console.error('Error scheduling notification:', error);
     }
@@ -140,8 +146,8 @@ class PWAService {
         tag: 'vocab-study-reminder',
         requireInteraction: true,
         data: {
-          url: '/learn'
-        }
+          url: '/learn',
+        },
       });
     } catch (error) {
       console.error('Error showing study reminder:', error);
@@ -153,7 +159,7 @@ class PWAService {
 
     try {
       const notifications = await this.registration.getNotifications();
-      notifications.forEach(notification => {
+      notifications.forEach((notification) => {
         if (notification.tag === 'vocab-study-reminder') {
           notification.close();
         }
@@ -163,7 +169,10 @@ class PWAService {
     }
   }
 
-  async showNotification(title: string, options?: NotificationOptions): Promise<void> {
+  async showNotification(
+    title: string,
+    options?: NotificationOptions
+  ): Promise<void> {
     if (!this.registration) {
       throw new Error('Service Worker not available');
     }
@@ -172,7 +181,7 @@ class PWAService {
       await this.registration.showNotification(title, {
         icon: '/pwa-192x192.png',
         badge: '/pwa-192x192.png',
-        ...options
+        ...options,
       });
     } catch (error) {
       console.error('Error showing notification:', error);
@@ -196,14 +205,14 @@ class PWAService {
       if (!url) {
         return;
       }
-      
+
       const audio = new Audio(url);
-      
+
       // Check if the audio can be loaded
       audio.addEventListener('error', () => {
         console.warn('Audio file not found or cannot be loaded:', url);
       });
-      
+
       await audio.play();
     } catch (error) {
       console.warn('Error playing sound:', error);
@@ -212,15 +221,18 @@ class PWAService {
   }
 
   isInstalled(): boolean {
-    return window.matchMedia('(display-mode: standalone)').matches ||
-           (window.navigator as any).standalone === true;
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone ===
+        true
+    );
   }
 
   canInstall(): boolean {
     return this.deferredPrompt !== null;
   }
 
-  getInstallPrompt(): any {
+  getInstallPrompt(): BeforeInstallPromptEvent | null {
     return this.deferredPrompt;
   }
 
@@ -230,7 +242,7 @@ class PWAService {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
           const { action, url } = event.data;
-          
+
           if (action === 'study' && url) {
             // Navigate to study page
             window.location.href = url;

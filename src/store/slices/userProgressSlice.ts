@@ -1,5 +1,9 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-import type { UserProgress } from '@/types';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
+import type { UserProgress, MemoryLevel } from '@/types';
 import { db } from '@/services/database';
 import { generateUUID } from '@/utils/uuid';
 
@@ -60,24 +64,39 @@ export const loadCombinedMemoryLevelDistribution = createAsyncThunk(
   async () => {
     // Get all vocabulary sets
     const sets = await db.vocabularySets.toArray();
-    
+
     // Combine memory level distribution from all sets
-    const combinedDistribution: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
-    
+    const combinedDistribution: Record<number, number> = {
+      0: 0,
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+      6: 0,
+      7: 0,
+    };
+
     for (const set of sets) {
       const distribution = await db.getMemoryLevelDistribution(set.id);
       for (const [level, count] of Object.entries(distribution)) {
         combinedDistribution[parseInt(level)] += count;
       }
     }
-    
+
     return combinedDistribution;
   }
 );
 
 export const updateProgress = createAsyncThunk(
   'userProgress/update',
-  async ({ setId, updates }: { setId: string; updates: Partial<UserProgress> }) => {
+  async ({
+    setId,
+    updates,
+  }: {
+    setId: string;
+    updates: Partial<UserProgress>;
+  }) => {
     const existingProgress = await db.userProgress
       .where('vocabularySetId')
       .equals(setId)
@@ -96,7 +115,16 @@ export const updateProgress = createAsyncThunk(
         totalIncorrectAnswers: 0,
         averageAccuracy: 0,
         streakDays: 0,
-        memoryLevelDistribution: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 },
+        memoryLevelDistribution: {
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0,
+          6: 0,
+          7: 0,
+        },
         ...updates,
       };
       await db.userProgress.add(newProgress);
@@ -120,11 +148,20 @@ const userProgressSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    updateMemoryDistribution: (state, action: PayloadAction<{ setId: string; distribution: Record<number, number> }>) => {
+    updateMemoryDistribution: (
+      state,
+      action: PayloadAction<{
+        setId: string;
+        distribution: Record<number, number>;
+      }>
+    ) => {
       const { setId, distribution } = action.payload;
-      const progressIndex = state.progress.findIndex(p => p.vocabularySetId === setId);
+      const progressIndex = state.progress.findIndex(
+        (p) => p.vocabularySetId === setId
+      );
       if (progressIndex !== -1) {
-        state.progress[progressIndex].memoryLevelDistribution = distribution as any;
+        state.progress[progressIndex].memoryLevelDistribution =
+          distribution as Record<MemoryLevel, number>;
       }
     },
   },
@@ -143,11 +180,13 @@ const userProgressSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to load user progress';
       })
-      
+
       // Load progress for set
       .addCase(loadProgressForSet.fulfilled, (state, action) => {
         if (action.payload) {
-          const existingIndex = state.progress.findIndex(p => p.id === action.payload!.id);
+          const existingIndex = state.progress.findIndex(
+            (p) => p.id === action.payload!.id
+          );
           if (existingIndex !== -1) {
             state.progress[existingIndex] = action.payload;
           } else {
@@ -155,37 +194,45 @@ const userProgressSlice = createSlice({
           }
         }
       })
-      
+
       // Load memory level distribution
       .addCase(loadMemoryLevelDistribution.fulfilled, (state, action) => {
         const { setId, distribution } = action.payload;
-        const progressIndex = state.progress.findIndex(p => p.vocabularySetId === setId);
+        const progressIndex = state.progress.findIndex(
+          (p) => p.vocabularySetId === setId
+        );
         if (progressIndex !== -1) {
-          state.progress[progressIndex].memoryLevelDistribution = distribution as any;
+          state.progress[progressIndex].memoryLevelDistribution =
+            distribution as Record<MemoryLevel, number>;
         }
         state.memoryLevelDistribution = distribution;
       })
-      
+
       // Load total words to review
       .addCase(loadTotalWordsToReview.fulfilled, (state, action) => {
         state.totalWordsToReview = action.payload;
       })
-      
+
       // Load combined memory level distribution
-      .addCase(loadCombinedMemoryLevelDistribution.fulfilled, (state, action) => {
-        state.memoryLevelDistribution = action.payload;
-      })
-      
+      .addCase(
+        loadCombinedMemoryLevelDistribution.fulfilled,
+        (state, action) => {
+          state.memoryLevelDistribution = action.payload;
+        }
+      )
+
       // Update progress
       .addCase(updateProgress.fulfilled, (state, action) => {
-        const existingIndex = state.progress.findIndex(p => p.id === action.payload.id);
+        const existingIndex = state.progress.findIndex(
+          (p) => p.id === action.payload.id
+        );
         if (existingIndex !== -1) {
           state.progress[existingIndex] = action.payload;
         } else {
           state.progress.push(action.payload);
         }
       })
-      
+
       // Reset progress
       .addCase(resetProgress.pending, (state) => {
         state.loading = true;
@@ -194,7 +241,9 @@ const userProgressSlice = createSlice({
       .addCase(resetProgress.fulfilled, (state, action) => {
         state.loading = false;
         // Remove progress for the reset set
-        state.progress = state.progress.filter(p => p.vocabularySetId !== action.payload);
+        state.progress = state.progress.filter(
+          (p) => p.vocabularySetId !== action.payload
+        );
         // Reset memory level distribution
         state.memoryLevelDistribution = {};
       })
@@ -205,5 +254,6 @@ const userProgressSlice = createSlice({
   },
 });
 
-export const { clearError, updateMemoryDistribution } = userProgressSlice.actions;
+export const { clearError, updateMemoryDistribution } =
+  userProgressSlice.actions;
 export default userProgressSlice.reducer;
