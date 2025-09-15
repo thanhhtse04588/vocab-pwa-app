@@ -25,8 +25,8 @@ export interface PublicVocabularySetMeta
     VocabularySet,
     | 'name'
     | 'description'
-    | 'sourceLanguage'
-    | 'targetLanguage'
+    | 'wordLanguage'
+    | 'meaningLanguage'
     | 'wordCount'
     | 'createdAt'
   > {
@@ -165,8 +165,8 @@ export async function fetchPublicVocabularySets(): Promise<
       id: docSnap.id,
       name: data.set?.name ?? data.name ?? '',
       description: data.set?.description ?? data.description ?? '',
-      sourceLanguage: data.set?.sourceLanguage ?? data.sourceLanguage ?? '',
-      targetLanguage: data.set?.targetLanguage ?? data.targetLanguage ?? '',
+      wordLanguage: data.set?.wordLanguage ?? data.wordLanguage ?? '',
+      meaningLanguage: data.set?.meaningLanguage ?? data.meaningLanguage ?? '',
       wordCount: data.set?.wordCount ?? data.wordCount ?? 0,
       createdAt:
         data.set?.createdAt ?? data.createdAt ?? new Date().toISOString(),
@@ -206,8 +206,8 @@ export async function fetchPublicVocabularySetWithWords(
     id: docSnap.id,
     name: data.set?.name ?? data.name ?? '',
     description: data.set?.description ?? data.description ?? '',
-    sourceLanguage: data.set?.sourceLanguage ?? data.sourceLanguage ?? '',
-    targetLanguage: data.set?.targetLanguage ?? data.targetLanguage ?? '',
+    wordLanguage: data.set?.wordLanguage ?? data.wordLanguage ?? '',
+    meaningLanguage: data.set?.meaningLanguage ?? data.meaningLanguage ?? '',
     wordCount: data.set?.wordCount ?? data.wordCount ?? words.length,
     createdAt:
       data.set?.createdAt ?? data.createdAt ?? new Date().toISOString(),

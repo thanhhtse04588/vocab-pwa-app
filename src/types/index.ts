@@ -4,8 +4,8 @@ export interface VocabularySet {
   id: string;
   name: string;
   description: string;
-  sourceLanguage: string;
-  targetLanguage: string;
+  wordLanguage: string;
+  meaningLanguage: string;
   createdAt: string;
   lastStudiedAt?: string;
   wordCount: number;
@@ -19,6 +19,7 @@ export interface VocabularyWord {
   meaning: string;
   pronunciation?: string;
   example?: string;
+  wordType?: WordType;
   memoryLevel: MemoryLevel;
   nextReviewAt: string;
   correctCount: number;
@@ -28,6 +29,20 @@ export interface VocabularyWord {
 }
 
 export type MemoryLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export type WordType =
+  | 'noun' // danh từ
+  | 'verb' // động từ
+  | 'adjective' // tính từ
+  | 'adverb' // trạng từ
+  | 'pronoun' // đại từ
+  | 'preposition' // giới từ
+  | 'conjunction' // liên từ
+  | 'interjection' // thán từ
+  | 'abbreviation' // viết tắt
+  | 'phrase' // cụm từ
+  | 'sentence' // câu
+  | 'other'; // khác
 
 export interface StudySession {
   id: string;
@@ -105,6 +120,7 @@ export interface CSVWordData {
   meaning: string;
   pronunciation?: string;
   example?: string;
+  wordType?: WordType;
 }
 
 // Backup/Restore types

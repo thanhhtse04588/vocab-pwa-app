@@ -74,7 +74,7 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
   if (totalWords === 0) {
     return (
       <Card>
-        <Pane paddingX={24} textAlign="center">
+        <Pane padding={24} textAlign="center">
           <Text color="muted">No words to display in chart</Text>
         </Pane>
       </Card>

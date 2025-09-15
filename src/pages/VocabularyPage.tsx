@@ -35,8 +35,8 @@ const VocabularyPage: React.FC = () => {
   const handleCreateSet = async (newSetData: {
     name: string;
     description: string;
-    sourceLanguage: string;
-    targetLanguage: string;
+    wordLanguage: string;
+    meaningLanguage: string;
   }) => {
     const result = await dispatch(createVocabularySet(newSetData));
 

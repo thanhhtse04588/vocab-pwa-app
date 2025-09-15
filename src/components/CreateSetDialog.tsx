@@ -6,8 +6,8 @@ import AppTextarea from './AppTextarea';
 interface NewSetData {
   name: string;
   description: string;
-  sourceLanguage: string;
-  targetLanguage: string;
+  wordLanguage: string;
+  meaningLanguage: string;
 }
 
 interface CreateSetDialogProps {
@@ -35,8 +35,8 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
   const [newSetData, setNewSetData] = useState<NewSetData>({
     name: '',
     description: '',
-    sourceLanguage: 'en',
-    targetLanguage: 'vi',
+    wordLanguage: 'en',
+    meaningLanguage: 'vi',
   });
 
   const handleInputChange = (field: keyof NewSetData, value: string) => {
@@ -49,8 +49,8 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
       setNewSetData({
         name: '',
         description: '',
-        sourceLanguage: 'en',
-        targetLanguage: 'vi',
+        wordLanguage: 'en',
+        meaningLanguage: 'vi',
       });
     }
   };
@@ -59,8 +59,8 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
     setNewSetData({
       name: '',
       description: '',
-      sourceLanguage: 'en',
-      targetLanguage: 'vi',
+      wordLanguage: 'en',
+      meaningLanguage: 'vi',
     });
     onClose();
   };
@@ -104,14 +104,14 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
 
         <Pane marginBottom={16}>
           <Text display="block" marginBottom={8} fontWeight={500}>
-            Source Language
+            Word Language
           </Text>
           <Select
-            value={newSetData.sourceLanguage}
+            value={newSetData.wordLanguage}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setNewSetData({
                 ...newSetData,
-                sourceLanguage: e.target.value,
+                wordLanguage: e.target.value,
               })
             }
             width="100%"
@@ -126,14 +126,14 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
 
         <Pane marginBottom={16}>
           <Text display="block" marginBottom={8} fontWeight={500}>
-            Target Language
+            Meaning Language
           </Text>
           <Select
-            value={newSetData.targetLanguage}
+            value={newSetData.meaningLanguage}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setNewSetData({
                 ...newSetData,
-                targetLanguage: e.target.value,
+                meaningLanguage: e.target.value,
               })
             }
             width="100%"

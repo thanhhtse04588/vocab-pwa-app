@@ -31,8 +31,8 @@ function convertToPublicVocabularySetMeta(setData) {
     id: setData.id,
     name: setData.name,
     description: setData.description,
-    sourceLanguage: setData.sourceLanguage,
-    targetLanguage: setData.targetLanguage,
+    wordLanguage: setData.wordLanguage,
+    meaningLanguage: setData.meaningLanguage,
     wordCount: setData.words ? setData.words.length : 0,
     createdAt: setData.createdAt,
   };
@@ -44,8 +44,8 @@ const sampleSets = [
     name: '100 Common Daily Life English Sentences',
     description:
       'Essential English sentences for daily conversations and everyday situations',
-    sourceLanguage: 'vi',
-    targetLanguage: 'en',
+    wordLanguage: 'vi',
+    meaningLanguage: 'en',
     createdAt: new Date().toISOString(),
     isActive: true,
     words: [

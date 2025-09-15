@@ -64,7 +64,6 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
     currentBatch,
     currentWordIndex,
     sessionResults,
-    incorrectWords,
     isStudying,
     batchSize,
     sessionSetId,
@@ -101,8 +100,8 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
   useEffect(() => {
     if (showAnswer && settings?.autoPlayPronunciation && currentWord) {
       // Determine the language to use for TTS
-      const ttsLanguage = currentVocabularySet?.targetLanguage
-        ? getTTSLanguageCode(currentVocabularySet.targetLanguage)
+      const ttsLanguage = currentVocabularySet?.wordLanguage
+        ? getTTSLanguageCode(currentVocabularySet.wordLanguage)
         : 'en-US';
 
       // Auto-play pronunciation of the correct answer using target language and TTS settings
@@ -277,7 +276,6 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
       <StudySessionHeader
         currentWordIndex={currentWordIndex}
         totalWords={currentBatch.length}
-        incorrectWordsCount={incorrectWords.length}
         progress={progress}
         onBack={handleBackToVocabulary}
       />

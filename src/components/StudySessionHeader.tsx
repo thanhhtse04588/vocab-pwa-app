@@ -5,7 +5,6 @@ import React from 'react';
 interface StudySessionHeaderProps {
   currentWordIndex: number;
   totalWords: number;
-  incorrectWordsCount: number;
   progress: number;
   onBack?: () => void;
 }
@@ -13,7 +12,6 @@ interface StudySessionHeaderProps {
 const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
   currentWordIndex,
   totalWords,
-  incorrectWordsCount,
   progress,
   onBack,
 }) => {
@@ -40,11 +38,6 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
         </Pane>
         <Text color="muted">
           {currentWordIndex + 1} / {totalWords}
-          {incorrectWordsCount > 0 && (
-            <Text color="danger" marginLeft={8}>
-              (Retry: {incorrectWordsCount})
-            </Text>
-          )}
         </Text>
       </Pane>
 

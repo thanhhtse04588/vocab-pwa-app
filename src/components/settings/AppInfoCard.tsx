@@ -20,7 +20,7 @@ const AppInfoCard: React.FC = () => {
                 size={16}
                 style={{ marginRight: '8px', color: 'var(--text-muted)' }}
               />
-              <Text fontWeight={600}>Build: PWA</Text>
+              <Text fontWeight={600}>PWA</Text>
             </Pane>
           </Pane>
           <Pane flex={1}>
@@ -29,14 +29,14 @@ const AppInfoCard: React.FC = () => {
                 size={16}
                 style={{ marginRight: '8px', color: 'var(--text-muted)' }}
               />
-              <Text fontWeight={600}>Framework: Evergreen UI</Text>
+              <Text fontWeight={600}>Evergreen UI</Text>
             </Pane>
             <Pane display="flex" alignItems="center">
               <Database
                 size={16}
                 style={{ marginRight: '8px', color: 'var(--text-muted)' }}
               />
-              <Text fontWeight={600}>Storage: IndexedDB</Text>
+              <Text fontWeight={600}>IndexedDB</Text>
             </Pane>
           </Pane>
         </Pane>

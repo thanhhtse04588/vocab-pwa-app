@@ -25,8 +25,8 @@ interface ImportPresetDialogProps {
 interface PresetSet {
   id: string;
   name: string;
-  sourceLanguage: string;
-  targetLanguage: string;
+  wordLanguage: string;
+  meaningLanguage: string;
   wordCount: number;
 }
 
@@ -54,8 +54,8 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
   const filteredSets = publicSets.filter(
     (preset: PresetSet) =>
       preset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      preset.sourceLanguage.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      preset.targetLanguage.toLowerCase().includes(searchQuery.toLowerCase())
+      preset.wordLanguage.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      preset.meaningLanguage.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -152,13 +152,13 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
                         gap={3}
                       >
                         <Badge color="blue" size="small">
-                          {preset.sourceLanguage}
+                          {preset.wordLanguage}
                         </Badge>
                         <Text size={300} marginX={4} color="muted">
                           →
                         </Text>
                         <Badge color="green" size="small">
-                          {preset.targetLanguage}
+                          {preset.meaningLanguage}
                         </Badge>
                       </Pane>
 

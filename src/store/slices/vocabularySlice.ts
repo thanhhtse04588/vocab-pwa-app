@@ -1,7 +1,15 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 import type { VocabularySet, VocabularyWord, CSVWordData } from '@/types';
 import { db } from '@/services/database';
-import { fetchPublicVocabularySets, fetchPublicVocabularySetWithWords, type PublicVocabularySetMeta } from '@/services/firebaseService';
+import {
+  fetchPublicVocabularySets,
+  fetchPublicVocabularySetWithWords,
+  type PublicVocabularySetMeta,
+} from '@/services/firebaseService';
 
 interface VocabularyState {
   sets: VocabularySet[];
@@ -48,13 +56,16 @@ export const downloadPublicSet = createAsyncThunk(
     const { set, words } = await fetchPublicVocabularySetWithWords(publicSetId);
 
     // Create local set
-    const newSetId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+    const newSetId =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2);
     const localSet: VocabularySet = {
       id: newSetId,
       name: set.name,
       description: set.description,
-      sourceLanguage: set.sourceLanguage,
-      targetLanguage: set.targetLanguage,
+      wordLanguage: set.wordLanguage,
+      meaningLanguage: set.meaningLanguage,
       createdAt: new Date().toISOString(),
       lastStudiedAt: undefined,
       wordCount: words.length,
@@ -67,7 +78,10 @@ export const downloadPublicSet = createAsyncThunk(
     const now = new Date();
     const nextReview = new Date(now.getTime() + 10 * 60 * 1000).toISOString();
     const localWords: VocabularyWord[] = words.map((w) => ({
-      id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2),
+      id:
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2),
       vocabularySetId: newSetId,
       word: w.word,
       meaning: w.meaning,
@@ -106,16 +120,18 @@ const generateUUID = (): string => {
     return crypto.randomUUID();
   }
   // Fallback for older browsers (including Safari < 15.4)
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
 
 export const createVocabularySet = createAsyncThunk(
   'vocabulary/createSet',
-  async (setData: Omit<VocabularySet, 'id' | 'createdAt' | 'wordCount' | 'isActive'>) => {
+  async (
+    setData: Omit<VocabularySet, 'id' | 'createdAt' | 'wordCount' | 'isActive'>
+  ) => {
     try {
       const id = generateUUID();
       const newSet: VocabularySet = {
@@ -125,12 +141,16 @@ export const createVocabularySet = createAsyncThunk(
         wordCount: 0,
         isActive: true,
       };
-      
+
       await db.vocabularySets.add(newSet);
       return newSet;
     } catch (error) {
       console.error('Error creating vocabulary set:', error);
-      throw new Error(`Failed to create vocabulary set: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create vocabulary set: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   }
 );
@@ -161,12 +181,22 @@ export const deleteVocabularySet = createAsyncThunk(
 
 export const addVocabularyWord = createAsyncThunk(
   'vocabulary/addWord',
-  async (wordData: Omit<VocabularyWord, 'id' | 'createdAt' | 'memoryLevel' | 'correctCount' | 'incorrectCount' | 'nextReviewAt'>) => {
+  async (
+    wordData: Omit<
+      VocabularyWord,
+      | 'id'
+      | 'createdAt'
+      | 'memoryLevel'
+      | 'correctCount'
+      | 'incorrectCount'
+      | 'nextReviewAt'
+    >
+  ) => {
     try {
       const id = generateUUID();
       const nextReview = new Date();
       nextReview.setMinutes(nextReview.getMinutes() + 10);
-      
+
       const newWord: VocabularyWord = {
         ...wordData,
         id,
@@ -176,21 +206,25 @@ export const addVocabularyWord = createAsyncThunk(
         incorrectCount: 0,
         nextReviewAt: nextReview.toISOString(),
       };
-      
+
       await db.vocabularyWords.add(newWord);
-      
+
       // Update word count in the set
       const set = await db.vocabularySets.get(wordData.vocabularySetId);
       if (set) {
         await db.vocabularySets.update(wordData.vocabularySetId, {
-          wordCount: set.wordCount + 1
+          wordCount: set.wordCount + 1,
         });
       }
-      
+
       return newWord;
     } catch (error) {
       console.error('Error adding vocabulary word:', error);
-      throw new Error(`Failed to add vocabulary word: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to add vocabulary word: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   }
 );
@@ -210,12 +244,12 @@ export const deleteVocabularyWord = createAsyncThunk(
     const word = await db.vocabularyWords.get(id);
     if (word) {
       await db.vocabularyWords.delete(id);
-      
+
       // Update word count in the set
       const set = await db.vocabularySets.get(word.vocabularySetId);
       if (set) {
         await db.vocabularySets.update(word.vocabularySetId, {
-          wordCount: Math.max(0, set.wordCount - 1)
+          wordCount: Math.max(0, set.wordCount - 1),
         });
       }
     }
@@ -228,13 +262,13 @@ export const importCSVWords = createAsyncThunk(
   async ({ setId, words }: { setId: string; words: CSVWordData[] }) => {
     const results = [];
     const errors: string[] = [];
-    
+
     for (const wordData of words) {
       try {
         const id = generateUUID();
         const nextReview = new Date();
         nextReview.setMinutes(nextReview.getMinutes() + 10);
-        
+
         const newWord: VocabularyWord = {
           id,
           vocabularySetId: setId,
@@ -242,28 +276,29 @@ export const importCSVWords = createAsyncThunk(
           meaning: wordData.meaning.trim(),
           pronunciation: wordData.pronunciation?.trim(),
           example: wordData.example?.trim(),
+          wordType: wordData.wordType,
           createdAt: new Date().toISOString(),
           memoryLevel: 0,
           correctCount: 0,
           incorrectCount: 0,
           nextReviewAt: nextReview.toISOString(),
         };
-        
+
         await db.vocabularyWords.add(newWord);
         results.push(newWord);
       } catch (error) {
         errors.push(`Failed to import "${wordData.word}": ${error}`);
       }
     }
-    
+
     // Update word count in the set
     const set = await db.vocabularySets.get(setId);
     if (set) {
       await db.vocabularySets.update(setId, {
-        wordCount: set.wordCount + results.length
+        wordCount: set.wordCount + results.length,
       });
     }
-    
+
     return { importedWords: results, errors };
   }
 );
@@ -315,7 +350,7 @@ const vocabularySlice = createSlice({
         state.publicLoading = false;
         state.error = action.error.message || 'Failed to fetch public sets';
       })
-      
+
       // Load words
       .addCase(loadVocabularyWords.pending, (state) => {
         state.loading = true;
@@ -329,7 +364,7 @@ const vocabularySlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to load vocabulary words';
       })
-      
+
       // Create set
       .addCase(createVocabularySet.pending, (state) => {
         state.loading = true;
@@ -343,10 +378,12 @@ const vocabularySlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to create vocabulary set';
       })
-      
+
       // Update set
       .addCase(updateVocabularySet.fulfilled, (state, action) => {
-        const index = state.sets.findIndex(set => set.id === action.payload.id);
+        const index = state.sets.findIndex(
+          (set) => set.id === action.payload.id
+        );
         if (index !== -1) {
           state.sets[index] = action.payload;
         }
@@ -354,46 +391,57 @@ const vocabularySlice = createSlice({
           state.currentSet = action.payload;
         }
       })
-      
+
       // Delete set
       .addCase(deleteVocabularySet.fulfilled, (state, action) => {
-        state.sets = state.sets.filter(set => set.id !== action.payload);
+        state.sets = state.sets.filter((set) => set.id !== action.payload);
         if (state.currentSet?.id === action.payload) {
           state.currentSet = null;
           state.words = [];
         }
       })
-      
+
       // Add word
       .addCase(addVocabularyWord.fulfilled, (state, action) => {
         state.words.push(action.payload);
-        const setIndex = state.sets.findIndex(set => set.id === action.payload.vocabularySetId);
+        const setIndex = state.sets.findIndex(
+          (set) => set.id === action.payload.vocabularySetId
+        );
         if (setIndex !== -1) {
           state.sets[setIndex].wordCount += 1;
         }
       })
-      
+
       // Update word
       .addCase(updateVocabularyWord.fulfilled, (state, action) => {
-        const index = state.words.findIndex(word => word.id === action.payload.id);
+        const index = state.words.findIndex(
+          (word) => word.id === action.payload.id
+        );
         if (index !== -1) {
           state.words[index] = action.payload;
         }
       })
-      
+
       // Delete word
       .addCase(deleteVocabularyWord.fulfilled, (state, action) => {
-        state.words = state.words.filter(word => word.id !== action.payload);
-        const setIndex = state.sets.findIndex(set => set.id === state.currentSet?.id);
+        state.words = state.words.filter((word) => word.id !== action.payload);
+        const setIndex = state.sets.findIndex(
+          (set) => set.id === state.currentSet?.id
+        );
         if (setIndex !== -1) {
-          state.sets[setIndex].wordCount = Math.max(0, state.sets[setIndex].wordCount - 1);
+          state.sets[setIndex].wordCount = Math.max(
+            0,
+            state.sets[setIndex].wordCount - 1
+          );
         }
       })
-      
+
       // Import CSV
       .addCase(importCSVWords.fulfilled, (state, action) => {
         state.words.push(...action.payload.importedWords);
-        const setIndex = state.sets.findIndex(set => set.id === state.currentSet?.id);
+        const setIndex = state.sets.findIndex(
+          (set) => set.id === state.currentSet?.id
+        );
         if (setIndex !== -1) {
           state.sets[setIndex].wordCount += action.payload.importedWords.length;
         }
@@ -417,7 +465,7 @@ const vocabularySlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to download public set';
       })
-      
+
       // Load total words to review
       .addCase(loadTotalWordsToReview.fulfilled, (state, action) => {
         state.totalWordsToReview = action.payload;

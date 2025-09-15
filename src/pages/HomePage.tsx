@@ -10,14 +10,14 @@ import { setActiveTab } from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
 import StorageWarning from '@/components/StorageWarning';
 import MemoryLevelChart from '@/components/MemoryLevelChart';
-import AddWordFromHomeDialog from '@/components/AddWordFromHomeDialog';
+import AddWordDialog from '@/components/AddWordDialog';
+import { Plus } from 'phosphor-react';
 
 const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { totalWordsToReview } = useAppSelector((state) => state.userProgress);
   const { sets } = useAppSelector((state) => state.vocabulary);
   const { settings } = useAppSelector((state) => state.settings);
-
   const [isAddWordDialogShown, setIsAddWordDialogShown] = useState(false);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const HomePage: React.FC = () => {
         <StorageWarning />
 
         {/* Review Card */}
-        <Card marginBottom={24} elevation={1}>
+        <Card marginBottom={16} elevation={1}>
           <Pane
             padding={24}
             display="flex"
@@ -78,33 +78,34 @@ const HomePage: React.FC = () => {
                 review
               </Text>
             </Pane>
-            <Pane display="flex" gap={12}>
-              <Button
-                size="large"
-                appearance="default"
-                intent="none"
-                onClick={() => setIsAddWordDialogShown(true)}
-                disabled={sets.length === 0}
-                title={
-                  sets.length === 0
-                    ? 'Create a vocabulary set first'
-                    : 'Add a new word to any vocabulary set'
-                }
-              >
-                Add Word
-              </Button>
-              <Button
-                size="large"
-                appearance="primary"
-                intent="none"
-                onClick={handleStartReview}
-                disabled={totalWordsToReview === 0}
-              >
-                Review
-              </Button>
-            </Pane>
+            <Button
+              size="large"
+              appearance="primary"
+              intent="none"
+              onClick={handleStartReview}
+              disabled={totalWordsToReview === 0}
+            >
+              Review
+            </Button>
           </Pane>
         </Card>
+
+        {/* Add Word Button */}
+        <Pane marginBottom={16} display="flex">
+          <Button
+            size="medium"
+            appearance="default"
+            onClick={() => setIsAddWordDialogShown(true)}
+            disabled={sets.length === 0}
+            title={
+              sets.length === 0
+                ? 'Create a vocabulary set first'
+                : 'Add a new word to any vocabulary set'
+            }
+          >
+            Add New Word
+          </Button>
+        </Pane>
 
         {/* Statistics */}
         <Heading size={500} marginBottom={16}>
@@ -149,9 +150,10 @@ const HomePage: React.FC = () => {
       </Pane>
 
       {/* Add Word Dialog */}
-      <AddWordFromHomeDialog
+      <AddWordDialog
         isShown={isAddWordDialogShown}
         onClose={() => setIsAddWordDialogShown(false)}
+        // No setId provided - will show vocabulary set selection
       />
     </Pane>
   );

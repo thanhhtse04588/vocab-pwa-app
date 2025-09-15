@@ -160,7 +160,12 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         />
 
         {/* Words List */}
-        <WordList words={words} loading={loading} onEditWord={handleEditWord} />
+        <WordList
+          words={words}
+          language={currentSet.wordLanguage}
+          loading={loading}
+          onEditWord={handleEditWord}
+        />
       </Pane>
 
       {/* Add/Edit Word Dialog */}

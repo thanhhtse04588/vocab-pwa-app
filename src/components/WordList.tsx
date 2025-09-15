@@ -21,9 +21,15 @@ interface WordListProps {
   words: VocabularyWord[];
   loading: boolean;
   onEditWord: (word: VocabularyWord) => void;
+  language: string;
 }
 
-const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
+const WordList: React.FC<WordListProps> = ({
+  words,
+  loading,
+  onEditWord,
+  language,
+}) => {
   const dispatch = useAppDispatch();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [wordToDelete, setWordToDelete] = useState<string | null>(null);
@@ -172,7 +178,7 @@ const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
                 <Heading size={500} flex={1} minWidth={0}>
                   {word.word}
                 </Heading>
-                <AudioButton text={word.word} lang="en-US" rate={0.8} />
+                <AudioButton text={word.word} lang={language} rate={0.8} />
                 <Badge color={getMemoryLevelColor(word.memoryLevel)} size={300}>
                   {getMemoryLevelLabel(word.memoryLevel)}
                 </Badge>
@@ -182,6 +188,19 @@ const WordList: React.FC<WordListProps> = ({ words, loading, onEditWord }) => {
               <Text size={400} color="muted">
                 {word.meaning}
               </Text>
+
+              {/* Word Type */}
+              {word.wordType && (
+                <Text
+                  size={300}
+                  color="muted"
+                  fontSize="11px"
+                  textTransform="uppercase"
+                  letterSpacing="0.5px"
+                >
+                  {word.wordType}
+                </Text>
+              )}
 
               {/* Memory level and actions */}
               <Pane

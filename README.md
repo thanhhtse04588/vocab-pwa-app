@@ -293,8 +293,8 @@ publicVocabularySets (collection)
   └── <setId> (document)
         name: string
         description: string
-        sourceLanguage: string
-        targetLanguage: string
+        wordLanguage: string
+        meaningLanguage: string
         wordCount: number
         createdAt: string (ISO)
         words: Array<{ 

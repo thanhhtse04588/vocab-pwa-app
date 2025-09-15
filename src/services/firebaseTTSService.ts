@@ -45,7 +45,8 @@ class FirebaseTTSService {
     try {
       // Ensure Firebase is initialized
       ensureFirebase();
-      this.functions = getFunctions();
+      // Specify the region where functions are deployed
+      this.functions = getFunctions(undefined, 'asia-southeast1');
       this.synthesizeSpeechFunction = httpsCallable(
         this.functions,
         'synthesizeSpeech'
