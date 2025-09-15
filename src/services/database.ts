@@ -79,7 +79,8 @@ export class VocabDatabase extends Dexie {
           .toArray();
 
         const wordsToReview = words.filter(
-          (word) => new Date(word.nextReviewAt) <= new Date()
+          (word) =>
+            new Date(word.nextReviewAt) <= new Date() && word.memoryLevel >= 1
         ).length;
 
         const progress = await this.userProgress
@@ -105,7 +106,7 @@ export class VocabDatabase extends Dexie {
     const query = this.vocabularyWords
       .where('vocabularySetId')
       .equals(vocabularySetId)
-      .and((word) => word.nextReviewAt <= now);
+      .and((word) => word.nextReviewAt <= now && word.memoryLevel >= 1);
 
     if (limit) {
       return await query.limit(limit).toArray();
@@ -116,7 +117,10 @@ export class VocabDatabase extends Dexie {
 
   async getAllWordsForReview(limit?: number): Promise<VocabularyWord[]> {
     const now = new Date().toISOString();
-    const query = this.vocabularyWords.where('nextReviewAt').belowOrEqual(now);
+    const query = this.vocabularyWords
+      .where('nextReviewAt')
+      .belowOrEqual(now)
+      .and((word) => word.memoryLevel >= 1);
 
     if (limit) {
       return await query.limit(limit).toArray();
@@ -180,10 +184,11 @@ export class VocabDatabase extends Dexie {
     const words = await this.vocabularyWords
       .where('vocabularySetId')
       .equals(vocabularySetId)
+      .and((word) => word.memoryLevel >= 1)
       .toArray();
 
     const distribution: Record<number, number> = {};
-    for (let i = 0; i <= 7; i++) {
+    for (let i = 1; i <= 7; i++) {
       distribution[i] = 0;
     }
 
@@ -197,7 +202,11 @@ export class VocabDatabase extends Dexie {
 
   async getTotalWordsToReview(): Promise<number> {
     const now = new Date().toISOString();
-    return await this.vocabularyWords.where('nextReviewAt').below(now).count();
+    return await this.vocabularyWords
+      .where('nextReviewAt')
+      .below(now)
+      .and((word) => word.memoryLevel >= 1)
+      .count();
   }
 
   async createDefaultSettings(): Promise<UserSettings> {

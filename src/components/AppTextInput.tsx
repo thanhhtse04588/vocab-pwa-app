@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Text, Pane } from 'evergreen-ui';
+import { TextInput } from 'evergreen-ui';
 import { CHARACTER_LIMIT } from '@/constants';
 
 interface AppTextInputProps {
@@ -12,9 +12,8 @@ interface AppTextInputProps {
   paddingRight?: string | number;
   minWidth?: string | number;
   className?: string;
-  showCharacterCount?: boolean;
   maxLength?: number;
-  [key: string]: any; // For other TextInput props
+  [key: string]: unknown; // For other TextInput props
 }
 
 const AppTextInput: React.FC<AppTextInputProps> = ({
@@ -27,7 +26,6 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   paddingRight,
   minWidth,
   className,
-  showCharacterCount = true,
   maxLength = CHARACTER_LIMIT,
   ...props
 }) => {
@@ -49,26 +47,19 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   };
 
   return (
-    <Pane>
-      <TextInput
-        value={internalValue}
-        onChange={handleChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        width={width}
-        height={height}
-        paddingRight={paddingRight}
-        minWidth={minWidth}
-        className={className}
-        maxLength={maxLength}
-        {...props}
-      />
-      {showCharacterCount && (
-        <Text size={300} color="muted" marginTop={4}>
-          {internalValue.length}/{maxLength} characters
-        </Text>
-      )}
-    </Pane>
+    <TextInput
+      value={internalValue}
+      onChange={handleChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      width={width}
+      height={height}
+      paddingRight={paddingRight}
+      minWidth={minWidth}
+      className={className}
+      maxLength={maxLength}
+      {...props}
+    />
   );
 };
 

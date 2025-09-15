@@ -12,6 +12,7 @@ import { Pane, Spinner, Text } from 'evergreen-ui';
 import React, { useEffect, useState, useCallback } from 'react';
 import { playAudio } from '@/utils/audioUtils';
 import { getTTSLanguageCode } from '@/utils/languageMapping';
+import { compareWords } from '@/utils/wordComparison';
 import StudySessionHeader from '@/components/StudySessionHeader';
 import WordCard from '@/components/WordCard';
 import AnswerInput from '@/components/AnswerInput';
@@ -142,10 +143,8 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
     setIsSubmitting(true);
 
     try {
-      // Simple answer checking (in a real app, this would be more sophisticated)
-      const correct =
-        userAnswer.toLowerCase().trim() ===
-        currentWord.word.toLowerCase().trim();
+      // Compare user answer with correct word using helper function
+      const correct = compareWords(userAnswer, currentWord.word);
       setIsCorrect(correct);
       setShowAnswer(true);
       setIsMarkedAsTrue(false); // Reset mark as true state
@@ -301,7 +300,6 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
           onStopListening={stopListening}
           onClearInput={handleClearInput}
           onSubmitAnswer={handleSubmitAnswer}
-          wordMeaning={currentWord.meaning}
         />
       )}
 

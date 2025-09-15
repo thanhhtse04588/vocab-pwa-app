@@ -94,15 +94,11 @@ class AudioService {
     } catch (error) {
       console.error('Failed to play audio with WaveNet:', error);
 
-      try {
-        await this.playWithWebSpeech(text, {
-          ...options,
-          lang: options.lang || 'en-US', // Default to English
-          pitch: this.convertGenderToPitch(options.gender || 'neutral'), // Convert gender to pitch
-        });
-      } catch (fallbackError) {
-        throw fallbackError;
-      }
+      await this.playWithWebSpeech(text, {
+        ...options,
+        lang: options.lang || 'en-US', // Default to English
+        pitch: this.convertGenderToPitch(options.gender || 'neutral'), // Convert gender to pitch
+      });
     }
   }
 

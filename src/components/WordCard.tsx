@@ -59,9 +59,6 @@ const WordCard: React.FC<WordCardProps> = ({
               <AudioButton
                 text={word.word}
                 targetLanguage={vocabularySet?.targetLanguage}
-                tooltip={`Play pronunciation in ${
-                  vocabularySet?.targetLanguage || 'default'
-                } language`}
               />
             </Pane>
 

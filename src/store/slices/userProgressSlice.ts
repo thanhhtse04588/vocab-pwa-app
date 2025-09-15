@@ -65,9 +65,8 @@ export const loadCombinedMemoryLevelDistribution = createAsyncThunk(
     // Get all vocabulary sets
     const sets = await db.vocabularySets.toArray();
 
-    // Combine memory level distribution from all sets
+    // Combine memory level distribution from all sets (only levels 1-7)
     const combinedDistribution: Record<number, number> = {
-      0: 0,
       1: 0,
       2: 0,
       3: 0,

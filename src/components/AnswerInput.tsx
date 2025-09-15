@@ -1,4 +1,4 @@
-import { Card, Pane, Text, Button } from 'evergreen-ui';
+import { Button, Card, Pane } from 'evergreen-ui';
 import { Microphone, XCircle } from 'phosphor-react';
 import React from 'react';
 import AppTextInput from './AppTextInput';
@@ -12,7 +12,6 @@ interface AnswerInputProps {
   onStopListening: () => void;
   onClearInput: () => void;
   onSubmitAnswer: () => void;
-  wordMeaning: string;
 }
 
 const AnswerInput: React.FC<AnswerInputProps> = ({
@@ -24,27 +23,28 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
   onStopListening,
   onClearInput,
   onSubmitAnswer,
-  wordMeaning,
 }) => {
+  // Handle Enter key press to submit answer
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !isSubmitting && userAnswer.trim()) {
+      onSubmitAnswer();
+    }
+  };
   return (
     <Card marginBottom={24}>
       <Pane padding={24}>
-        <Text size={500} fontWeight={600} marginBottom={16}>
-          What is the word for "{wordMeaning}"?
-        </Text>
-
-        <Pane display="flex" gap={8} marginBottom={8} alignItems="center">
+        <Pane display="flex" gap={8} marginBottom={16} alignItems="center">
           <Pane position="relative" flex={1}>
             <AppTextInput
               placeholder="Enter your answer..."
               value={userAnswer}
               onChange={onAnswerChange}
+              onKeyDown={handleKeyDown}
               disabled={isSubmitting}
               width="100%"
               paddingRight={userAnswer ? 40 : 12}
               height={42}
               minWidth={42}
-              showCharacterCount={false}
             />
             {userAnswer && (
               <Button
@@ -62,8 +62,7 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
             )}
           </Pane>
           <Button
-            appearance={isListening ? 'primary' : 'default'}
-            intent={isListening ? 'danger' : 'none'}
+            appearance={isListening ? 'danger' : 'default'}
             onClick={isListening ? onStopListening : onStartListening}
             disabled={isSubmitting}
             height={40}
@@ -73,27 +72,6 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
             <Microphone size={20} />
           </Button>
         </Pane>
-
-        <Pane display="flex" justifyContent="flex-end" marginBottom={16}>
-          <Text size={300} color="muted">
-            {userAnswer.length}/126 characters
-          </Text>
-        </Pane>
-
-        {isListening && (
-          <Pane
-            padding={12}
-            backgroundColor="#e3f2fd"
-            borderRadius={8}
-            textAlign="center"
-            border="2px solid #2196f3"
-            marginBottom={16}
-          >
-            <Text size={400} color="#1976d2">
-              🎤 Listening... Speak now
-            </Text>
-          </Pane>
-        )}
 
         <Button
           appearance="primary"

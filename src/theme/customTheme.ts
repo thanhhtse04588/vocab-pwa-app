@@ -40,6 +40,21 @@ export const customTheme = mergeTheme(defaultTheme, {
             },
           },
         },
+        danger: {
+          color: 'white',
+          backgroundColor: 'indianred',
+          selectors: {
+            _hover: {
+              backgroundColor: 'firebrick',
+            },
+            _active: {
+              backgroundColor: 'darkred',
+            },
+            _focus: {
+              boxShadow: '0 0 0 2px lightcoral',
+            },
+          },
+        },
       },
     },
     IconButton: {

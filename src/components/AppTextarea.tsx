@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Textarea, Text, Pane } from 'evergreen-ui';
+import { Textarea } from 'evergreen-ui';
 import { CHARACTER_LIMIT } from '@/constants';
 
 interface AppTextareaProps {
@@ -10,9 +10,8 @@ interface AppTextareaProps {
   width?: string | number;
   height?: string | number;
   className?: string;
-  showCharacterCount?: boolean;
   maxLength?: number;
-  [key: string]: any; // For other Textarea props
+  [key: string]: unknown; // For other Textarea props
 }
 
 const AppTextarea: React.FC<AppTextareaProps> = ({
@@ -23,7 +22,6 @@ const AppTextarea: React.FC<AppTextareaProps> = ({
   width = '100%',
   height,
   className,
-  showCharacterCount = true,
   maxLength = CHARACTER_LIMIT,
   ...props
 }) => {
@@ -45,24 +43,17 @@ const AppTextarea: React.FC<AppTextareaProps> = ({
   };
 
   return (
-    <Pane>
-      <Textarea
-        value={internalValue}
-        onChange={handleChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        width={width}
-        height={height}
-        className={className}
-        maxLength={maxLength}
-        {...props}
-      />
-      {showCharacterCount && (
-        <Text size={300} color="muted" marginTop={4}>
-          {internalValue.length}/{maxLength} characters
-        </Text>
-      )}
-    </Pane>
+    <Textarea
+      value={internalValue}
+      onChange={handleChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      width={width}
+      height={height}
+      className={className}
+      maxLength={maxLength}
+      {...props}
+    />
   );
 };
 

@@ -40,7 +40,7 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
 
   const getMemoryLevelLabel = (level: number): string => {
     const labels = [
-      'New (0)',
+      '', // Empty for level 0 (not used)
       'Learning (1)',
       'Familiar (2)',
       'Known (3)',
@@ -54,7 +54,7 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
 
   const getMemoryLevelColor = (level: number): string => {
     const colors = [
-      '#ff6b6b', // Red - New
+      '', // Empty for level 0 (not used)
       '#ffa726', // Orange - Learning
       '#ffeb3b', // Yellow - Familiar
       '#66bb6a', // Green - Known
@@ -88,62 +88,69 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
           Memory Levels Distribution
         </Heading>
         <Pane className="memory-chart">
-          {Object.entries(chartData).map(([level, count]) => {
-            const levelNum = parseInt(level);
-            const percentage = totalWords > 0 ? (count / totalWords) * 100 : 0;
+          {Object.entries(chartData)
+            .filter(([level]) => parseInt(level) >= 1) // Only show levels 1-7
+            .map(([level, count]) => {
+              const levelNum = parseInt(level);
+              const percentage =
+                totalWords > 0 ? (count / totalWords) * 100 : 0;
 
-            return (
-              <Pane key={level} className="memory-level-item" marginBottom={12}>
+              return (
                 <Pane
-                  className="memory-level-info"
-                  display="flex"
-                  alignItems="center"
-                  marginBottom={4}
+                  key={level}
+                  className="memory-level-item"
+                  marginBottom={12}
                 >
                   <Pane
-                    className="memory-level-color"
-                    width={12}
-                    height={12}
-                    borderRadius="50%"
-                    marginRight={8}
-                    flexShrink={0}
-                    backgroundColor={getMemoryLevelColor(levelNum)}
-                  />
-                  <Pane
-                    className="memory-level-label"
-                    flex={1}
-                    fontSize={14}
-                    fontWeight={500}
+                    className="memory-level-info"
+                    display="flex"
+                    alignItems="center"
+                    marginBottom={4}
                   >
-                    {getMemoryLevelLabel(levelNum)}
+                    <Pane
+                      className="memory-level-color"
+                      width={12}
+                      height={12}
+                      borderRadius="50%"
+                      marginRight={8}
+                      flexShrink={0}
+                      backgroundColor={getMemoryLevelColor(levelNum)}
+                    />
+                    <Pane
+                      className="memory-level-label"
+                      flex={1}
+                      fontSize={14}
+                      fontWeight={500}
+                    >
+                      {getMemoryLevelLabel(levelNum)}
+                    </Pane>
+                    <Pane
+                      className="memory-level-count"
+                      fontSize={12}
+                      color="muted"
+                    >
+                      {count} ({percentage.toFixed(1)}%)
+                    </Pane>
                   </Pane>
                   <Pane
-                    className="memory-level-count"
-                    fontSize={12}
-                    color="muted"
-                  >
-                    {count} ({percentage.toFixed(1)}%)
-                  </Pane>
-                </Pane>
-                <Pane
-                  className="memory-level-bar"
-                  height={8}
-                  backgroundColor="#f7f9fc"
-                  borderRadius={4}
-                  overflow="hidden"
-                >
-                  <Pane
-                    className="memory-level-fill"
-                    height="100%"
-                    width={`${percentage}%`}
-                    backgroundColor={getMemoryLevelColor(levelNum)}
+                    className="memory-level-bar"
+                    height={8}
+                    backgroundColor="#f7f9fc"
                     borderRadius={4}
-                    transition="width 0.3s ease"
-                  />
+                    overflow="hidden"
+                  >
+                    <Pane
+                      className="memory-level-fill"
+                      height="100%"
+                      width={`${percentage}%`}
+                      backgroundColor={getMemoryLevelColor(levelNum)}
+                      borderRadius={4}
+                      transition="width 0.3s ease"
+                    />
+                  </Pane>
                 </Pane>
-              </Pane>
-            );
-          })}
+              );
+            })}
         </Pane>
         {showTotal && (
           <Pane

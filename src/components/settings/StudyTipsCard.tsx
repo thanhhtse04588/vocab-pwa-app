@@ -5,7 +5,7 @@ import { Lightbulb } from 'lucide-react';
 const StudyTipsCard: React.FC = () => {
   return (
     <Card>
-      <Pane paddingX={24}>
+      <Pane>
         <Pane display="flex" alignItems="center" marginBottom={16}>
           <Lightbulb
             size={20}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pane, Heading, Card, Button, Text } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
@@ -10,12 +10,15 @@ import { setActiveTab } from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
 import StorageWarning from '@/components/StorageWarning';
 import MemoryLevelChart from '@/components/MemoryLevelChart';
+import AddWordFromHomeDialog from '@/components/AddWordFromHomeDialog';
 
 const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { totalWordsToReview } = useAppSelector((state) => state.userProgress);
   const { sets } = useAppSelector((state) => state.vocabulary);
   const { settings } = useAppSelector((state) => state.settings);
+
+  const [isAddWordDialogShown, setIsAddWordDialogShown] = useState(false);
 
   useEffect(() => {
     dispatch(loadTotalWordsToReview());
@@ -75,7 +78,21 @@ const HomePage: React.FC = () => {
                 review
               </Text>
             </Pane>
-            <Pane>
+            <Pane display="flex" gap={12}>
+              <Button
+                size="large"
+                appearance="default"
+                intent="none"
+                onClick={() => setIsAddWordDialogShown(true)}
+                disabled={sets.length === 0}
+                title={
+                  sets.length === 0
+                    ? 'Create a vocabulary set first'
+                    : 'Add a new word to any vocabulary set'
+                }
+              >
+                Add Word
+              </Button>
               <Button
                 size="large"
                 appearance="primary"
@@ -130,6 +147,12 @@ const HomePage: React.FC = () => {
           </>
         )}
       </Pane>
+
+      {/* Add Word Dialog */}
+      <AddWordFromHomeDialog
+        isShown={isAddWordDialogShown}
+        onClose={() => setIsAddWordDialogShown(false)}
+      />
     </Pane>
   );
 };
