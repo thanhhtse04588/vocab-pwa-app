@@ -8,8 +8,8 @@ export const normalizeText = (text: string): string => {
     text
       .toLowerCase()
       .trim()
-      // Remove special characters, keeping only letters, numbers, and spaces
-      .replace(/[^\w\s]/g, '')
+      // Remove special characters, keeping letters (including Unicode), numbers, and spaces
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
       // Replace multiple spaces with single space
       .replace(/\s+/g, ' ')
       .trim()

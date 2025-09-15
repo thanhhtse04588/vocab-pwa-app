@@ -2,8 +2,6 @@
  * Fallback data utilities for when AI services are unavailable
  */
 
-import { GenerateWordInfoRequest } from '../types';
-
 /**
  * Generate fallback word data when AI service is unavailable
  */

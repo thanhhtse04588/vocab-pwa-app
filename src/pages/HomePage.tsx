@@ -11,7 +11,6 @@ import { startStudySession } from '@/store/slices/studySlice';
 import StorageWarning from '@/components/StorageWarning';
 import MemoryLevelChart from '@/components/MemoryLevelChart';
 import AddWordDialog from '@/components/AddWordDialog';
-import { Plus } from 'phosphor-react';
 
 const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
