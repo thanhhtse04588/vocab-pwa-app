@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Pane } from 'evergreen-ui';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Pane, TextInput } from 'evergreen-ui';
+import { MagnifyingGlass } from 'phosphor-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadVocabularyWords,
@@ -39,6 +40,24 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isStartingStudy, setIsStartingStudy] = useState(false);
   const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter words based on search query
+  const filteredWords = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return words;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return words.filter(
+      (word) =>
+        word.word.toLowerCase().includes(query) ||
+        word.meaning.toLowerCase().includes(query) ||
+        (word.pronunciation &&
+          word.pronunciation.toLowerCase().includes(query)) ||
+        (word.example && word.example.toLowerCase().includes(query))
+    );
+  }, [words, searchQuery]);
 
   useEffect(() => {
     if (setId) {
@@ -159,9 +178,35 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
           onAddWord={handleAddWord}
         />
 
+        {/* Search Words */}
+        {words.length > 0 && (
+          <Pane marginBottom={16}>
+            <Pane position="relative" maxWidth={400}>
+              <TextInput
+                placeholder="Search words..."
+                value={searchQuery}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value)
+                }
+                width="100%"
+                paddingLeft={32}
+              />
+              <Pane
+                position="absolute"
+                left={8}
+                top="50%"
+                transform="translateY(-50%)"
+                pointerEvents="none"
+              >
+                <MagnifyingGlass size={16} color="#8F95B2" />
+              </Pane>
+            </Pane>
+          </Pane>
+        )}
+
         {/* Words List */}
         <WordList
-          words={words}
+          words={filteredWords}
           language={currentSet.wordLanguage}
           loading={loading}
           onEditWord={handleEditWord}

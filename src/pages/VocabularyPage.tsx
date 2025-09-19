@@ -1,6 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Pane, Heading, Card, Button, Spinner, Text } from 'evergreen-ui';
-import { Plus, CloudArrowDown } from 'phosphor-react';
+import React, { useEffect, useState, useMemo } from 'react';
+import {
+  Pane,
+  Heading,
+  Card,
+  Button,
+  Spinner,
+  Text,
+  TextInput,
+  Select,
+  IconButton,
+} from 'evergreen-ui';
+import {
+  Plus,
+  CloudArrowDown,
+  MagnifyingGlass,
+  SortAscending,
+  SortDescending,
+} from 'phosphor-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadVocabularySets,
@@ -27,10 +43,45 @@ const VocabularyPage: React.FC = () => {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [setToDelete, setSetToDelete] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'createdAt' | 'name' | 'wordCount'>(
+    'createdAt'
+  );
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     dispatch(loadVocabularySets());
   }, [dispatch]);
+
+  // Filter and sort sets based on search query and sort options
+  const filteredAndSortedSets = useMemo(() => {
+    const filtered = sets.filter(
+      (set) =>
+        set.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        set.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return filtered.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortBy) {
+        case 'createdAt':
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'wordCount':
+          comparison = a.wordCount - b.wordCount;
+          break;
+        default:
+          comparison = 0;
+      }
+
+      return sortOrder === 'desc' ? -comparison : comparison;
+    });
+  }, [sets, searchQuery, sortBy, sortOrder]);
 
   const handleCreateSet = async (newSetData: {
     name: string;
@@ -110,6 +161,63 @@ const VocabularyPage: React.FC = () => {
           </Pane>
         </Pane>
 
+        {/* Search and Sort Controls */}
+        {sets.length > 0 && (
+          <Pane
+            display="flex"
+            gap={16}
+            marginBottom={24}
+            alignItems="center"
+            flexDirection="row"
+          >
+            <Pane flex={1} minWidth={250} position="relative">
+              <TextInput
+                placeholder="Search vocabulary sets..."
+                value={searchQuery}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value)
+                }
+                width="100%"
+                paddingLeft={32}
+              />
+              <Pane
+                position="absolute"
+                left={8}
+                top="50%"
+                transform="translateY(-50%)"
+                pointerEvents="none"
+              >
+                <MagnifyingGlass size={16} color="#8F95B2" />
+              </Pane>
+            </Pane>
+            <Pane display="flex" gap={8} alignItems="center" flexShrink={0}>
+              <Select
+                value={sortBy}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSortBy(
+                    e.target.value as 'createdAt' | 'name' | 'wordCount'
+                  )
+                }
+                width={100}
+              >
+                <option value="createdAt">Date</option>
+                <option value="name">Name</option>
+                <option value="wordCount">Words</option>
+              </Select>
+              <IconButton
+                intent="default"
+                onClick={() =>
+                  setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
+                }
+                title={
+                  sortOrder === 'desc' ? 'Sort descending' : 'Sort ascending'
+                }
+                icon={sortOrder === 'desc' ? SortDescending : SortAscending}
+              />
+            </Pane>
+          </Pane>
+        )}
+
         {loading ? (
           <Pane
             display="flex"
@@ -139,12 +247,31 @@ const VocabularyPage: React.FC = () => {
               </Button>
             </Pane>
           </Card>
+        ) : filteredAndSortedSets.length === 0 ? (
+          <Card>
+            <Pane padding={24} textAlign="center">
+              <Heading size={500} marginBottom={16}>
+                No Matching Sets
+              </Heading>
+              <Text marginBottom={24}>
+                No vocabulary sets match your search criteria.
+              </Text>
+              <Button
+                appearance="primary"
+                intent="none"
+                onClick={() => setSearchQuery('')}
+              >
+                Clear Search
+              </Button>
+            </Pane>
+          </Card>
         ) : (
           <>
             <Heading size={500} marginBottom={16}>
-              Your Vocabulary Sets ({sets.length})
+              Your Vocabulary Sets ({filteredAndSortedSets.length} of{' '}
+              {sets.length})
             </Heading>
-            {sets.map((set) => (
+            {filteredAndSortedSets.map((set) => (
               <VocabularySetCard
                 key={set.id}
                 set={set}

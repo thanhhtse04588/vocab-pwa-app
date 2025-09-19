@@ -96,6 +96,10 @@ body {
   .header {
     max-width: 480px;
   }
+
+  [role='dialog'] {
+    max-width: 400px !important;
+  }
   /* Center the app on larger screens */
   body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

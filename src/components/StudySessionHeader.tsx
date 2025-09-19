@@ -1,5 +1,5 @@
-import { Pane, Heading, Text, Button } from 'evergreen-ui';
-import { ArrowLeft } from 'phosphor-react';
+import { Pane, Heading, Text, Button, IconButton } from 'evergreen-ui';
+import { ArrowLeft, Gear } from 'phosphor-react';
 import React from 'react';
 
 interface StudySessionHeaderProps {
@@ -7,6 +7,7 @@ interface StudySessionHeaderProps {
   totalWords: number;
   progress: number;
   onBack?: () => void;
+  onSettingsClick?: () => void;
 }
 
 const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
@@ -14,6 +15,7 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
   totalWords,
   progress,
   onBack,
+  onSettingsClick,
 }) => {
   return (
     <>
@@ -36,9 +38,22 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
           )}
           <Heading size={600}>Study Session</Heading>
         </Pane>
-        <Text color="muted">
-          {currentWordIndex + 1} / {totalWords}
-        </Text>
+        <Pane display="flex" alignItems="center" gap={12}>
+          <Text color="muted">
+            {currentWordIndex + 1} / {totalWords}
+          </Text>
+          {onSettingsClick && (
+            <IconButton
+              intent="default"
+              appearance="minimal"
+              iconSize={20}
+              icon={Gear}
+              onClick={onSettingsClick}
+              size="small"
+              title="Study Settings"
+            />
+          )}
+        </Pane>
       </Pane>
 
       {/* Progress Bar */}

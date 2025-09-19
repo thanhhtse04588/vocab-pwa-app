@@ -26,7 +26,8 @@ interface UseSpeechRecognitionReturn {
 }
 
 export const useSpeechRecognition = (
-  onResult: (transcript: string) => void
+  onResult: (transcript: string) => void,
+  languageCode: string = 'en-US'
 ): UseSpeechRecognitionReturn => {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
@@ -38,7 +39,7 @@ export const useSpeechRecognition = (
     onResultRef.current = onResult;
   }, [onResult]);
 
-  // Initialize speech recognition only once
+  // Initialize speech recognition
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition =
@@ -60,7 +61,7 @@ export const useSpeechRecognition = (
 
       recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.lang = 'en-US';
+      recognition.lang = languageCode;
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -88,7 +89,7 @@ export const useSpeechRecognition = (
       speechRecognitionRef.current = recognition;
       setIsSupported(true);
     }
-  }, []); // Empty dependency array - only run once
+  }, [languageCode]); // Recreate when language changes
 
   const startListening = useCallback(() => {
     if (speechRecognitionRef.current && !isListening) {

@@ -14,11 +14,11 @@ import { playAudio } from '@/utils/audioUtils';
 import { getTTSLanguageCode } from '@/utils/languageMapping';
 import { compareWords } from '@/utils/wordComparison';
 import StudySessionHeader from '@/components/StudySessionHeader';
+import StudySessionSettingsDialog from '@/components/StudySessionSettingsDialog';
 import WordCard from '@/components/WordCard';
 import AnswerInput from '@/components/AnswerInput';
 import ActionButtons from '@/components/ActionButtons';
 import SessionStats from '@/components/SessionStats';
-import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 
 // Helper function to play feedback sound
 const playFeedbackSound = (isCorrect: boolean) => {
@@ -76,14 +76,23 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMarkedAsTrue, setIsMarkedAsTrue] = useState(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
 
-  // Memoize the speech recognition callback to prevent infinite re-renders
-  const handleSpeechResult = useCallback((transcript: string) => {
-    setUserAnswer(transcript);
+  // Get the vocabulary set for the current session
+  const currentVocabularySet = sessionSetId
+    ? sets.find((set) => set.id === sessionSetId)
+    : null;
+
+  // Simple state for speech recognition
+  const [isListening, setIsListening] = useState(false);
+
+  const startListening = useCallback(() => {
+    setIsListening(true);
   }, []);
 
-  const { isListening, startListening, stopListening } =
-    useSpeechRecognition(handleSpeechResult);
+  const stopListening = useCallback(() => {
+    setIsListening(false);
+  }, []);
 
   const currentWord = currentBatch[currentWordIndex];
   const progress =
@@ -91,16 +100,13 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
       ? ((currentWordIndex + 1) / currentBatch.length) * 100
       : 0;
 
-  // Get the vocabulary set for the current session
-  const currentVocabularySet = sessionSetId
-    ? sets.find((set) => set.id === sessionSetId)
-    : null;
-
   // Auto-play audio when answer is shown
   useEffect(() => {
     if (showAnswer && settings?.autoPlayPronunciation && currentWord) {
       // Determine the language to use for TTS
-      const ttsLanguage = currentVocabularySet?.wordLanguage
+      const ttsLanguage = currentWord?.wordLanguage
+        ? getTTSLanguageCode(currentWord.wordLanguage)
+        : currentVocabularySet?.wordLanguage
         ? getTTSLanguageCode(currentVocabularySet.wordLanguage)
         : 'en-US';
 
@@ -247,7 +253,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
   const handleClearInput = () => {
     setUserAnswer('');
     if (isListening) {
-      stopListening();
+      setIsListening(false);
     }
   };
 
@@ -278,6 +284,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         totalWords={currentBatch.length}
         progress={progress}
         onBack={handleBackToVocabulary}
+        onSettingsClick={() => setShowSettingsDialog(true)}
       />
 
       <WordCard
@@ -298,6 +305,13 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
           onStopListening={stopListening}
           onClearInput={handleClearInput}
           onSubmitAnswer={handleSubmitAnswer}
+          languageCode={
+            currentWord?.wordLanguage
+              ? getTTSLanguageCode(currentWord.wordLanguage)
+              : currentVocabularySet?.wordLanguage
+              ? getTTSLanguageCode(currentVocabularySet.wordLanguage)
+              : 'en-US'
+          }
         />
       )}
 
@@ -315,6 +329,12 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         correct={sessionResults.correct}
         incorrect={sessionResults.incorrect}
         total={sessionResults.total}
+      />
+
+      {/* Settings Dialog */}
+      <StudySessionSettingsDialog
+        isShown={showSettingsDialog}
+        onClose={() => setShowSettingsDialog(false)}
       />
     </Pane>
   );

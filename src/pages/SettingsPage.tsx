@@ -6,8 +6,6 @@ import {
   loadSettings,
   updateSettings,
   toggleNotifications,
-  toggleSound,
-  toggleVibration,
   setBatchSize,
   setNotificationTime,
 } from '@/store/slices/settingsSlice';
@@ -17,7 +15,6 @@ import { useSettingsDialogs } from '@/hooks/useSettingsDialogs';
 import StudySettingsSection from '@/components/settings/StudySettingsSection';
 import AppearanceSection from '@/components/settings/AppearanceSection';
 import NotificationSection from '@/components/settings/NotificationSection';
-import SoundVibrationSection from '@/components/settings/SoundVibrationSection';
 import DataManagementSection from '@/components/settings/DataManagementSection';
 import AppInfoSection from '@/components/settings/AppInfoSection';
 import StudyTipsSection from '@/components/settings/StudyTipsSection';
@@ -47,20 +44,6 @@ const SettingsPage: React.FC = () => {
       dispatch(
         updateSettings({ enableNotifications: !settings.enableNotifications })
       );
-    }
-  };
-
-  const handleSoundToggle = () => {
-    dispatch(toggleSound());
-    if (settings) {
-      dispatch(updateSettings({ enableSound: !settings.enableSound }));
-    }
-  };
-
-  const handleVibrationToggle = () => {
-    dispatch(toggleVibration());
-    if (settings) {
-      dispatch(updateSettings({ enableVibration: !settings.enableVibration }));
     }
   };
 
@@ -174,20 +157,6 @@ const SettingsPage: React.FC = () => {
           settings={settings}
           onNotificationToggle={handleNotificationToggle}
           onNotificationTimeChange={handleNotificationTimeChange}
-        />
-
-        {/* Sound & Vibration */}
-        <SoundVibrationSection
-          settings={settings}
-          onSoundToggle={handleSoundToggle}
-          onVibrationToggle={handleVibrationToggle}
-          onAutoPlayToggle={() =>
-            dispatch(
-              updateSettings({
-                autoPlayPronunciation: !settings.autoPlayPronunciation,
-              })
-            )
-          }
         />
 
         {/* Data Management */}

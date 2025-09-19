@@ -1,7 +1,18 @@
-import { Button, Card, Pane } from 'evergreen-ui';
+import { Button, Card, Pane, Spinner } from 'evergreen-ui';
 import { Microphone, XCircle } from 'phosphor-react';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import AppTextInput from './AppTextInput';
+import { speechToTextService } from '../services/speechToTextService';
+
+// Simple logger utility
+const logger = {
+  info: (message: string, data?: unknown) =>
+    console.log(`[INFO] ${message}`, data || ''),
+  warn: (message: string, data?: unknown) =>
+    console.warn(`[WARN] ${message}`, data || ''),
+  error: (message: string, data?: unknown) =>
+    console.error(`[ERROR] ${message}`, data || ''),
+};
 
 interface AnswerInputProps {
   userAnswer: string;
@@ -12,6 +23,7 @@ interface AnswerInputProps {
   onStopListening: () => void;
   onClearInput: () => void;
   onSubmitAnswer: () => void;
+  languageCode?: string; // Language code for speech recognition
 }
 
 const AnswerInput: React.FC<AnswerInputProps> = ({
@@ -23,7 +35,69 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
   onStopListening,
   onClearInput,
   onSubmitAnswer,
+  languageCode = 'en-US',
 }) => {
+  // State for speech recognition processing
+  const [isProcessingSpeech, setIsProcessingSpeech] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+
+  // Check if speech recognition is supported
+  React.useEffect(() => {
+    setSpeechSupported(speechToTextService.isSupported());
+  }, []);
+
+  // Handle speech recognition start
+  const handleStartListening = useCallback(async () => {
+    if (!speechSupported) {
+      logger.warn('Speech recognition not supported');
+      return;
+    }
+
+    try {
+      onStartListening();
+      await speechToTextService.startRecording(
+        undefined, // onDataAvailable callback
+        (error) => {
+          logger.error('Speech recording error:', error);
+          onStopListening();
+        }
+      );
+      logger.info('Started Firebase speech recording');
+    } catch (error) {
+      logger.error('Failed to start speech recording:', error);
+      onStopListening();
+    }
+  }, [speechSupported, onStartListening, onStopListening]);
+
+  // Handle speech recognition stop and conversion
+  const handleStopListening = useCallback(async () => {
+    try {
+      onStopListening();
+      speechToTextService.stopRecording();
+
+      setIsProcessingSpeech(true);
+      logger.info('Processing speech with Firebase API...');
+
+      // Convert speech to text using Firebase API
+      const result = await speechToTextService.convertToText(languageCode);
+
+      if (result.success && result.transcription) {
+        onAnswerChange(result.transcription);
+        logger.info('Speech converted to text successfully via Firebase API', {
+          transcription: result.transcription,
+          confidence: result.confidence,
+        });
+      } else {
+        logger.warn('No transcription received from Firebase speech service');
+      }
+    } catch (error) {
+      logger.error('Failed to convert speech to text via Firebase API:', error);
+    } finally {
+      setIsProcessingSpeech(false);
+      speechToTextService.clearAudioData();
+    }
+  }, [languageCode, onAnswerChange, onStopListening]);
+
   // Handle Enter key press to submit answer
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && !isSubmitting && userAnswer.trim()) {
@@ -63,13 +137,26 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
           </Pane>
           <Button
             appearance={isListening ? 'danger' : 'default'}
-            onClick={isListening ? onStopListening : onStartListening}
-            disabled={isSubmitting}
+            onClick={isListening ? handleStopListening : handleStartListening}
+            disabled={isSubmitting || !speechSupported || isProcessingSpeech}
             height={40}
             minWidth={40}
             paddingX={8}
+            title={
+              !speechSupported
+                ? 'Speech recognition not supported'
+                : isProcessingSpeech
+                ? 'Processing speech...'
+                : isListening
+                ? 'Stop recording'
+                : 'Start recording'
+            }
           >
-            <Microphone size={20} />
+            {isProcessingSpeech ? (
+              <Spinner size={20} />
+            ) : (
+              <Microphone size={20} />
+            )}
           </Button>
         </Pane>
 

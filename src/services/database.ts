@@ -21,7 +21,7 @@ export class VocabDatabase extends Dexie {
       vocabularySets:
         'id, name, description, wordLanguage, meaningLanguage, createdAt, lastStudiedAt, wordCount, isActive',
       vocabularyWords:
-        'id, vocabularySetId, word, meaning, pronunciation, example, wordType, memoryLevel, nextReviewAt, correctCount, incorrectCount, createdAt, lastReviewedAt',
+        'id, vocabularySetId, word, meaning, pronunciation, example, wordType, wordLanguage, memoryLevel, nextReviewAt, correctCount, incorrectCount, createdAt, lastReviewedAt',
       studySessions:
         'id, vocabularySetId, startedAt, completedAt, totalWords, correctWords, incorrectWords, wordsStudied, isCompleted',
       userProgress:
@@ -154,26 +154,31 @@ export class VocabDatabase extends Dexie {
 
     const now = new Date();
     let newMemoryLevel: number;
+    let nextReviewAt: string | undefined;
 
     if (isCorrect) {
       // Move to next memory level
       newMemoryLevel = Math.min(word.memoryLevel + 1, 7);
       word.correctCount += 1;
+
+      // Calculate next review time based on new memory level
+      const intervals = [10, 15, 1440, 4320, 10080, 20160, 43200, 129600]; // minutes
+      const nextReviewInterval = intervals[newMemoryLevel];
+      const nextReview = new Date(
+        now.getTime() + nextReviewInterval * 60 * 1000
+      );
+      nextReviewAt = nextReview.toISOString();
     } else {
-      // Reset to level 0
+      // Reset to level 0 but don't update nextReviewAt
       newMemoryLevel = 0;
       word.incorrectCount += 1;
+      // Keep the existing nextReviewAt value
+      nextReviewAt = word.nextReviewAt;
     }
-
-    // Calculate next review time based on memory level
-    const intervals = [10, 15, 1440, 4320, 10080, 20160, 43200, 129600]; // minutes
-    const nextReviewInterval = intervals[newMemoryLevel];
-
-    const nextReview = new Date(now.getTime() + nextReviewInterval * 60 * 1000);
 
     await this.vocabularyWords.update(wordId, {
       memoryLevel: newMemoryLevel as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7,
-      nextReviewAt: nextReview.toISOString(),
+      nextReviewAt: nextReviewAt,
       lastReviewedAt: now.toISOString(),
     });
   }

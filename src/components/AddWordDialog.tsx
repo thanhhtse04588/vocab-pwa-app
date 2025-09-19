@@ -40,6 +40,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
     pronunciation: '',
     example: '',
     wordType: '' as WordType | '',
+    wordLanguage: '',
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -61,6 +62,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           pronunciation: editingWord.pronunciation || '',
           example: editingWord.example || '',
           wordType: editingWord.wordType || '',
+          wordLanguage: editingWord.wordLanguage || '',
         });
       } else {
         // Clear form for adding new word
@@ -70,6 +72,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           pronunciation: '',
           example: '',
           wordType: '',
+          wordLanguage: '',
         });
       }
 
@@ -147,6 +150,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
               pronunciation: newWordData.pronunciation.trim() || undefined,
               example: newWordData.example.trim() || undefined,
               wordType: newWordData.wordType || undefined,
+              wordLanguage: newWordData.wordLanguage.trim() || undefined,
             },
           })
         );
@@ -160,6 +164,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
             pronunciation: newWordData.pronunciation.trim() || undefined,
             example: newWordData.example.trim() || undefined,
             wordType: newWordData.wordType || undefined,
+            wordLanguage: newWordData.wordLanguage.trim() || undefined,
           })
         );
       }
@@ -169,6 +174,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
         pronunciation: '',
         example: '',
         wordType: '',
+        wordLanguage: '',
       });
       onClose();
     }
@@ -283,6 +289,15 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
             <option value="sentence">Sentence (sent)</option>
             <option value="other">Other</option>
           </Select>
+        </Pane>
+
+        <Pane marginBottom={16}>
+          <AppTextInput
+            placeholder="Word Language (optional, e.g., en, vi, ja)"
+            value={newWordData.wordLanguage}
+            onChange={(value) => handleInputChange('wordLanguage', value)}
+            width="100%"
+          />
         </Pane>
 
         <Pane marginBottom={16}>

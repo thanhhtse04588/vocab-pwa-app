@@ -20,6 +20,7 @@ export interface VocabularyWord {
   pronunciation?: string;
   example?: string;
   wordType?: WordType;
+  wordLanguage?: string; // Language of the word for speech recognition
   memoryLevel: MemoryLevel;
   nextReviewAt: string;
   correctCount: number;
