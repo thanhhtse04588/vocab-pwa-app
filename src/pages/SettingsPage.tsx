@@ -355,8 +355,8 @@ const SettingsPage: React.FC = () => {
         onCancel={handleCancelRestore}
       >
         <Text>
-          This will replace all your current data with the backup file. This action cannot be undone.
-          Are you sure you want to continue?
+          This will replace all your current data with the backup file. This
+          action cannot be undone. Are you sure you want to continue?
         </Text>
       </Dialog>
     </Pane>

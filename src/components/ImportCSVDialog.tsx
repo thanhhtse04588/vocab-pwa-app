@@ -58,7 +58,9 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
           setCurrentStep('preview');
         } catch (error) {
           console.error('CSV parsing error:', error);
-          toasterService.error('Error parsing CSV file. Please check the format.');
+          toasterService.error(
+            'Error parsing CSV file. Please check the format.'
+          );
         }
       };
       reader.readAsText(file);
@@ -340,7 +342,6 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
         style={{ display: 'none' }}
         onChange={handleFileUpload}
       />
-
     </>
   );
 };
