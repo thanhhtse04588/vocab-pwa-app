@@ -13,6 +13,7 @@ import { useAppDispatch } from '@/hooks/redux';
 import { importCSVWords } from '@/store/slices/vocabularySlice';
 import { parseCSV, validateCSVFile } from '@/utils/csvParser';
 import type { CSVParseResult } from '@/utils/csvParser';
+import { toasterService } from '@/services/toasterService';
 
 interface ImportCSVDialogProps {
   isShown: boolean;
@@ -27,8 +28,6 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<CSVParseResult | null>(null);
   const [currentStep, setCurrentStep] = useState<
@@ -45,8 +44,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
       // Validate file first
       const validation = validateCSVFile(file);
       if (!validation.valid) {
-        setAlertMessage(validation.error || 'Invalid file');
-        setShowAlert(true);
+        toasterService.error(validation.error || 'Invalid file');
         return;
       }
 
@@ -60,8 +58,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
           setCurrentStep('preview');
         } catch (error) {
           console.error('CSV parsing error:', error);
-          setAlertMessage('Error parsing CSV file. Please check the format.');
-          setShowAlert(true);
+          toasterService.error('Error parsing CSV file. Please check the format.');
         }
       };
       reader.readAsText(file);
@@ -344,26 +341,6 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
         onChange={handleFileUpload}
       />
 
-      {/* Alert Dialog */}
-      <SideSheet
-        position={Position.BOTTOM}
-        isShown={showAlert}
-        onCloseComplete={() => setShowAlert(false)}
-      >
-        <Pane padding={24}>
-          <Text size={500} fontWeight={600} marginBottom={16}>
-            Import Error
-          </Text>
-          <Text marginBottom={24}>{alertMessage}</Text>
-          <Button
-            onClick={() => setShowAlert(false)}
-            intent="primary"
-            width="100%"
-          >
-            OK
-          </Button>
-        </Pane>
-      </SideSheet>
     </>
   );
 };

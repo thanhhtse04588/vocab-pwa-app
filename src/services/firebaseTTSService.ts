@@ -5,6 +5,7 @@
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { ensureFirebase } from './firebaseService';
+import { audioCacheService, type AudioCacheOptions } from './audioCacheService';
 
 export interface FirebaseTTSOptions {
   languageCode?: string;
@@ -89,7 +90,7 @@ class FirebaseTTSService {
   }
 
   /**
-   * Synthesize speech using Firebase Cloud Function
+   * Synthesize speech using Firebase Cloud Function with caching
    * @param text - Text to synthesize
    * @param options - TTS options
    * @returns Audio data as base64 string
@@ -102,6 +103,25 @@ class FirebaseTTSService {
       throw new Error(
         'Firebase TTS not available - please use Web Speech API instead'
       );
+    }
+
+    // Convert FirebaseTTSOptions to AudioCacheOptions
+    const cacheOptions: AudioCacheOptions = {
+      languageCode: options.languageCode || 'en-US',
+      voiceName: options.voiceName,
+      ssmlGender: options.ssmlGender || 'NEUTRAL',
+      speakingRate: options.speakingRate || 1.0,
+      pitch: options.pitch || 0.0,
+      volumeGainDb: options.volumeGainDb || 0.0,
+    };
+
+    // Check cache first
+    const cachedAudio = await audioCacheService.getCachedAudio(
+      text,
+      cacheOptions
+    );
+    if (cachedAudio) {
+      return cachedAudio;
     }
 
     try {
@@ -119,6 +139,13 @@ class FirebaseTTSService {
       if (!response.success || !response.audioContent) {
         throw new Error('Failed to synthesize speech');
       }
+
+      // Cache the audio data
+      await audioCacheService.setCachedAudio(
+        text,
+        response.audioContent,
+        cacheOptions
+      );
 
       return response.audioContent;
     } catch (error) {

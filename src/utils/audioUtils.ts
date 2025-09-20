@@ -11,6 +11,7 @@ import {
   audioService,
   type AudioServiceOptions,
 } from '@/services/audioService';
+import { toasterService } from '@/services/toasterService';
 import { CHARACTER_LIMIT } from '@/constants';
 
 export interface AudioOptions {
@@ -80,15 +81,13 @@ export const playAudioWithVoice = async (
 ): Promise<void> => {
   // Check if text exceeds character limit and warn user
   if (text.length > CHARACTER_LIMIT) {
-    // Show user-friendly warning
-    if (typeof window !== 'undefined' && window.confirm) {
-      const shouldContinue = window.confirm(
-        `The text is quite long (${text.length} characters). This may take a while to process. Do you want to continue?`
-      );
-      if (!shouldContinue) {
-        return;
+    // Show user-friendly warning using toaster
+    toasterService.warning(
+      `The text is quite long (${text.length} characters). This may take a while to process.`,
+      {
+        description: 'Processing will continue automatically...',
       }
-    }
+    );
   }
 
   const audioOptions: AudioServiceOptions = {

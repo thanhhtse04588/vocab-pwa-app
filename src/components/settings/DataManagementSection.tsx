@@ -7,12 +7,16 @@ interface DataManagementSectionProps {
   onBackup: () => void;
   onRestore: () => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearAudioCache?: () => void;
+  audioCacheStats?: string;
 }
 
 const DataManagementSection: React.FC<DataManagementSectionProps> = ({
   onBackup,
   onRestore,
   onFileUpload,
+  onClearAudioCache,
+  audioCacheStats,
 }) => {
   return (
     <SettingsSection icon={Database} title="Data Management">
@@ -20,6 +24,8 @@ const DataManagementSection: React.FC<DataManagementSectionProps> = ({
         onBackup={onBackup}
         onRestore={onRestore}
         onFileUpload={onFileUpload}
+        onClearAudioCache={onClearAudioCache}
+        audioCacheStats={audioCacheStats}
       />
     </SettingsSection>
   );

@@ -183,6 +183,11 @@ body {
   z-index: 1001 !important;
 }
 
+/* Toaster z-index to appear above SideSheet and dialogs */
+[data-evergreen-toaster-container] > span {
+  z-index: 1002 !important;
+}
+
 /* Memory Level Chart Styles */
 .memory-chart {
   margin: 16px 0;

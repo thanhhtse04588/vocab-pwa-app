@@ -1,17 +1,21 @@
 import React, { useRef } from 'react';
 import { Pane, Card, Text, Button } from 'evergreen-ui';
-import { Download, Upload } from 'lucide-react';
+import { Download, Upload, Trash2, Music } from 'lucide-react';
 
 interface DataManagementCardProps {
   onBackup: () => void;
   onRestore?: () => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearAudioCache?: () => void;
+  audioCacheStats?: string;
 }
 
 const DataManagementCard: React.FC<DataManagementCardProps> = ({
   onBackup,
   onRestore: _onRestore,
   onFileUpload,
+  onClearAudioCache,
+  audioCacheStats,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,6 +81,42 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
           </Card>
         </Pane>
       </Pane>
+
+      {/* Audio Cache Management - Full Width */}
+      {onClearAudioCache && (
+        <Card elevation={1} marginBottom={24}>
+          <Pane padding={24}>
+            <Pane display="flex" alignItems="center" marginBottom={12}>
+              <Music
+                size={20}
+                style={{ marginRight: '8px', color: '#8b5cf6' }}
+              />
+              <Text fontWeight={600}>Audio Cache</Text>
+            </Pane>
+            <Pane
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Pane flex={1}>
+                <Text color="muted">
+                  {audioCacheStats || 'Cache: 0 items, 0 B'}
+                </Text>
+              </Pane>
+              <Pane marginLeft={16}>
+                <Button
+                  appearance="outline"
+                  intent="danger"
+                  onClick={onClearAudioCache}
+                  iconBefore={<Trash2 size={16} />}
+                >
+                  Clear Audio Cache
+                </Button>
+              </Pane>
+            </Pane>
+          </Pane>
+        </Card>
+      )}
 
       {/* Hidden file input for restore */}
       <input

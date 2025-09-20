@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { signIn } from '@/store/slices/authSlice';
 import { Button, Spinner } from 'evergreen-ui';
+import { toasterService } from '@/services/toasterService';
 import React from 'react';
 
 // Google Icon SVG Component
@@ -43,9 +44,9 @@ const LoginButton: React.FC = () => {
         if (error.message === 'Login cancelled by user.') {
           return; // Silent handling for user cancellation
         }
-        alert(error.message);
+        toasterService.error(error.message);
       } else {
-        alert('Login failed. Please try again.');
+        toasterService.error('Login failed. Please try again.');
       }
     }
   };

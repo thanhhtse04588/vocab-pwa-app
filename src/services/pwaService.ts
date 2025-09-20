@@ -8,6 +8,7 @@ interface BeforeInstallPromptEvent extends Event {
 class PWAService {
   private registration: ServiceWorkerRegistration | null = null;
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
+  private swReadyPromise: Promise<ServiceWorkerRegistration> | null = null;
 
   constructor() {
     this.setupInstallPrompt();
@@ -29,9 +30,50 @@ class PWAService {
 
   private setupServiceWorker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then((registration) => {
-        this.registration = registration;
-      });
+      // Check if service worker is already ready
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then((registration) => {
+          this.registration = registration;
+          console.log('Service Worker already active');
+        });
+      }
+
+      // Try to get registration immediately if possible
+      const getRegistration = async () => {
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration && registration.active) {
+            this.registration = registration;
+            console.log('Service Worker found and active');
+            return registration;
+          }
+        } catch (error) {
+          console.log('No existing service worker found');
+        }
+        return null;
+      };
+
+      // Create a promise that resolves when service worker is ready
+      this.swReadyPromise = getRegistration()
+        .then((registration) => {
+          if (registration) return registration;
+          // If no existing registration, wait for ready
+          return navigator.serviceWorker.ready;
+        })
+        .then((registration) => {
+          this.registration = registration;
+          console.log('Service Worker registered successfully');
+          return registration;
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+          throw error;
+        });
+    } else {
+      console.warn('Service Worker not supported in this browser');
+      this.swReadyPromise = Promise.reject(
+        new Error('Service Worker not supported')
+      );
     }
   }
 
@@ -173,8 +215,26 @@ class PWAService {
     title: string,
     options?: NotificationOptions
   ): Promise<void> {
+    // Check if service worker is available
     if (!this.registration) {
-      throw new Error('Service Worker not available');
+      // Try to get the registration if it's not cached
+      if ('serviceWorker' in navigator) {
+        try {
+          // Try quick check first
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration && registration.active) {
+            this.registration = registration;
+          } else {
+            // If not available, throw error to use browser API
+            throw new Error('Service Worker not available');
+          }
+        } catch (error) {
+          console.warn('Service Worker not ready, falling back to browser API');
+          throw new Error('Service Worker not available');
+        }
+      } else {
+        throw new Error('Service Worker not supported');
+      }
     }
 
     try {
@@ -184,7 +244,7 @@ class PWAService {
         ...options,
       });
     } catch (error) {
-      console.error('Error showing notification:', error);
+      console.error('Error showing notification via Service Worker:', error);
       throw error;
     }
   }
@@ -231,6 +291,77 @@ class PWAService {
 
   getInstallPrompt(): BeforeInstallPromptEvent | null {
     return this.deferredPrompt;
+  }
+
+  // Check if service worker is ready
+  isServiceWorkerReady(): boolean {
+    return this.registration !== null;
+  }
+
+  // Get service worker status
+  getServiceWorkerStatus(): 'ready' | 'loading' | 'error' | 'unsupported' {
+    if (!('serviceWorker' in navigator)) {
+      return 'unsupported';
+    }
+    if (this.registration) {
+      return 'ready';
+    }
+    if (this.swReadyPromise) {
+      return 'loading';
+    }
+    return 'error';
+  }
+
+  // Quick check if service worker is available without waiting
+  async quickCheckServiceWorker(): Promise<boolean> {
+    if (this.registration) {
+      return true;
+    }
+
+    if (!('serviceWorker' in navigator)) {
+      return false;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration && registration.active) {
+        this.registration = registration;
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Wait for service worker to be ready with timeout
+  async waitForServiceWorker(
+    timeoutMs: number = 3000
+  ): Promise<ServiceWorkerRegistration> {
+    if (this.registration) {
+      return this.registration;
+    }
+
+    if (!this.swReadyPromise) {
+      throw new Error('Service Worker not supported in this browser');
+    }
+
+    try {
+      // Add timeout to prevent indefinite waiting
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Service Worker timeout - taking too long to load'));
+        }, timeoutMs);
+      });
+
+      this.registration = await Promise.race([
+        this.swReadyPromise,
+        timeoutPromise,
+      ]);
+      return this.registration;
+    } catch (error) {
+      throw new Error('Service Worker registration failed');
+    }
   }
 
   // Handle notification clicks

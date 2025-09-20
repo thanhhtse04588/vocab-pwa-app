@@ -12,6 +12,7 @@ import {
 } from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
 import { resetProgress } from '@/store/slices/userProgressSlice';
+import { toasterService } from '@/services/toasterService';
 import type { VocabularyWord } from '@/types';
 import AddWordDialog from '@/components/AddWordDialog';
 import ImportCSVDialog from '@/components/ImportCSVDialog';
@@ -82,7 +83,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         console.error('Failed to start study session:', error);
         const errorMessage =
           error instanceof Error ? error.message : 'Unknown error';
-        alert(`Failed to start study: ${errorMessage}`);
+        toasterService.error(`Failed to start study: ${errorMessage}`);
       } finally {
         setIsStartingStudy(false);
       }
@@ -96,12 +97,12 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         // Reload words to reflect the reset
         dispatch(loadVocabularyWords(setId));
         setShowResetDialog(false);
-        alert('Progress has been reset successfully!');
+        toasterService.success('Progress has been reset successfully!');
       } catch (error) {
         console.error('Failed to reset progress:', error);
         const errorMessage =
           error instanceof Error ? error.message : 'Unknown error';
-        alert(`Failed to reset progress: ${errorMessage}`);
+        toasterService.error(`Failed to reset progress: ${errorMessage}`);
       }
     }
   };

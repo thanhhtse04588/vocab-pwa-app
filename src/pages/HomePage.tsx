@@ -8,6 +8,7 @@ import {
 import { loadVocabularySets } from '@/store/slices/vocabularySlice';
 import { setActiveTab } from '@/store/slices/navigationSlice';
 import { startStudySession } from '@/store/slices/studySlice';
+import { toasterService } from '@/services/toasterService';
 import StorageWarning from '@/components/StorageWarning';
 import MemoryLevelChart from '@/components/MemoryLevelChart';
 import AddWordDialog from '@/components/AddWordDialog';
@@ -41,7 +42,7 @@ const HomePage: React.FC = () => {
       console.error('Failed to start review session:', error);
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      alert(`Failed to start review: ${errorMessage}`);
+      toasterService.error(`Failed to start review: ${errorMessage}`);
     }
   };
 

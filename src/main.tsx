@@ -4,9 +4,9 @@ import { createRoot } from 'react-dom/client';
 // App styles
 import './index.css';
 import App from '@/App';
-// import { registerSW } from 'virtual:pwa-register';
+import { registerSW } from 'virtual:pwa-register';
 
-// registerSW({ immediate: true }); // auto update SW
+registerSW({ immediate: true }); // auto update SW
 
 const container = document.getElementById('root');
 if (container) {
