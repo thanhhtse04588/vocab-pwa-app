@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pane, Card, Text } from 'evergreen-ui';
-import { Code, Smartphone, Layers, Database, Clock } from 'lucide-react';
+import { Code, Layers, Database, Clock } from 'lucide-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import timezone from 'dayjs/plugin/timezone';
@@ -44,13 +44,6 @@ const AppInfoCard: React.FC = () => {
               <Text fontWeight={600} size={300}>
                 Deploy: {formattedDate}
               </Text>
-            </Pane>
-            <Pane display="flex" alignItems="center">
-              <Smartphone
-                size={16}
-                style={{ marginRight: '8px', color: 'var(--text-muted)' }}
-              />
-              <Text fontWeight={600}>PWA</Text>
             </Pane>
           </Pane>
           <Pane flex={1}>

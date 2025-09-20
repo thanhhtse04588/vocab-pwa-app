@@ -39,6 +39,8 @@ function AppContent() {
 
     // Initialize audio service
     audioInitializer.initialize();
+
+    // Initialize PWA service
   }, [dispatch]);
 
   useEffect(() => {

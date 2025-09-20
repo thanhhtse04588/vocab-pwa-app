@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc -b && cross-env VITE_BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)\" vite build",
+    "build": "tsc -b && powershell -ExecutionPolicy Bypass -File scripts/set-build-time.ps1 && vite build",
     "build:win": "tsc -b && powershell -ExecutionPolicy Bypass -File scripts/set-build-time.ps1 && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -49,12 +49,6 @@ const settingsSlice = createSlice({
         state.settings.theme = action.payload;
       }
     },
-    toggleNotifications: (state) => {
-      if (state.settings) {
-        state.settings.enableNotifications =
-          !state.settings.enableNotifications;
-      }
-    },
     toggleSound: (state) => {
       if (state.settings) {
         state.settings.enableSound = !state.settings.enableSound;
@@ -68,11 +62,6 @@ const settingsSlice = createSlice({
     setBatchSize: (state, action: PayloadAction<number>) => {
       if (state.settings) {
         state.settings.batchSize = action.payload;
-      }
-    },
-    setNotificationTime: (state, action: PayloadAction<string>) => {
-      if (state.settings) {
-        state.settings.notificationTime = action.payload;
       }
     },
     // TTS Settings
@@ -132,11 +121,9 @@ const settingsSlice = createSlice({
 
 export const {
   setTheme,
-  toggleNotifications,
   toggleSound,
   toggleVibration,
   setBatchSize,
-  setNotificationTime,
   setTTSGender,
   setTTSRate,
   clearError,

@@ -6,23 +6,17 @@ import type { UserSettings } from '@/types';
 
 interface SoundVibrationSectionProps {
   settings: UserSettings;
-  onSoundToggle: () => void;
-  onVibrationToggle: () => void;
   onAutoPlayToggle: () => void;
 }
 
 const SoundVibrationSection: React.FC<SoundVibrationSectionProps> = ({
   settings,
-  onSoundToggle,
-  onVibrationToggle,
   onAutoPlayToggle,
 }) => {
   return (
     <SettingsSection icon={Volume2} title="Sound, Vibration & TTS">
       <SoundVibrationCard
         settings={settings}
-        onSoundToggle={onSoundToggle}
-        onVibrationToggle={onVibrationToggle}
         onAutoPlayToggle={onAutoPlayToggle}
       />
     </SettingsSection>

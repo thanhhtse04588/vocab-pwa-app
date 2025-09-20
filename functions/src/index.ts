@@ -9,18 +9,41 @@ import { setGlobalOptions } from 'firebase-functions';
 import { synthesizeSpeech, getAvailableVoices } from './services/ttsService';
 import { generateWordInfo } from './services/aiService';
 import { health } from './services/healthService';
-import { speechToText, getSupportedLanguages, streamingSpeechToText } from './services/speechService';
+import {
+  speechToText,
+  getSupportedLanguages,
+  streamingSpeechToText,
+} from './services/speechService';
+// FCM service temporarily disabled - file not found
+// import {
+//   saveFCMToken,
+//   removeFCMToken,
+//   sendStudyReminder,
+//   onVocabularySetCreated,
+//   onStudySessionCompleted,
+//   sendDailyStudyReminders,
+//   scheduleDailyNotifications,
+// } from './services/fcmService';
 
 // Set global options for cost control
 setGlobalOptions({ maxInstances: 10 });
 
 // Export all cloud functions
-export { 
-  synthesizeSpeech, 
-  getAvailableVoices, 
-  generateWordInfo, 
+export {
+  synthesizeSpeech,
+  getAvailableVoices,
+  generateWordInfo,
   health,
   speechToText,
   getSupportedLanguages,
-  streamingSpeechToText
+  streamingSpeechToText,
+  // FCM Functions - temporarily disabled
+  // saveFCMToken,
+  // removeFCMToken,
+  // sendStudyReminder,
+  // onVocabularySetCreated,
+  // onStudySessionCompleted,
+  // Daily Notifications
+  // sendDailyStudyReminders,
+  // scheduleDailyNotifications,
 };

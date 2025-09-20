@@ -71,8 +71,6 @@ export interface UserProgress {
 export interface UserSettings {
   id: string;
   batchSize: number;
-  enableNotifications: boolean;
-  notificationTime: string; // HH:MM format
   theme: 'light' | 'dark' | 'auto';
   enableSound: boolean;
   enableVibration: boolean;

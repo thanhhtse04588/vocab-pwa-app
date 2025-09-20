@@ -2,21 +2,17 @@ import { useAppDispatch } from '@/hooks/redux';
 import { updateSettings } from '@/store/slices/settingsSlice';
 import type { UserSettings } from '@/types';
 import { Card, Pane, Select, Switch, Text, Button } from 'evergreen-ui';
-import { Gauge, Play, Smartphone, User, Volume2, Speaker } from 'lucide-react';
+import { Gauge, Play, User, Speaker } from 'lucide-react';
 import React, { useState } from 'react';
 import { playAudio } from '@/utils/audioUtils';
 
 interface SoundVibrationCardProps {
   settings: UserSettings;
-  onSoundToggle: () => void;
-  onVibrationToggle: () => void;
   onAutoPlayToggle: () => void;
 }
 
 const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
   settings,
-  onSoundToggle,
-  onVibrationToggle,
   onAutoPlayToggle,
 }) => {
   const dispatch = useAppDispatch();
@@ -49,43 +45,6 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
           marginBottom={24}
         >
           <Pane display="flex" alignItems="center">
-            <Volume2
-              size={16}
-              style={{ marginRight: '8px', color: 'var(--text-muted)' }}
-            />
-            <Pane>
-              <Text fontWeight={500}>Enable sound</Text>
-            </Pane>
-          </Pane>
-          <Switch checked={settings.enableSound} onChange={onSoundToggle} />
-        </Pane>
-        <Pane
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom={24}
-        >
-          <Pane display="flex" alignItems="center">
-            <Smartphone
-              size={16}
-              style={{ marginRight: '8px', color: 'var(--text-muted)' }}
-            />
-            <Pane>
-              <Text fontWeight={500}>Enable vibration</Text>
-            </Pane>
-          </Pane>
-          <Switch
-            checked={settings.enableVibration}
-            onChange={onVibrationToggle}
-          />
-        </Pane>
-        <Pane
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom={24}
-        >
-          <Pane display="flex" alignItems="center">
             <Play
               size={16}
               style={{ marginRight: '8px', color: 'var(--text-muted)' }}
@@ -102,10 +61,6 @@ const SoundVibrationCard: React.FC<SoundVibrationCardProps> = ({
 
         {/* TTS Settings */}
         <Pane>
-          <Text size={500} fontWeight={600} marginBottom={20} display="block">
-            Text-to-Speech
-          </Text>
-
           {/* Voice Gender */}
           <Pane
             marginBottom={20}

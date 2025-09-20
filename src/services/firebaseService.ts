@@ -23,11 +23,7 @@ import type { VocabularySet, VocabularyWord } from '@/types';
 export interface PublicVocabularySetMeta
   extends Pick<
     VocabularySet,
-    | 'name'
-    | 'wordLanguage'
-    | 'meaningLanguage'
-    | 'wordCount'
-    | 'createdAt'
+    'name' | 'wordLanguage' | 'meaningLanguage' | 'wordCount' | 'createdAt'
   > {
   id: string;
 }
@@ -43,8 +39,13 @@ let firebaseApp: FirebaseApp | null = null;
 let firestoreDb: Firestore | null = null;
 let auth: Auth | null = null;
 
-export function ensureFirebase(): { db: Firestore; auth: Auth } {
-  if (firestoreDb && auth) return { db: firestoreDb, auth };
+export function ensureFirebase(): {
+  db: Firestore;
+  auth: Auth;
+  app: FirebaseApp;
+} {
+  if (firestoreDb && auth && firebaseApp)
+    return { db: firestoreDb, auth, app: firebaseApp };
 
   // Validate that all required environment variables are present
   const requiredEnvVars = {
@@ -82,7 +83,7 @@ export function ensureFirebase(): { db: Firestore; auth: Auth } {
   firebaseApp = initializeApp(firebaseConfig);
   firestoreDb = getFirestore(firebaseApp);
   auth = getAuth(firebaseApp);
-  return { db: firestoreDb, auth };
+  return { db: firestoreDb, auth, app: firebaseApp };
 }
 
 // Authentication functions

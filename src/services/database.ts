@@ -27,7 +27,7 @@ export class VocabDatabase extends Dexie {
       userProgress:
         'id, vocabularySetId, totalWordsStudied, totalCorrectAnswers, totalIncorrectAnswers, averageAccuracy, streakDays, lastStudyDate, memoryLevelDistribution',
       userSettings:
-        'id, batchSize, enableNotifications, notificationTime, theme, enableSound, enableVibration, autoPlayPronunciation, reviewReminderEnabled, reviewReminderInterval, ttsGender, ttsRate',
+        'id, batchSize, theme, enableSound, enableVibration, autoPlayPronunciation, reviewReminderEnabled, reviewReminderInterval, ttsGender, ttsRate',
     });
 
     // Add hooks for data integrity
@@ -218,8 +218,6 @@ export class VocabDatabase extends Dexie {
     const defaultSettings: UserSettings = {
       id: 'default',
       batchSize: 10,
-      enableNotifications: true,
-      notificationTime: '09:00',
       theme: 'auto',
       enableSound: true,
       enableVibration: true,
