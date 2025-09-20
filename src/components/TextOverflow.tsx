@@ -15,6 +15,7 @@ interface TextOverflowProps {
   marginRight?: string | number;
   textAlign?: 'left' | 'center' | 'right';
   lineHeight?: string | number;
+  hasTooltip?: boolean;
 }
 
 const TextOverflow: React.FC<TextOverflowProps> = ({
@@ -31,6 +32,7 @@ const TextOverflow: React.FC<TextOverflowProps> = ({
   marginRight,
   textAlign,
   lineHeight,
+  hasTooltip = false,
   ...props
 }) => {
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -79,7 +81,7 @@ const TextOverflow: React.FC<TextOverflowProps> = ({
   );
 
   // Only show tooltip if text is overflowing
-  if (isOverflowing) {
+  if (isOverflowing && hasTooltip) {
     return (
       <Tooltip content={children} position="top">
         {textElement}

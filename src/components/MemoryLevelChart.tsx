@@ -1,56 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Pane, Heading, Text } from 'evergreen-ui';
+import React, { useEffect, useMemo } from 'react';
+import { Card, Pane, Text } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { loadMemoryLevelDistribution } from '@/store/slices/userProgressSlice';
 
 interface MemoryLevelChartProps {
   vocabularySetId?: string;
-  showTotal?: boolean;
 }
 
 const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
   vocabularySetId,
-  showTotal = true,
 }) => {
   const dispatch = useAppDispatch();
   const { memoryLevelDistribution } = useAppSelector(
     (state) => state.userProgress
   );
   const { sets } = useAppSelector((state) => state.vocabulary);
-  const [chartData, setChartData] = useState<Record<number, number>>({});
 
   useEffect(() => {
     if (vocabularySetId) {
       dispatch(loadMemoryLevelDistribution(vocabularySetId));
     } else if (sets.length > 0) {
       // Load combined distribution for all sets
-      loadCombinedDistribution();
+      // This should be loaded by loadCombinedMemoryLevelDistribution
     }
   }, [vocabularySetId, sets, dispatch]);
-
-  useEffect(() => {
-    setChartData(memoryLevelDistribution);
-  }, [memoryLevelDistribution]);
-
-  const loadCombinedDistribution = async () => {
-    // Use the memoryLevelDistribution from Redux state
-    // This should be loaded by loadCombinedMemoryLevelDistribution
-    setChartData(memoryLevelDistribution);
-  };
-
-  const getMemoryLevelLabel = (level: number): string => {
-    const labels = [
-      '', // Empty for level 0 (not used)
-      'Learning (1)',
-      'Familiar (2)',
-      'Known (3)',
-      'Mastered (4)',
-      'Expert (5)',
-      'Native (6)',
-      'Perfect (7)',
-    ];
-    return labels[level] || `Level ${level}`;
-  };
 
   const getMemoryLevelColor = (level: number): string => {
     const colors = [
@@ -66,10 +39,22 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
     return colors[level] || '#9e9e9e';
   };
 
-  const totalWords = Object.values(chartData).reduce(
-    (sum, count) => sum + count,
-    0
-  );
+  // Transform data for chart
+  const chartData = useMemo(() => {
+    return Object.entries(memoryLevelDistribution)
+      .filter(([level]) => parseInt(level) >= 1) // Only show levels 1-7
+      .map(([level, count]) => {
+        const levelNum = parseInt(level);
+        return {
+          level: levelNum,
+          count: count,
+          color: getMemoryLevelColor(levelNum),
+        };
+      })
+      .sort((a, b) => a.level - b.level);
+  }, [memoryLevelDistribution]);
+
+  const totalWords = chartData.reduce((sum, item) => sum + item.count, 0);
 
   if (totalWords === 0) {
     return (
@@ -83,88 +68,62 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
 
   return (
     <Card>
-      <Pane paddingX={24}>
-        <Heading size={500} marginBottom={16}>
-          Memory Levels Distribution
-        </Heading>
-        <Pane className="memory-chart">
-          {Object.entries(chartData)
-            .filter(([level]) => parseInt(level) >= 1) // Only show levels 1-7
-            .map(([level, count]) => {
-              const levelNum = parseInt(level);
-              const percentage =
-                totalWords > 0 ? (count / totalWords) * 100 : 0;
-
+      <Pane>
+        <Pane marginBottom={16} borderRadius={6} padding={16}>
+          {/* Simple CSS Bar Chart */}
+          <Pane display="flex" alignItems="end" height={220} gap={4}>
+            {chartData.map((item, index) => {
+              const maxCount = Math.max(...chartData.map((d) => d.count));
+              const height = (item.count / maxCount) * 180; // Max height 180px
               return (
                 <Pane
-                  key={level}
-                  className="memory-level-item"
-                  marginBottom={12}
+                  key={index}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  flex={1}
+                  minWidth={0}
+                  position="relative"
                 >
-                  <Pane
-                    className="memory-level-info"
-                    display="flex"
-                    alignItems="center"
-                    marginBottom={4}
-                  >
-                    <Pane
-                      className="memory-level-color"
-                      width={12}
-                      height={12}
-                      borderRadius="50%"
-                      marginRight={8}
-                      flexShrink={0}
-                      backgroundColor={getMemoryLevelColor(levelNum)}
-                    />
-                    <Pane
-                      className="memory-level-label"
-                      flex={1}
-                      fontSize={14}
-                      fontWeight={500}
+                  {/* Count number on top of bar */}
+                  {item.count > 0 && (
+                    <Text
+                      fontSize={10}
+                      position="absolute"
+                      top={-25}
+                      zIndex={2}
+                      textAlign="center"
+                      paddingY={2}
                     >
-                      {getMemoryLevelLabel(levelNum)}
-                    </Pane>
-                    <Pane
-                      className="memory-level-count"
-                      fontSize={12}
-                      color="muted"
-                    >
-                      {count} ({percentage.toFixed(1)}%)
-                    </Pane>
-                  </Pane>
+                      {`${item.count} words`}
+                    </Text>
+                  )}
+
                   <Pane
-                    className="memory-level-bar"
-                    height={8}
-                    backgroundColor="#f7f9fc"
-                    borderRadius={4}
-                    overflow="hidden"
+                    width="100%"
+                    height={height}
+                    backgroundColor={item.color}
+                    borderTopLeftRadius={4}
+                    borderTopRightRadius={4}
+                    marginBottom={8}
+                    paddingY={4}
+                    minHeight={item.count > 0 ? 4 : 0}
+                  />
+
+                  {/* Level number at bottom */}
+                  <Text
+                    size={300}
+                    textAlign="center"
+                    fontWeight={600}
+                    color="muted"
                   >
-                    <Pane
-                      className="memory-level-fill"
-                      height="100%"
-                      width={`${percentage}%`}
-                      backgroundColor={getMemoryLevelColor(levelNum)}
-                      borderRadius={4}
-                      transition="width 0.3s ease"
-                    />
-                  </Pane>
+                    {item.level === 7 ? 'Mastered' : `Lv ${item.level}`}
+                  </Text>
                 </Pane>
               );
             })}
-        </Pane>
-        {showTotal && (
-          <Pane
-            className="memory-chart-summary"
-            marginTop={16}
-            paddingTop={16}
-            borderTop="1px solid #e4e7eb"
-            textAlign="center"
-          >
-            <Text fontSize={14} color="muted">
-              Total: {totalWords} words
-            </Text>
           </Pane>
-        )}
+        </Pane>
       </Pane>
     </Card>
   );

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog,
+  SideSheet,
   Pane,
   Select,
   Text,
   Button,
   Spinner,
   Alert,
+  Position,
 } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
@@ -181,20 +182,26 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
   };
 
   return (
-    <Dialog
+    <SideSheet
+      position={Position.BOTTOM}
       isShown={isShown}
-      title={editingWord ? 'Edit Word' : 'Add New Word'}
       onCloseComplete={onClose}
-      confirmLabel={editingWord ? 'Update Word' : 'Add Word'}
-      cancelLabel="Cancel"
-      onConfirm={handleSaveWord}
-      onCancel={onClose}
-      isConfirmDisabled={
-        !newWordData.word.trim() || !newWordData.meaning.trim() || !currentSetId
-      }
-      shouldCloseOnOverlayClick={false}
     >
-      <Pane>
+      <Pane padding={24}>
+        {/* Header */}
+        <Pane
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingBottom={16}
+          marginBottom={16}
+          borderBottom="1px solid #E4E7EB"
+        >
+          <Text size={500} fontWeight={600}>
+            {editingWord ? 'Edit Word' : 'Add New Word'}
+          </Text>
+        </Pane>
+
         {/* Vocabulary Set Selection - only show when setId is not provided */}
         {showSetSelection && (
           <Pane marginBottom={16}>
@@ -309,7 +316,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           />
         </Pane>
 
-        <Pane>
+        <Pane marginBottom={24}>
           <AppTextInput
             placeholder="Example sentence (optional)"
             value={newWordData.example}
@@ -317,8 +324,27 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
             width="100%"
           />
         </Pane>
+
+        {/* Action Buttons */}
+        <Pane display="flex" gap={12} marginTop={24}>
+          <Button flex={1} onClick={onClose} appearance="minimal">
+            Cancel
+          </Button>
+          <Button
+            flex={1}
+            onClick={handleSaveWord}
+            intent="success"
+            disabled={
+              !newWordData.word.trim() ||
+              !newWordData.meaning.trim() ||
+              !currentSetId
+            }
+          >
+            {editingWord ? 'Update Word' : 'Add Word'}
+          </Button>
+        </Pane>
       </Pane>
-    </Dialog>
+    </SideSheet>
   );
 };
 

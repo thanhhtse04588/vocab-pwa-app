@@ -4,6 +4,7 @@
  */
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { ALTERNATIVE_LANGUAGE_CODES } from '@/constants';
 
 // Simple logger utility
 const logger = {
@@ -144,6 +145,7 @@ class SpeechToTextService {
       const result = await speechToTextFunction({
         audioData,
         languageCode,
+        alternativeLanguageCodes: ALTERNATIVE_LANGUAGE_CODES,
       });
 
       logger.info('Speech-to-text conversion completed', {
@@ -182,6 +184,7 @@ class SpeechToTextService {
       const result = await streamingFunction({
         audioChunks: audioChunksBase64,
         languageCode,
+        alternativeLanguageCodes: ALTERNATIVE_LANGUAGE_CODES,
       });
 
       logger.info('Streaming speech-to-text conversion completed', {

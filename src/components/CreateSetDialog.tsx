@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Dialog, Pane, Text, Select } from 'evergreen-ui';
+import { SideSheet, Pane, Text, Select, Button, Position } from 'evergreen-ui';
 import AppTextInput from './AppTextInput';
-import AppTextarea from './AppTextarea';
 
 interface NewSetData {
   name: string;
-  description: string;
   wordLanguage: string;
   meaningLanguage: string;
 }
@@ -34,7 +32,6 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
 }) => {
   const [newSetData, setNewSetData] = useState<NewSetData>({
     name: '',
-    description: '',
     wordLanguage: 'en',
     meaningLanguage: 'vi',
   });
@@ -48,7 +45,6 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
       onCreate(newSetData);
       setNewSetData({
         name: '',
-        description: '',
         wordLanguage: 'en',
         meaningLanguage: 'vi',
       });
@@ -58,7 +54,6 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
   const handleClose = () => {
     setNewSetData({
       name: '',
-      description: '',
       wordLanguage: 'en',
       meaningLanguage: 'vi',
     });
@@ -66,18 +61,25 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
   };
 
   return (
-    <Dialog
+    <SideSheet
+      position={Position.BOTTOM}
       isShown={isShown}
-      title="Create New Set"
       onCloseComplete={handleClose}
-      confirmLabel="Create Set"
-      cancelLabel="Cancel"
-      onConfirm={handleCreate}
-      onCancel={handleClose}
-      isConfirmDisabled={!newSetData.name.trim()}
-      width="90vw"
     >
-      <Pane>
+      <Pane padding={24}>
+        {/* Header */}
+        <Pane
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingBottom={16}
+          marginBottom={16}
+          borderBottom="1px solid #E4E7EB"
+        >
+          <Text size={500} fontWeight={600}>
+            Create New Set
+          </Text>
+        </Pane>
         <Pane marginBottom={16}>
           <Text display="block" marginBottom={8} fontWeight={500}>
             Set Name *
@@ -86,18 +88,6 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
             placeholder="Enter set name"
             value={newSetData.name}
             onChange={(value) => handleInputChange('name', value)}
-            width="100%"
-          />
-        </Pane>
-
-        <Pane marginBottom={16}>
-          <Text display="block" marginBottom={8} fontWeight={500}>
-            Description
-          </Text>
-          <AppTextarea
-            placeholder="Enter description (optional)"
-            value={newSetData.description}
-            onChange={(value) => handleInputChange('description', value)}
             width="100%"
           />
         </Pane>
@@ -124,7 +114,7 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
           </Select>
         </Pane>
 
-        <Pane marginBottom={16}>
+        <Pane marginBottom={24}>
           <Text display="block" marginBottom={8} fontWeight={500}>
             Meaning Language
           </Text>
@@ -145,8 +135,23 @@ const CreateSetDialog: React.FC<CreateSetDialogProps> = ({
             ))}
           </Select>
         </Pane>
+
+        {/* Action Buttons */}
+        <Pane display="flex" gap={12} marginTop={24}>
+          <Button flex={1} onClick={handleClose} appearance="minimal">
+            Cancel
+          </Button>
+          <Button
+            flex={1}
+            onClick={handleCreate}
+            intent="success"
+            disabled={!newSetData.name.trim()}
+          >
+            Create Set
+          </Button>
+        </Pane>
       </Pane>
-    </Dialog>
+    </SideSheet>
   );
 };
 

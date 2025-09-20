@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Dialog, Pane, Text, Button, Switch, Select } from 'evergreen-ui';
+import {
+  SideSheet,
+  Pane,
+  Text,
+  Button,
+  Switch,
+  Select,
+  Position,
+} from 'evergreen-ui';
 import { Volume2, Play, Smartphone, User, Gauge, Speaker } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
@@ -58,15 +66,26 @@ const StudySessionSettingsDialog: React.FC<StudySessionSettingsDialogProps> = ({
   };
 
   return (
-    <Dialog
+    <SideSheet
+      position={Position.BOTTOM}
       isShown={isShown}
-      title="Study Settings"
       onCloseComplete={onClose}
-      confirmLabel="Done"
-      onConfirm={onClose}
-      width={500}
     >
       <Pane padding={24}>
+        {/* Header */}
+        <Pane
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingBottom={16}
+          marginBottom={16}
+          borderBottom="1px solid #E4E7EB"
+        >
+          <Text size={500} fontWeight={600}>
+            Study Settings
+          </Text>
+        </Pane>
+
         {/* Sound Settings */}
         <Pane marginBottom={24}>
           <Text size={500} fontWeight={600} marginBottom={16} display="block">
@@ -132,7 +151,7 @@ const StudySessionSettingsDialog: React.FC<StudySessionSettingsDialogProps> = ({
         </Pane>
 
         {/* TTS Settings */}
-        <Pane>
+        <Pane marginBottom={24}>
           <Text size={500} fontWeight={600} marginBottom={16} display="block">
             Text-to-Speech
           </Text>
@@ -228,8 +247,15 @@ const StudySessionSettingsDialog: React.FC<StudySessionSettingsDialogProps> = ({
             </Button>
           </Pane>
         </Pane>
+
+        {/* Action Buttons */}
+        <Pane display="flex" gap={12} marginTop={24}>
+          <Button flex={1} onClick={onClose} appearance="minimal">
+            Done
+          </Button>
+        </Pane>
       </Pane>
-    </Dialog>
+    </SideSheet>
   );
 };
 

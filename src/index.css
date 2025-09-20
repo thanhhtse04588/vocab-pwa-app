@@ -168,6 +168,21 @@ body {
   }
 }
 
+/* Dialog centering for all screen sizes */
+[role='dialog'] {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  z-index: 1000 !important;
+}
+
+/* SideSheet z-index to appear above everything */
+[evergreen-portal-container] > div {
+  z-index: 1001 !important;
+}
+
 /* Memory Level Chart Styles */
 .memory-chart {
   margin: 16px 0;

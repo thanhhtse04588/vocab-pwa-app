@@ -1,27 +1,35 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import {
-  Pane,
-  Heading,
-  Card,
-  Button,
-  Text,
-  Spinner,
-  Badge,
-  Tooltip,
-  Dialog,
-  Alert,
-} from 'evergreen-ui';
-import { Trash, PencilSimple } from 'phosphor-react';
+import AudioButton from '@/components/AudioButton';
 import { useAppDispatch } from '@/hooks/redux';
 import { deleteVocabularyWord } from '@/store/slices/vocabularySlice';
 import type { VocabularyWord } from '@/types';
-import AudioButton from '@/components/AudioButton';
+import {
+  Alert,
+  Badge,
+  Card,
+  Dialog,
+  Heading,
+  IconButton,
+  Pane,
+  Spinner,
+  Text,
+  TextInput,
+} from 'evergreen-ui';
+import {
+  CaretLeft,
+  CaretRight,
+  PencilSimple,
+  Trash,
+  MagnifyingGlass,
+} from 'phosphor-react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 interface WordListProps {
   words: VocabularyWord[];
   loading: boolean;
   onEditWord: (word: VocabularyWord) => void;
   language: string;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
 const WordList: React.FC<WordListProps> = ({
@@ -29,6 +37,8 @@ const WordList: React.FC<WordListProps> = ({
   loading,
   onEditWord,
   language,
+  searchQuery = '',
+  onSearchChange,
 }) => {
   const dispatch = useAppDispatch();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -36,16 +46,26 @@ const WordList: React.FC<WordListProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const PAGE_SIZE = 20;
 
+  // Filter words by search query
+  const filteredWords = useMemo(() => {
+    if (!searchQuery.trim()) return words;
+    return words.filter(
+      (word) =>
+        word.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        word.meaning.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [words, searchQuery]);
+
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(words.length / PAGE_SIZE)),
-    [words.length]
+    () => Math.max(1, Math.ceil(filteredWords.length / PAGE_SIZE)),
+    [filteredWords.length]
   );
   const clampedPage = Math.min(currentPage, totalPages);
   const startIndex = (clampedPage - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const pagedWords = useMemo(
-    () => words.slice(startIndex, endIndex),
-    [words, startIndex, endIndex]
+    () => filteredWords.slice(startIndex, endIndex),
+    [filteredWords, startIndex, endIndex]
   );
 
   useEffect(() => {
@@ -53,58 +73,11 @@ const WordList: React.FC<WordListProps> = ({
     setCurrentPage((prev) => {
       const next = Math.max(
         1,
-        Math.min(prev, Math.max(1, Math.ceil(words.length / PAGE_SIZE)))
+        Math.min(prev, Math.max(1, Math.ceil(filteredWords.length / PAGE_SIZE)))
       );
       return next;
     });
-  }, [words.length]);
-
-  const getMemoryLevelLabel = (level: number) => {
-    const labels = [
-      'New',
-      'Learning',
-      'Familiar',
-      'Known',
-      'Mastered',
-      'Expert',
-      'Native',
-      'Perfect',
-    ];
-    return labels[level] || `Level ${level}`;
-  };
-
-  const getMemoryLevelColor = (
-    level: number
-  ):
-    | 'neutral'
-    | 'blue'
-    | 'green'
-    | 'orange'
-    | 'red'
-    | 'purple'
-    | 'teal'
-    | 'yellow' => {
-    const colors: (
-      | 'neutral'
-      | 'blue'
-      | 'green'
-      | 'orange'
-      | 'red'
-      | 'purple'
-      | 'teal'
-      | 'yellow'
-    )[] = [
-      'neutral',
-      'blue',
-      'green',
-      'orange',
-      'red',
-      'purple',
-      'teal',
-      'yellow',
-    ];
-    return colors[level] || 'neutral';
-  };
+  }, [filteredWords.length]);
 
   const handleDeleteWord = (wordId: string) => {
     setWordToDelete(wordId);
@@ -160,28 +133,55 @@ const WordList: React.FC<WordListProps> = ({
 
   return (
     <>
-      <Pane display="flex" alignItems="center" marginBottom={16}>
-        <Heading size={500} marginRight={12}>
-          Words
-        </Heading>
-        <Badge color="blue" size={300}>
-          {words.length}
-        </Badge>
+      <Pane
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        marginBottom={16}
+      >
+        <Pane display="flex" alignItems="center">
+          <Heading size={500} marginRight={12}>
+            Words
+          </Heading>
+          <Badge color="blue" size={300}>
+            {filteredWords.length}
+          </Badge>
+        </Pane>
+
+        {onSearchChange && (
+          <Pane position="relative" maxWidth={300}>
+            <TextInput
+              placeholder="Search words..."
+              value={searchQuery}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onSearchChange(e.target.value)
+              }
+              width="100%"
+              paddingLeft={32}
+            />
+            <Pane
+              position="absolute"
+              left={8}
+              top="50%"
+              transform="translateY(-50%)"
+              pointerEvents="none"
+            >
+              <MagnifyingGlass size={16} color="#8F95B2" />
+            </Pane>
+          </Pane>
+        )}
       </Pane>
 
       {pagedWords.map((word) => (
-        <Card key={word.id} marginBottom={16} hoverElevation={1}>
-          <Pane padding={24}>
-            <Pane display="flex" flexDirection="column" gap={16}>
+        <Card key={word.id} marginBottom={8} hoverElevation={1}>
+          <Pane padding={16}>
+            <Pane display="flex" flexDirection="column" gap={8}>
               {/* Header with word and badge */}
               <Pane display="flex" alignItems="center" flexWrap="wrap" gap={12}>
                 <Heading size={500} flex={1} minWidth={0}>
                   {word.word}
                 </Heading>
                 <AudioButton text={word.word} lang={language} rate={0.8} />
-                <Badge color={getMemoryLevelColor(word.memoryLevel)} size={300}>
-                  {getMemoryLevelLabel(word.memoryLevel)}
-                </Badge>
               </Pane>
 
               {/* Meaning */}
@@ -215,28 +215,22 @@ const WordList: React.FC<WordListProps> = ({
                 </Text>
 
                 <Pane display="flex" gap={8}>
-                  <Tooltip content="Edit this word">
-                    <Button
-                      appearance="minimal"
-                      intent="none"
-                      iconBefore={<PencilSimple size={16} />}
-                      onClick={() => onEditWord(word)}
-                      size="small"
-                    >
-                      Edit
-                    </Button>
-                  </Tooltip>
-                  <Tooltip content="Delete this word">
-                    <Button
-                      appearance="minimal"
-                      intent="danger"
-                      iconBefore={<Trash size={16} />}
-                      onClick={() => handleDeleteWord(word.id)}
-                      size="small"
-                    >
-                      Delete
-                    </Button>
-                  </Tooltip>
+                  <IconButton
+                    appearance="minimal"
+                    intent="primary"
+                    icon={<PencilSimple size={16} />}
+                    onClick={() => onEditWord(word)}
+                    size="small"
+                    title="Edit word"
+                  />
+                  <IconButton
+                    appearance="minimal"
+                    intent="danger"
+                    icon={<Trash size={16} />}
+                    onClick={() => handleDeleteWord(word.id)}
+                    size="small"
+                    title="Delete word"
+                  />
                 </Pane>
               </Pane>
             </Pane>
@@ -245,30 +239,32 @@ const WordList: React.FC<WordListProps> = ({
       ))}
 
       {/* Pagination controls */}
-      {words.length > PAGE_SIZE && (
+      {filteredWords.length > PAGE_SIZE && (
         <Pane
           display="flex"
           alignItems="center"
           justifyContent="space-between"
           marginTop={16}
         >
-          <Button
+          <IconButton
+            intent="primary"
             disabled={clampedPage <= 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          >
-            Previous
-          </Button>
+            icon={<CaretLeft size={16} />}
+            title="Previous page"
+          />
 
           <Text size={300} color="muted">
             Page {clampedPage} of {totalPages}
           </Text>
 
-          <Button
+          <IconButton
+            intent="primary"
             disabled={clampedPage >= totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          >
-            Next
-          </Button>
+            icon={<CaretRight size={16} />}
+            title="Next page"
+          />
         </Pane>
       )}
 

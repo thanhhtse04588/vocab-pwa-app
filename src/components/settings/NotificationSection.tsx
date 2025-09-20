@@ -8,12 +8,14 @@ interface NotificationSectionProps {
   settings: UserSettings;
   onNotificationToggle: () => void;
   onNotificationTimeChange: (time: string) => void;
+  onTestNotification?: () => void;
 }
 
 const NotificationSection: React.FC<NotificationSectionProps> = ({
   settings,
   onNotificationToggle,
   onNotificationTimeChange,
+  onTestNotification,
 }) => {
   return (
     <SettingsSection icon={Bell} title="Notifications">
@@ -21,6 +23,7 @@ const NotificationSection: React.FC<NotificationSectionProps> = ({
         settings={settings}
         onNotificationToggle={onNotificationToggle}
         onNotificationTimeChange={onNotificationTimeChange}
+        onTestNotification={onTestNotification}
       />
     </SettingsSection>
   );

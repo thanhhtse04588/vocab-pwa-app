@@ -24,7 +24,6 @@ export interface PublicVocabularySetMeta
   extends Pick<
     VocabularySet,
     | 'name'
-    | 'description'
     | 'wordLanguage'
     | 'meaningLanguage'
     | 'wordCount'
@@ -164,7 +163,6 @@ export async function fetchPublicVocabularySets(): Promise<
     result.push({
       id: docSnap.id,
       name: data.set?.name ?? data.name ?? '',
-      description: data.set?.description ?? data.description ?? '',
       wordLanguage: data.set?.wordLanguage ?? data.wordLanguage ?? '',
       meaningLanguage: data.set?.meaningLanguage ?? data.meaningLanguage ?? '',
       wordCount: data.set?.wordCount ?? data.wordCount ?? 0,
@@ -205,7 +203,6 @@ export async function fetchPublicVocabularySetWithWords(
   const set: PublicVocabularySetMeta = {
     id: docSnap.id,
     name: data.set?.name ?? data.name ?? '',
-    description: data.set?.description ?? data.description ?? '',
     wordLanguage: data.set?.wordLanguage ?? data.wordLanguage ?? '',
     meaningLanguage: data.set?.meaningLanguage ?? data.meaningLanguage ?? '',
     wordCount: data.set?.wordCount ?? data.wordCount ?? words.length,

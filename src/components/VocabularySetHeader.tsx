@@ -1,17 +1,15 @@
 import React from 'react';
 import { Pane, Heading, Button } from 'evergreen-ui';
-import { ArrowClockwise, ArrowLeft } from 'phosphor-react';
+import { ArrowLeft } from 'phosphor-react';
 import type { VocabularySet } from '@/types';
 
 interface VocabularySetHeaderProps {
   set: VocabularySet;
-  onResetProgress: () => void;
   onBack?: () => void;
 }
 
 const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
   set,
-  onResetProgress,
   onBack,
 }) => {
   return (
@@ -40,15 +38,6 @@ const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
           </Button>
         )}
         <Heading size={600}>{set.name}</Heading>
-      </Pane>
-      <Pane display="flex" gap={8}>
-        <Button
-          iconBefore={<ArrowClockwise size={16} />}
-          intent="danger"
-          onClick={onResetProgress}
-        >
-          Reset Progress
-        </Button>
       </Pane>
     </Pane>
   );

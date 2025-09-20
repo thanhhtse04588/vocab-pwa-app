@@ -1,15 +1,17 @@
 import React from 'react';
 import { Pane, Button } from 'evergreen-ui';
-import { Plus, FileCsv } from 'phosphor-react';
+import { Plus, FileCsv, ArrowClockwise } from 'phosphor-react';
 
 interface VocabularySetActionsProps {
   onImportCSV: () => void;
   onAddWord: () => void;
+  onResetProgress: () => void;
 }
 
 const VocabularySetActions: React.FC<VocabularySetActionsProps> = ({
   onImportCSV,
   onAddWord,
+  onResetProgress,
 }) => {
   return (
     <Pane
@@ -32,6 +34,15 @@ const VocabularySetActions: React.FC<VocabularySetActionsProps> = ({
         onClick={onAddWord}
       >
         Add Word
+      </Button>
+
+      <Button
+        gridColumn="span 1"
+        iconBefore={<ArrowClockwise size={16} />}
+        intent="danger"
+        onClick={onResetProgress}
+      >
+        Reset Progress
       </Button>
     </Pane>
   );

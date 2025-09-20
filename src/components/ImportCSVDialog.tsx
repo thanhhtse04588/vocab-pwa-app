@@ -1,5 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { Dialog, Pane, Button, Text, Table, Badge, Alert } from 'evergreen-ui';
+import {
+  SideSheet,
+  Pane,
+  Button,
+  Text,
+  Table,
+  Badge,
+  Alert,
+  Position,
+} from 'evergreen-ui';
 import { useAppDispatch } from '@/hooks/redux';
 import { importCSVWords } from '@/store/slices/vocabularySlice';
 import { parseCSV, validateCSVFile } from '@/utils/csvParser';
@@ -236,18 +245,26 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
 
   return (
     <>
-      <Dialog
+      <SideSheet
+        position={Position.BOTTOM}
         isShown={isShown}
-        title={getDialogTitle()}
         onCloseComplete={handleClose}
-        confirmLabel={getConfirmLabel()}
-        cancelLabel={getCancelLabel()}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-        isConfirmDisabled={currentStep === 'preview' && !previewData?.success}
-        width="90vw"
       >
-        <Pane>
+        <Pane padding={24}>
+          {/* Header */}
+          <Pane
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            paddingBottom={16}
+            marginBottom={16}
+            borderBottom="1px solid #E4E7EB"
+          >
+            <Text size={500} fontWeight={600}>
+              {getDialogTitle()}
+            </Text>
+          </Pane>
+
           {currentStep === 'select' && (
             <>
               <Text marginBottom={16}>
@@ -276,6 +293,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
                 intent="success"
                 onClick={downloadCSVTemplate}
                 width="100%"
+                marginBottom={16}
               >
                 Download Template
               </Button>
@@ -300,8 +318,23 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
               {previewData.success && renderPreviewTable()}
             </>
           )}
+
+          {/* Action Buttons */}
+          <Pane display="flex" gap={12} marginTop={24}>
+            <Button flex={1} onClick={handleCancel} appearance="minimal">
+              {getCancelLabel()}
+            </Button>
+            <Button
+              flex={1}
+              onClick={handleConfirm}
+              intent="success"
+              disabled={currentStep === 'preview' && !previewData?.success}
+            >
+              {getConfirmLabel()}
+            </Button>
+          </Pane>
         </Pane>
-      </Dialog>
+      </SideSheet>
 
       <input
         ref={fileInputRef}
@@ -312,15 +345,25 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
       />
 
       {/* Alert Dialog */}
-      <Dialog
+      <SideSheet
+        position={Position.BOTTOM}
         isShown={showAlert}
-        title="Import Error"
         onCloseComplete={() => setShowAlert(false)}
-        confirmLabel="OK"
-        onConfirm={() => setShowAlert(false)}
       >
-        <Text>{alertMessage}</Text>
-      </Dialog>
+        <Pane padding={24}>
+          <Text size={500} fontWeight={600} marginBottom={16}>
+            Import Error
+          </Text>
+          <Text marginBottom={24}>{alertMessage}</Text>
+          <Button
+            onClick={() => setShowAlert(false)}
+            intent="primary"
+            width="100%"
+          >
+            OK
+          </Button>
+        </Pane>
+      </SideSheet>
     </>
   );
 };

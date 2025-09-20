@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  Dialog,
+  SideSheet,
   Pane,
   Button,
   Spinner,
@@ -8,6 +8,7 @@ import {
   Card,
   Heading,
   Badge,
+  Position,
 } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
@@ -59,14 +60,26 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
   );
 
   return (
-    <Dialog
+    <SideSheet
+      position={Position.BOTTOM}
       isShown={isShown}
-      title="Import Preset Vocabulary Set"
       onCloseComplete={onClose}
-      hasFooter={false}
-      width="90vw"
     >
-      <Pane>
+      <Pane padding={24}>
+        {/* Header */}
+        <Pane
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingBottom={16}
+          marginBottom={16}
+          borderBottom="1px solid #E4E7EB"
+        >
+          <Text size={500} fontWeight={600}>
+            Import Preset Vocabulary Set
+          </Text>
+        </Pane>
+
         {publicLoading ? (
           <Pane
             display="flex"
@@ -82,7 +95,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
         ) : (
           <>
             {/* Search Bar */}
-            <Pane padding={16} borderBottom="1px solid var(--border-color)">
+            <Pane marginBottom={16}>
               <SearchInput
                 placeholder="Search presets by name or language..."
                 value={searchQuery}
@@ -101,10 +114,9 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
             {/* Presets Grid */}
             <Pane
               display="grid"
-              gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-              gap={10}
-              padding={16}
-              maxHeight="65vh"
+              gridTemplateColumns="repeat(auto-fill, minmax(180px, 1fr))"
+              gap={12}
+              maxHeight="60vh"
               overflowY="auto"
             >
               {filteredSets.length === 0 ? (
@@ -131,10 +143,10 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
                     display="flex"
                     flexDirection="column"
                     justifyContent="space-between"
-                    minHeight={110}
+                    minHeight={100}
                     hoverElevation={2}
                     transition="all 0.2s ease"
-                    border="1px solid var(--border-color)"
+                    border="1px solid #E4E7EB"
                     borderRadius={6}
                   >
                     {/* Header */}
@@ -187,7 +199,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
           </>
         )}
       </Pane>
-    </Dialog>
+    </SideSheet>
   );
 };
 

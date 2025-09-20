@@ -113,39 +113,6 @@ const HomePage: React.FC = () => {
 
         {/* Memory Levels Chart */}
         {sets.length > 0 && <MemoryLevelChart />}
-
-        {/* Recent Activity */}
-        {sets.length > 0 && (
-          <>
-            <Heading size={500} marginBottom={16}>
-              Recent Activity
-            </Heading>
-            <Card>
-              <Pane paddingX={24}>
-                <Heading size={400} marginBottom={16}>
-                  Recent Vocabulary Sets
-                </Heading>
-                {sets.slice(0, 3).map((set) => (
-                  <Pane
-                    key={set.id}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    padding={12}
-                    borderBottom="1px solid #e4e7eb"
-                  >
-                    <Pane>
-                      <Text fontWeight={500}>{set.name}</Text>
-                    </Pane>
-                    <Pane>
-                      <Text color="muted">{set.wordCount} words</Text>
-                    </Pane>
-                  </Pane>
-                ))}
-              </Pane>
-            </Card>
-          </>
-        )}
       </Pane>
 
       {/* Add Word Dialog */}

@@ -19,7 +19,7 @@ export class VocabDatabase extends Dexie {
 
     this.version(1).stores({
       vocabularySets:
-        'id, name, description, wordLanguage, meaningLanguage, createdAt, lastStudiedAt, wordCount, isActive',
+        'id, name, wordLanguage, meaningLanguage, createdAt, lastStudiedAt, wordCount, isActive',
       vocabularyWords:
         'id, vocabularySetId, word, meaning, pronunciation, example, wordType, wordLanguage, memoryLevel, nextReviewAt, correctCount, incorrectCount, createdAt, lastReviewedAt',
       studySessions:

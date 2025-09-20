@@ -41,7 +41,7 @@ const StudyTipsCard: React.FC = () => {
                 flexShrink={0}
               />
               <Text fontWeight={500} marginRight={8}>
-                Level {level}:
+                Lv {level}:
               </Text>
               <Text color="muted">{time}</Text>
             </Pane>

@@ -1,18 +1,20 @@
 import React from 'react';
-import { Pane, Card, Text, Switch } from 'evergreen-ui';
-import { Bell, Clock } from 'lucide-react';
+import { Pane, Card, Text, Switch, Button } from 'evergreen-ui';
+import { Bell, Clock, TestTube } from 'lucide-react';
 import type { UserSettings } from '@/types';
 
 interface NotificationSettingsCardProps {
   settings: UserSettings;
   onNotificationToggle: () => void;
   onNotificationTimeChange: (time: string) => void;
+  onTestNotification?: () => void;
 }
 
 const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({
   settings,
   onNotificationToggle,
   onNotificationTimeChange,
+  onTestNotification,
 }) => {
   return (
     <Card marginBottom={0}>
@@ -62,6 +64,23 @@ const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({
             }}
           />
         </Pane>
+
+        {/* Test Notification Button */}
+        {onTestNotification && (
+          <Pane marginTop={16} marginBottom={24}>
+            <Button
+              iconBefore={<TestTube size={16} />}
+              onClick={onTestNotification}
+              appearance="outline"
+              size="small"
+            >
+              Test Notification
+            </Button>
+            <Text size={300} color="muted" marginTop={8} display="block">
+              Send a test notification to check if notifications are working
+            </Text>
+          </Pane>
+        )}
       </Pane>
     </Card>
   );

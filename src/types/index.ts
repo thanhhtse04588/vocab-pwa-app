@@ -3,7 +3,6 @@
 export interface VocabularySet {
   id: string;
   name: string;
-  description: string;
   wordLanguage: string;
   meaningLanguage: string;
   createdAt: string;

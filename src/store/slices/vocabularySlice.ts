@@ -63,7 +63,6 @@ export const downloadPublicSet = createAsyncThunk(
     const localSet: VocabularySet = {
       id: newSetId,
       name: set.name,
-      description: set.description,
       wordLanguage: set.wordLanguage,
       meaningLanguage: set.meaningLanguage,
       createdAt: new Date().toISOString(),
