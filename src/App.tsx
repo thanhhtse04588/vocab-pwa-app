@@ -17,6 +17,7 @@ import VocabularySetPage from '@/pages/VocabularySetPage';
 import LearnPage from '@/pages/LearnPage';
 import SettingsPage from '@/pages/SettingsPage';
 import UserProfilePage from '@/pages/UserProfilePage';
+import AdminPage from '@/pages/AdminPage';
 import AuthInitializer from '@/components/AuthInitializer';
 import LoadingScreen from '@/components/LoadingScreen';
 import LoginPrompt from '@/components/LoginPrompt';
@@ -104,6 +105,8 @@ function AppContent(): JSX.Element {
         return <SettingsPage />;
       case 'profile':
         return <UserProfilePage />;
+      case 'admin':
+        return <AdminPage />;
       default:
         return <HomePage />;
     }

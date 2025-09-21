@@ -19,21 +19,17 @@ const SetInfoCard: React.FC<SetInfoCardProps> = ({
   return (
     <Card>
       <Pane paddingX={24} marginBottom={16}>
-        <Pane display="flex" gap={16}>
-          <Pane flex={1}>
-            <Button
-              appearance="primary"
-              intent="success"
-              iconBefore={<Play size={16} />}
-              onClick={onStartStudy}
-              width="100%"
-              disabled={isStartingStudy || newWords === 0}
-            >
-              {isStartingStudy
-                ? 'Starting...'
-                : `Start Study (${newWords} new)`}
-            </Button>
-          </Pane>
+        <Pane>
+          <Button
+            appearance="primary"
+            intent="success"
+            iconBefore={<Play size={16} />}
+            onClick={onStartStudy}
+            width="100%"
+            disabled={isStartingStudy || newWords === 0}
+          >
+            {isStartingStudy ? 'Starting...' : `Start Study (${newWords} new)`}
+          </Button>
         </Pane>
       </Pane>
     </Card>

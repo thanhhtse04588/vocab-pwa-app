@@ -2,11 +2,13 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setActiveTab } from '@/store/slices/navigationSlice';
 import type { TabId } from '@/types';
 import { Button, Pane } from 'evergreen-ui';
-import { BookOpen, Gear, House } from 'phosphor-react';
+import { BookOpen, Gear, House, Shield } from 'phosphor-react';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const Navigation: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeTab } = useAppSelector((state) => state.navigation);
+  const { canAccessAdmin } = usePermissions();
 
   const handleTabChange = (tabId: string) => {
     dispatch(setActiveTab(tabId as TabId));
@@ -71,6 +73,22 @@ const Navigation: React.FC = () => {
             <Gear size={20} />
             <span style={{ fontSize: '12px', marginTop: '2px' }}>Settings</span>
           </Button>
+          {canAccessAdmin() && (
+            <Button
+              appearance={activeTab === 'admin' ? 'primary' : 'minimal'}
+              intent="none"
+              onClick={() => handleTabChange('admin')}
+              height={48}
+              minWidth={60}
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Shield size={20} />
+              <span style={{ fontSize: '12px', marginTop: '2px' }}>Admin</span>
+            </Button>
+          )}
         </Pane>
       </Pane>
     </>

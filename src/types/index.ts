@@ -9,6 +9,10 @@ export interface VocabularySet {
   lastStudiedAt?: string;
   wordCount: number;
   isActive: boolean;
+  isPublic?: boolean;
+  publicId?: string; // ID in public collection
+  publishedAt?: string;
+  publisherId?: string; // User ID who published this set
 }
 
 export interface VocabularyWord {
@@ -94,8 +98,33 @@ export const SPACED_REPETITION_INTERVALS: Record<MemoryLevel, number> = {
   7: 129600, // 90 days (90 * 24 * 60 minutes)
 };
 
+// Admin types
+export type UserRole = 'user' | 'moderator' | 'admin';
+
+export interface UserProfile {
+  uid: string;
+  email: string;
+  displayName: string;
+  role: UserRole;
+  permissions: Permission[];
+  createdAt: string;
+  lastActiveAt: string;
+  isActive: boolean;
+}
+
+export interface Permission {
+  resource: string; // 'vocabulary_sets', 'users', 'analytics', 'system'
+  actions: string[]; // ['read', 'write', 'delete', 'publish', 'moderate']
+}
+
 // Navigation types
-export type TabId = 'home' | 'vocabulary' | 'learn' | 'settings' | 'profile';
+export type TabId =
+  | 'home'
+  | 'vocabulary'
+  | 'learn'
+  | 'settings'
+  | 'profile'
+  | 'admin';
 
 export interface NavigationState {
   activeTab: TabId;

@@ -4,6 +4,9 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadVocabularyWords,
   setCurrentSet,
+  publishSet,
+  unpublishSet,
+  deleteVocabularySet,
 } from '@/store/slices/vocabularySlice';
 import {
   setActiveTab,
@@ -17,11 +20,11 @@ import type { VocabularyWord } from '@/types';
 import AddWordDialog from '@/components/AddWordDialog';
 import ImportCSVDialog from '@/components/ImportCSVDialog';
 import ResetProgressDialog from '@/components/ResetProgressDialog';
+import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
 import WordList from '@/components/WordList';
 import SetInfoCard from '@/components/SetInfoCard';
 import MemoryLevelChart from '@/components/MemoryLevelChart';
 import VocabularySetHeader from '@/components/VocabularySetHeader';
-import VocabularySetActions from '@/components/VocabularySetActions';
 import VocabularySetErrorStates from '@/components/VocabularySetErrorStates';
 
 interface VocabularySetPageProps {
@@ -38,9 +41,11 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
   const [showAddWordDialog, setShowAddWordDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isStartingStudy, setIsStartingStudy] = useState(false);
   const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isPublishing, setIsPublishing] = useState(false);
 
   useEffect(() => {
     if (setId) {
@@ -97,12 +102,64 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         // Reload words to reflect the reset
         dispatch(loadVocabularyWords(setId));
         setShowResetDialog(false);
-        toasterService.success('Progress has been reset successfully!');
       } catch (error) {
         console.error('Failed to reset progress:', error);
         const errorMessage =
           error instanceof Error ? error.message : 'Unknown error';
         toasterService.error(`Failed to reset progress: ${errorMessage}`);
+      }
+    }
+  };
+
+  const handlePublish = async () => {
+    if (setId) {
+      setIsPublishing(true);
+      try {
+        await dispatch(publishSet(setId)).unwrap();
+      } catch (error) {
+        console.error('Failed to publish vocabulary set:', error);
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        toasterService.error(`Failed to publish: ${errorMessage}`);
+      } finally {
+        setIsPublishing(false);
+      }
+    }
+  };
+
+  const handleUnpublish = async () => {
+    if (setId) {
+      setIsPublishing(true);
+      try {
+        await dispatch(unpublishSet(setId)).unwrap();
+      } catch (error) {
+        console.error('Failed to unpublish vocabulary set:', error);
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        toasterService.error(`Failed to unpublish: ${errorMessage}`);
+      } finally {
+        setIsPublishing(false);
+      }
+    }
+  };
+
+  const handleDelete = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (setId) {
+      try {
+        await dispatch(deleteVocabularySet(setId)).unwrap();
+        setShowDeleteDialog(false);
+        // Navigate back to vocabulary page
+        dispatch(setVocabularySetId(undefined));
+        dispatch(setCurrentPage('vocabulary'));
+      } catch (error) {
+        console.error('Failed to delete vocabulary set:', error);
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        toasterService.error(`Failed to delete: ${errorMessage}`);
       }
     }
   };
@@ -138,7 +195,17 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
     >
       <Pane padding={24} width="100%" maxWidth="100%" boxSizing="border-box">
         {/* Header */}
-        <VocabularySetHeader set={currentSet} onBack={handleBackToVocabulary} />
+        <VocabularySetHeader
+          set={currentSet}
+          onBack={handleBackToVocabulary}
+          onAddWord={handleAddWord}
+          onImportCSV={() => setShowImportDialog(true)}
+          onResetProgress={() => setShowResetDialog(true)}
+          onPublish={handlePublish}
+          onUnpublish={handleUnpublish}
+          onDelete={handleDelete}
+          isPublishing={isPublishing}
+        />
 
         {/* Set Info */}
         <SetInfoCard
@@ -149,13 +216,6 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
 
         {/* Memory Levels Distribution */}
         <MemoryLevelChart vocabularySetId={setId} />
-
-        {/* Action Buttons */}
-        <VocabularySetActions
-          onImportCSV={() => setShowImportDialog(true)}
-          onAddWord={handleAddWord}
-          onResetProgress={() => setShowResetDialog(true)}
-        />
 
         {/* Words List */}
         <WordList
@@ -192,6 +252,13 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         onClose={() => setShowResetDialog(false)}
         onConfirm={handleResetProgress}
         setName={currentSet?.name || ''}
+      />
+
+      {/* Delete Confirm Dialog */}
+      <DeleteConfirmDialog
+        isShown={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={confirmDelete}
       />
     </Pane>
   );

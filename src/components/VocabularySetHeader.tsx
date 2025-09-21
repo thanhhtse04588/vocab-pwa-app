@@ -1,17 +1,50 @@
-import React from 'react';
-import { Pane, Heading, Button } from 'evergreen-ui';
-import { ArrowLeft } from 'phosphor-react';
 import type { VocabularySet } from '@/types';
+import {
+  Button,
+  Heading,
+  IconButton,
+  Menu,
+  Pane,
+  Popover,
+  Position,
+  useTheme,
+} from 'evergreen-ui';
+import {
+  ArrowClockwise,
+  ArrowLeft,
+  DotsThreeVertical,
+  FileCsv,
+  Globe,
+  Plus,
+  Trash,
+  XCircle,
+} from 'phosphor-react';
+import React from 'react';
 
 interface VocabularySetHeaderProps {
   set: VocabularySet;
   onBack?: () => void;
+  onAddWord?: () => void;
+  onImportCSV?: () => void;
+  onResetProgress?: () => void;
+  onPublish?: () => void;
+  onUnpublish?: () => void;
+  onDelete?: () => void;
+  isPublishing?: boolean;
 }
 
 const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
   set,
   onBack,
+  onAddWord,
+  onImportCSV,
+  onResetProgress,
+  onPublish,
+  onUnpublish,
+  onDelete,
+  isPublishing = false,
 }) => {
+  const theme = useTheme();
   return (
     <Pane
       display="flex"
@@ -39,6 +72,97 @@ const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
         )}
         <Heading size={600}>{set.name}</Heading>
       </Pane>
+
+      {/* Settings Menu */}
+      <Popover
+        content={
+          <Menu>
+            <Menu.Group>
+              {onAddWord && (
+                <Menu.Item
+                  icon={<Plus size={16} color={theme.colors.gray800} />}
+                  onSelect={() => {
+                    onAddWord();
+                  }}
+                >
+                  Add Word
+                </Menu.Item>
+              )}
+
+              {onImportCSV && (
+                <Menu.Item
+                  icon={<FileCsv size={16} color={theme.colors.gray800} />}
+                  onSelect={() => {
+                    onImportCSV();
+                  }}
+                >
+                  Import CSV
+                </Menu.Item>
+              )}
+
+              {(onAddWord || onImportCSV) && <Menu.Divider />}
+
+              {onResetProgress && (
+                <Menu.Item
+                  icon={
+                    <ArrowClockwise size={16} color={theme.colors.gray800} />
+                  }
+                  onSelect={() => {
+                    onResetProgress();
+                  }}
+                >
+                  Reset Progress
+                </Menu.Item>
+              )}
+
+              {onPublish &&
+                onUnpublish &&
+                (set.isPublic ? (
+                  <Menu.Item
+                    icon={<XCircle size={16} color={theme.colors.red500} />}
+                    intent="danger"
+                    onSelect={() => {
+                      onUnpublish();
+                    }}
+                  >
+                    {isPublishing ? 'Unpublishing...' : 'Unpublish'}
+                  </Menu.Item>
+                ) : (
+                  <Menu.Item
+                    icon={<Globe size={16} color={theme.colors.green500} />}
+                    intent="success"
+                    onSelect={() => {
+                      onPublish();
+                    }}
+                  >
+                    {isPublishing ? 'Publishing...' : 'Publish'}
+                  </Menu.Item>
+                ))}
+
+              {onDelete && <Menu.Divider />}
+
+              {onDelete && (
+                <Menu.Item
+                  icon={<Trash size={16} color={theme.colors.red500} />}
+                  intent="danger"
+                  onSelect={() => {
+                    onDelete();
+                  }}
+                >
+                  Delete Set
+                </Menu.Item>
+              )}
+            </Menu.Group>
+          </Menu>
+        }
+        position={Position.BOTTOM_RIGHT}
+      >
+        <IconButton
+          icon={<DotsThreeVertical size={16} />}
+          appearance="minimal"
+          size="small"
+        />
+      </Popover>
     </Pane>
   );
 };

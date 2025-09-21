@@ -5,6 +5,8 @@ import {
 } from '@reduxjs/toolkit';
 import type { User } from 'firebase/auth';
 import { signInWithGoogle, signOutUser } from '@/services/firebaseService';
+import type { UserProfile } from '@/types';
+import { createUserProfile } from '@/utils/adminUtils';
 
 // Serializable user interface
 interface SerializableUser {
@@ -17,12 +19,14 @@ interface SerializableUser {
 
 interface AuthState {
   user: SerializableUser | null;
+  userProfile: UserProfile | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  userProfile: null,
   loading: false,
   error: null,
 };
@@ -71,7 +75,13 @@ export const signOut = createAsyncThunk(
 export const setUser = createAsyncThunk(
   'auth/setUser',
   async (user: User | null) => {
-    return serializeUser(user);
+    const serializedUser = serializeUser(user);
+    const userProfile = user ? createUserProfile(user) : null;
+
+    return {
+      user: serializedUser,
+      userProfile,
+    };
   }
 );
 
@@ -96,6 +106,9 @@ const authSlice = createSlice({
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.userProfile = action.payload
+          ? createUserProfile(action.payload)
+          : null;
         state.error = null;
       })
       .addCase(signIn.rejected, (state, action) => {
@@ -110,6 +123,7 @@ const authSlice = createSlice({
       .addCase(signOut.fulfilled, (state) => {
         state.loading = false;
         state.user = null;
+        state.userProfile = null;
         state.error = null;
       })
       .addCase(signOut.rejected, (state, action) => {
@@ -118,7 +132,8 @@ const authSlice = createSlice({
       })
       // Set user
       .addCase(setUser.fulfilled, (state, action) => {
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.userProfile = action.payload.userProfile;
         state.loading = false;
       });
   },

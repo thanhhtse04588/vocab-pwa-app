@@ -95,16 +95,16 @@ const VocabularyPage: React.FC = () => {
 
         <Pane display="flex" gap={8}>
           <Button
-            iconBefore={<CloudArrowDown size={16} />}
-            onClick={() => setShowImportDialog(true)}
-          >
-            Import Preset
-          </Button>
-          <Button
             iconBefore={<Plus size={16} />}
             onClick={() => setShowCreatePopup(true)}
           >
             New Set
+          </Button>
+          <Button
+            iconBefore={<CloudArrowDown size={16} />}
+            onClick={() => setShowImportDialog(true)}
+          >
+            Import Preset
           </Button>
           <Button
             iconBefore={<PencilSimple size={16} />}

@@ -5,6 +5,8 @@ import {
   getDocs,
   doc,
   getDoc,
+  addDoc,
+  deleteDoc,
   type Firestore,
   type DocumentData,
   type QueryDocumentSnapshot,
@@ -26,6 +28,10 @@ export interface PublicVocabularySetMeta
     'name' | 'wordLanguage' | 'meaningLanguage' | 'wordCount' | 'createdAt'
   > {
   id: string;
+  publisherId: string;
+  publisherName?: string;
+  publisherAvatar?: string;
+  publishedAt: string;
 }
 
 export interface PublicVocabularySetData {
@@ -169,6 +175,10 @@ export async function fetchPublicVocabularySets(): Promise<
       wordCount: data.set?.wordCount ?? data.wordCount ?? 0,
       createdAt:
         data.set?.createdAt ?? data.createdAt ?? new Date().toISOString(),
+      publisherId: data.publisherId ?? '',
+      publisherName: data.publisherName ?? 'Anonymous',
+      publisherAvatar: data.publisherAvatar ?? undefined,
+      publishedAt: data.publishedAt ?? new Date().toISOString(),
     });
   });
   return result;
@@ -209,7 +219,96 @@ export async function fetchPublicVocabularySetWithWords(
     wordCount: data.set?.wordCount ?? data.wordCount ?? words.length,
     createdAt:
       data.set?.createdAt ?? data.createdAt ?? new Date().toISOString(),
+    publisherId: data.publisherId ?? '',
+    publisherName: data.publisherName ?? 'Anonymous',
+    publisherAvatar: data.publisherAvatar ?? undefined,
+    publishedAt: data.publishedAt ?? new Date().toISOString(),
   };
 
   return { set, words };
+}
+
+// Publish a vocabulary set to make it public
+export async function publishVocabularySet(
+  _setId: string,
+  set: VocabularySet,
+  words: VocabularyWord[]
+): Promise<string> {
+  const { db, auth } = ensureFirebase();
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error('User must be authenticated to publish vocabulary sets');
+  }
+
+  const publicSetData = {
+    set: {
+      name: set.name,
+      wordLanguage: set.wordLanguage,
+      meaningLanguage: set.meaningLanguage,
+      wordCount: set.wordCount,
+      createdAt: set.createdAt,
+    },
+    words: words.map((w) => ({
+      word: w.word,
+      meaning: w.meaning,
+      pronunciation: w.pronunciation,
+      example: w.example,
+    })),
+    publisherId: user.uid,
+    publisherName: user.displayName || user.email || 'Anonymous',
+    publisherAvatar: user.photoURL || undefined,
+    publishedAt: new Date().toISOString(),
+  };
+
+  const docRef = await addDoc(
+    collection(db, 'publicVocabularySets'),
+    publicSetData
+  );
+  return docRef.id;
+}
+
+// Unpublish a vocabulary set (remove from public collection)
+export async function unpublishVocabularySet(publicId: string): Promise<void> {
+  const { db, auth } = ensureFirebase();
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error('User must be authenticated to unpublish vocabulary sets');
+  }
+
+  // First check if the user owns this public set
+  const docRef = doc(db, 'publicVocabularySets', publicId);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    throw new Error('Public vocabulary set not found');
+  }
+
+  const data = docSnap.data() as DocumentData;
+  if (data.publisherId !== user.uid) {
+    throw new Error('You can only unpublish your own vocabulary sets');
+  }
+
+  await deleteDoc(docRef);
+}
+
+// Check if user owns a public vocabulary set
+export async function isPublicSetOwner(publicId: string): Promise<boolean> {
+  const { db, auth } = ensureFirebase();
+  const user = auth.currentUser;
+
+  if (!user) {
+    return false;
+  }
+
+  const docRef = doc(db, 'publicVocabularySets', publicId);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    return false;
+  }
+
+  const data = docSnap.data() as DocumentData;
+  return data.publisherId === user.uid;
 }

@@ -8,6 +8,9 @@ import { db } from '@/services/database';
 import {
   fetchPublicVocabularySets,
   fetchPublicVocabularySetWithWords,
+  publishVocabularySet,
+  unpublishVocabularySet,
+  isPublicSetOwner,
   type PublicVocabularySetMeta,
 } from '@/services/firebaseService';
 
@@ -310,6 +313,74 @@ export const loadTotalWordsToReview = createAsyncThunk(
   }
 );
 
+// Publish a vocabulary set to make it public
+export const publishSet = createAsyncThunk(
+  'vocabulary/publishSet',
+  async (setId: string) => {
+    // Get the vocabulary set and its words
+    const set = await db.vocabularySets.get(setId);
+    if (!set) {
+      throw new Error('Vocabulary set not found');
+    }
+
+    const words = await db.vocabularyWords
+      .where('vocabularySetId')
+      .equals(setId)
+      .toArray();
+
+    if (words.length === 0) {
+      throw new Error('Cannot publish empty vocabulary set');
+    }
+
+    // Publish to Firebase
+    const publicId = await publishVocabularySet(setId, set, words);
+
+    // Update local set with public information
+    const updatedSet: VocabularySet = {
+      ...set,
+      isPublic: true,
+      publicId,
+      publishedAt: new Date().toISOString(),
+    };
+
+    await db.vocabularySets.update(setId, updatedSet);
+
+    return { setId, publicId };
+  }
+);
+
+// Unpublish a vocabulary set
+export const unpublishSet = createAsyncThunk(
+  'vocabulary/unpublishSet',
+  async (setId: string) => {
+    const set = await db.vocabularySets.get(setId);
+    if (!set || !set.isPublic || !set.publicId) {
+      throw new Error('Vocabulary set is not published');
+    }
+
+    // Check if user owns the public set
+    const isOwner = await isPublicSetOwner(set.publicId);
+    if (!isOwner) {
+      throw new Error('You can only unpublish your own vocabulary sets');
+    }
+
+    // Remove from Firebase
+    await unpublishVocabularySet(set.publicId);
+
+    // Update local set
+    const updatedSet: VocabularySet = {
+      ...set,
+      isPublic: false,
+      publicId: undefined,
+      publishedAt: undefined,
+    };
+
+    await db.vocabularySets.update(setId, updatedSet);
+
+    return setId;
+  }
+);
+
 const vocabularySlice = createSlice({
   name: 'vocabulary',
   initialState,
@@ -468,6 +539,50 @@ const vocabularySlice = createSlice({
       // Load total words to review
       .addCase(loadTotalWordsToReview.fulfilled, (state, action) => {
         state.totalWordsToReview = action.payload;
+      })
+
+      // Publish set
+      .addCase(publishSet.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(publishSet.fulfilled, (state, action) => {
+        state.loading = false;
+        const setIndex = state.sets.findIndex(
+          (set) => set.id === action.payload.setId
+        );
+        if (setIndex !== -1) {
+          state.sets[setIndex].isPublic = true;
+          state.sets[setIndex].publicId = action.payload.publicId;
+          state.sets[setIndex].publishedAt = new Date().toISOString();
+        }
+      })
+      .addCase(publishSet.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message || 'Failed to publish vocabulary set';
+      })
+
+      // Unpublish set
+      .addCase(unpublishSet.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(unpublishSet.fulfilled, (state, action) => {
+        state.loading = false;
+        const setIndex = state.sets.findIndex(
+          (set) => set.id === action.payload
+        );
+        if (setIndex !== -1) {
+          state.sets[setIndex].isPublic = false;
+          state.sets[setIndex].publicId = undefined;
+          state.sets[setIndex].publishedAt = undefined;
+        }
+      })
+      .addCase(unpublishSet.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message || 'Failed to unpublish vocabulary set';
       });
   },
 });
