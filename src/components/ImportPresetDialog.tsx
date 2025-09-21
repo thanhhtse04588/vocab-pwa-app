@@ -19,6 +19,7 @@ import {
 } from '@/store/slices/vocabularySlice';
 import { getCurrentUser } from '@/services/firebaseService';
 import { toasterService } from '@/services/toasterService';
+import { usePermissions } from '@/hooks/usePermissions';
 import { useState } from 'react';
 import { SearchInput } from 'evergreen-ui';
 import { XCircle, CaretLeft, CaretRight, User } from 'phosphor-react';
@@ -103,6 +104,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
   const { publicSets, publicLoading, sets } = useAppSelector(
     (state) => state.vocabulary
   );
+  const { isAdmin } = usePermissions();
   const [searchQuery, setSearchQuery] = useState('');
   const [unpublishingSets, setUnpublishingSets] = useState<Set<string>>(
     new Set()
@@ -129,7 +131,8 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
 
   // Handle unpublish action
   const handleUnpublish = async (preset: PresetSet) => {
-    if (!isOwnedByCurrentUser(preset)) {
+    // Allow admins to unpublish any preset, or users to unpublish their own
+    if (!isAdmin() && !isOwnedByCurrentUser(preset)) {
       toasterService.error('You can only unpublish your own vocabulary sets');
       return;
     }
@@ -343,7 +346,7 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
                         Import
                       </Button>
 
-                      {isOwnedByCurrentUser(preset) && (
+                      {(isAdmin() || isOwnedByCurrentUser(preset)) && (
                         <Button
                           iconBefore={<XCircle size={16} />}
                           intent="danger"

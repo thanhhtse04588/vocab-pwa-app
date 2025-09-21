@@ -136,12 +136,9 @@ export class AdminService {
     hasMore: boolean;
   }> {
     try {
-      const {
-        collection,
-        getDocs,
-        query,
-        orderBy,
-      } = await import('firebase/firestore');
+      const { collection, getDocs, query, orderBy } = await import(
+        'firebase/firestore'
+      );
 
       let setsQuery = query(
         collection(this.db, 'vocabularySets'),
