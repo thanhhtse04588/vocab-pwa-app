@@ -1,11 +1,5 @@
 /* Global styles for BeeVocab */
 :root {
-  /* Light theme colors */
-  --evergreen-primary: #f7ac15;
-  --evergreen-primary-rgb: 247, 172, 21;
-  --evergreen-primary-shade: #e69a0e;
-  --evergreen-primary-tint: #f9b833;
-
   /* Light theme variables */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
@@ -15,40 +9,26 @@
   --text-muted: #64748b;
   --border-color: #e2e8f0;
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
   /* Light theme accent colors */
   --accent-primary: #f7ac15;
   --accent-primary-hover: #e69a0e;
-  --accent-secondary: #06b6d4;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --error-color: #ef4444;
-  --info-color: #3b82f6;
 }
 
-/* Dark theme variables - More user-friendly colors */
+/* Dark theme variables - Inspired by Firebase console and Evergreen colors */
 [data-theme='dark'] {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --border-color: #334155;
+  --bg-primary: #1e1e1e; /* Main dark background like Firebase console */
+  --bg-secondary: #282828; /* Secondary background (cards, modals) */
+  --bg-tertiary: #303030; /* Tertiary background (table rows, inputs) */
+  --text-primary: #ffffff; /* Primary text */
+  --text-secondary: #b3b3b3; /* Secondary text (descriptions, labels) */
+  --text-muted: #8a8a8a; /* Muted text (placeholders, disabled) */
+  --border-color: #404040; /* Primary borders */
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
-    0 4px 6px -2px rgba(0, 0, 0, 0.3);
 
   /* Enhanced dark theme colors for better UX */
-  --accent-primary: #f7ac15;
+  --accent-primary: #f7ac15; /* Keep bee yellow as primary accent */
   --accent-primary-hover: #e69a0e;
-  --accent-secondary: #06b6d4;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --error-color: #ef4444;
-  --info-color: #3b82f6;
 }
 
 /* Ensure proper app structure */
@@ -188,62 +168,6 @@ body {
   z-index: 1002 !important;
 }
 
-/* Memory Level Chart Styles */
-.memory-chart {
-  margin: 16px 0;
-}
-
-.memory-level-item {
-  margin-bottom: 12px;
-}
-
-.memory-level-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.memory-level-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-
-.memory-level-label {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.memory-level-count {
-  font-size: 12px;
-  color: #66788a;
-}
-
-.memory-level-bar {
-  height: 8px;
-  background-color: #f7f9fc;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.memory-level-fill {
-  height: 100%;
-  transition: width 0.3s ease;
-  border-radius: 4px;
-}
-
-.memory-chart-summary {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e4e7eb;
-  text-align: center;
-  font-size: 14px;
-  color: #66788a;
-}
-
 /* Page content responsive styles */
 .page-content {
   width: 100%;
@@ -280,7 +204,6 @@ body {
 
 .header {
   margin: 0 auto;
-  transition: all 0.3s ease;
 }
 
 /* Responsive design */
@@ -341,7 +264,7 @@ body {
 }
 
 .brand-section:hover .brand-text h1 {
-  color: var(--text-accent, #f7ac15);
+  color: var(--accent-primary);
   transition: color 0.3s ease;
 }
 
@@ -371,10 +294,6 @@ body {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-[data-theme='dark'] .header-container {
-  background: rgba(15, 23, 42, 0.95);
-}
-
 /* Improved button styling */
 .header button {
   border-radius: 8px;
@@ -384,7 +303,7 @@ body {
 
 /* Better focus states */
 .header button:focus {
-  outline: 2px solid var(--text-accent, #f7ac15);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
@@ -402,96 +321,6 @@ html {
   overflow-x: hidden;
 }
 
-/* Enhanced dark theme adjustments */
-[data-theme='dark'] .memory-level-bar {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-[data-theme='dark'] .card {
-  box-shadow: var(--shadow);
-  border-color: var(--border-color);
-  background-color: var(--bg-secondary);
-}
-
-[data-theme='dark'] .stats-card h3 {
-  color: var(--accent-primary);
-}
-
-[data-theme='dark'] .stats-card p {
-  color: var(--text-muted);
-}
-
-[data-theme='dark'] .memory-chart-summary {
-  border-top-color: var(--border-color);
-  color: var(--text-muted);
-}
-
-[data-theme='dark'] .memory-level-count {
-  color: var(--text-muted);
-}
-
-/* Improved form elements for dark mode */
-[data-theme='dark'] .form-input {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-color);
-  color: var(--text-primary);
-}
-
-[data-theme='dark'] .form-input:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-[data-theme='dark'] .form-label {
-  color: var(--text-secondary);
-}
-
-/* Theme selector improvements */
-.theme-selector {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.theme-selector:hover {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.theme-selector:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Better contrast for headings */
-[data-theme='dark'] h1,
-[data-theme='dark'] h2,
-[data-theme='dark'] h3,
-[data-theme='dark'] h4,
-[data-theme='dark'] h5,
-[data-theme='dark'] h6 {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-/* Improved link colors */
-[data-theme='dark'] a {
-  color: var(--accent-primary);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-[data-theme='dark'] a:hover {
-  color: var(--accent-primary-hover);
-  text-decoration: underline;
-}
-
 /* Animation for smooth transitions */
 .fade-in {
   animation: fadeIn 0.3s ease-in;
@@ -506,82 +335,4 @@ html {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Range Slider Styles */
-.range-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--border-color);
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  cursor: pointer;
-  border: 2px solid var(--bg-primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.range-slider::-webkit-slider-thumb:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.range-slider::-webkit-slider-thumb:active {
-  background: var(--accent-primary-hover);
-  transform: scale(1.05);
-}
-
-.range-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  cursor: pointer;
-  border: 2px solid var(--bg-primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.range-slider::-moz-range-thumb:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.range-slider::-moz-range-thumb:active {
-  background: var(--accent-primary-hover);
-  transform: scale(1.05);
-}
-
-.range-slider::-moz-range-track {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--border-color);
-  border: none;
-}
-
-/* Focus styles for accessibility */
-.range-slider:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(247, 172, 21, 0.3);
-}
-
-.range-slider:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px rgba(247, 172, 21, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.range-slider:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 3px rgba(247, 172, 21, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
 }

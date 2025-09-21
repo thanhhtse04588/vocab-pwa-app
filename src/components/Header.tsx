@@ -1,16 +1,26 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setActiveTab } from '@/store/slices/navigationSlice';
-import { Heading, Pane } from 'evergreen-ui';
+import { setTheme, updateSettings } from '@/store/slices/settingsSlice';
+import { Heading, Pane, useTheme, IconButton } from 'evergreen-ui';
 import React from 'react';
+import { Sun, Moon } from 'lucide-react';
 import LoginButton from './LoginButton';
 import UserProfile from './UserProfile';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { isDark } = useAppSelector((state) => state.settings);
+  const theme = useTheme();
 
   const handleLogoClick = () => {
     dispatch(setActiveTab('home'));
+  };
+
+  const handleThemeToggle = () => {
+    const newTheme = isDark ? 'light' : 'dark';
+    dispatch(setTheme(newTheme));
+    dispatch(updateSettings({ theme: newTheme }));
   };
 
   return (
@@ -40,7 +50,7 @@ const Header: React.FC = () => {
             width={32}
             height={32}
             borderRadius={8}
-            background="linear-gradient(135deg, #f7ac15 0%, #e69a0e 100%)"
+            background={`linear-gradient(135deg, ${theme.colors.blue500} 0%, ${theme.colors.blue600} 100%)`}
             display="flex"
             alignItems="center"
             justifyContent="center"
@@ -72,7 +82,16 @@ const Header: React.FC = () => {
         </Pane>
 
         {/* Auth Section */}
-        <Pane display="flex" alignItems="center">
+        <Pane display="flex" alignItems="center" gap={8}>
+          <IconButton
+            icon={isDark ? Sun : Moon}
+            iconSize={20}
+            size="medium"
+            appearance="minimal"
+            intent="default"
+            onClick={handleThemeToggle}
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          />
           {user ? <UserProfile /> : <LoginButton />}
         </Pane>
       </Pane>

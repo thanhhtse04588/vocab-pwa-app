@@ -2,17 +2,14 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Pane, ThemeProvider } from 'evergreen-ui';
-import { customTheme } from '@/theme/customTheme';
+import { lightTheme, darkTheme } from '@/theme/customTheme';
 import { store, persistor } from '@/store';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { loadSettings } from '@/store/slices/settingsSlice';
 import { loadVocabularySets } from '@/store/slices/vocabularySlice';
 import { loadTotalWordsToReview } from '@/store/slices/userProgressSlice';
 import { audioInitializer } from '@/services/audioInitializer';
-import {
-  setTheme,
-  updateThemeFromSystem,
-} from '@/store/slices/navigationSlice';
+import { updateThemeFromSystem } from '@/store/slices/settingsSlice';
 // Import pages
 import HomePage from '@/pages/HomePage';
 import VocabularyPage from '@/pages/VocabularyPage';
@@ -33,8 +30,8 @@ import Header from './components/Header';
 function AppContent(): JSX.Element {
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((state) => state.auth);
-  const { settings } = useAppSelector((state) => state.settings);
-  const { currentPage, theme, isDark, vocabularySetId } = useAppSelector(
+  const { settings, isDark } = useAppSelector((state) => state.settings);
+  const { currentPage, vocabularySetId } = useAppSelector(
     (state) => state.navigation
   );
 
@@ -50,12 +47,7 @@ function AppContent(): JSX.Element {
     // Initialize PWA service
   }, [dispatch]);
 
-  useEffect(() => {
-    // Apply theme from settings to navigation
-    if (settings?.theme) {
-      dispatch(setTheme(settings.theme));
-    }
-  }, [dispatch, settings?.theme]);
+  // Theme is now managed directly in settingsSlice, no need to sync
 
   useEffect(() => {
     // Apply theme to document
@@ -66,14 +58,14 @@ function AppContent(): JSX.Element {
 
   useEffect(() => {
     // Listen for system theme changes when auto mode is enabled
-    if (theme === 'auto') {
+    if (settings?.theme === 'auto') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleChange = () => dispatch(updateThemeFromSystem());
 
       mediaQuery.addEventListener('change', handleChange);
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
-  }, [dispatch, theme]);
+  }, [dispatch, settings?.theme]);
 
   // Auto scroll to top when page changes
   useEffect(() => {
@@ -151,6 +143,20 @@ function AppContent(): JSX.Element {
 }
 
 /**
+ * Theme provider component that handles dynamic theme switching
+ * @returns JSX element with theme provider
+ */
+function AppWithTheme(): JSX.Element {
+  const { isDark } = useAppSelector((state) => state.settings);
+
+  return (
+    <ThemeProvider value={isDark ? darkTheme : lightTheme}>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+/**
  * Root App component that provides Redux store, persistence, and theme context.
  * @returns JSX element for the entire application
  */
@@ -158,9 +164,7 @@ function App(): JSX.Element {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider value={customTheme}>
-          <AppContent />
-        </ThemeProvider>
+        <AppWithTheme />
       </PersistGate>
     </Provider>
   );

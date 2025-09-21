@@ -7,6 +7,7 @@ import {
   Switch,
   Select,
   Position,
+  useTheme,
 } from 'evergreen-ui';
 import { Play, User, Gauge, Speaker } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
@@ -23,6 +24,7 @@ const StudySessionSettingsDialog: React.FC<StudySessionSettingsDialogProps> = ({
   onClose,
 }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const { settings } = useAppSelector((state) => state.settings);
   const [isTestingTTS, setIsTestingTTS] = useState(false);
 
@@ -65,7 +67,7 @@ const StudySessionSettingsDialog: React.FC<StudySessionSettingsDialogProps> = ({
           justifyContent="space-between"
           paddingBottom={16}
           marginBottom={16}
-          borderBottom="1px solid #E4E7EB"
+          borderBottom={`1px solid ${theme.colors.gray200}`}
         >
           <Text size={500} fontWeight={600}>
             Study Settings

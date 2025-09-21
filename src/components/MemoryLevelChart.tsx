@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Card, Pane, Text } from 'evergreen-ui';
+import { Card, Pane, Text, useTheme } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { loadMemoryLevelDistribution } from '@/store/slices/userProgressSlice';
 
@@ -11,6 +11,7 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
   vocabularySetId,
 }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const { memoryLevelDistribution } = useAppSelector(
     (state) => state.userProgress
   );
@@ -28,15 +29,15 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
   const getMemoryLevelColor = (level: number): string => {
     const colors = [
       '', // Empty for level 0 (not used)
-      '#ffa726', // Orange - Learning
-      '#ffeb3b', // Yellow - Familiar
-      '#66bb6a', // Green - Known
-      '#42a5f5', // Blue - Mastered
-      '#ab47bc', // Purple - Expert
-      '#26a69a', // Teal - Native
-      '#5c6bc0', // Indigo - Perfect
+      theme.colors.orange500, // Orange - Learning
+      theme.colors.blue500, // Blue - Familiar (using blue color)
+      theme.colors.green500, // Green - Known
+      theme.colors.blue500, // Blue - Mastered
+      theme.colors.red500, // Red - Expert
+      theme.colors.green600, // Teal - Native
+      theme.colors.blue600, // Indigo - Perfect
     ];
-    return colors[level] || '#9e9e9e';
+    return colors[level] || theme.colors.gray500;
   };
 
   // Transform data for chart

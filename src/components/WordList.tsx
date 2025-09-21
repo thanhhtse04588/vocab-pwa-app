@@ -13,6 +13,7 @@ import {
   Spinner,
   Text,
   TextInput,
+  useTheme,
 } from 'evergreen-ui';
 import {
   CaretLeft,
@@ -41,6 +42,7 @@ const WordList: React.FC<WordListProps> = ({
   onSearchChange,
 }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [wordToDelete, setWordToDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -166,7 +168,7 @@ const WordList: React.FC<WordListProps> = ({
               transform="translateY(-50%)"
               pointerEvents="none"
             >
-              <MagnifyingGlass size={16} color="#8F95B2" />
+              <MagnifyingGlass size={16} color={theme.colors.gray600} />
             </Pane>
           </Pane>
         )}

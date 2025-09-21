@@ -7,12 +7,10 @@ import {
   updateSettings,
   setBatchSize,
 } from '@/store/slices/settingsSlice';
-import { setTheme } from '@/store/slices/navigationSlice';
 import { backupService } from '@/services/backupService';
 import { db } from '@/services/database';
 import { toasterService } from '@/services/toasterService';
 import StudySettingsSection from '@/components/settings/StudySettingsSection';
-import AppearanceSection from '@/components/settings/AppearanceSection';
 import SoundVibrationSection from '@/components/settings/SoundVibrationSection';
 import DataManagementSection from '@/components/settings/DataManagementSection';
 import AppInfoSection from '@/components/settings/AppInfoSection';
@@ -49,11 +47,6 @@ const SettingsPage: React.FC = () => {
   const handleBatchSizeChange = (value: number) => {
     dispatch(setBatchSize(value));
     dispatch(updateSettings({ batchSize: value }));
-  };
-
-  const handleThemeChange = (theme: 'light' | 'dark' | 'auto') => {
-    dispatch(setTheme(theme));
-    dispatch(updateSettings({ theme }));
   };
 
   const handleAutoPlayToggle = () => {
@@ -172,12 +165,6 @@ const SettingsPage: React.FC = () => {
         <StudySettingsSection
           settings={settings}
           onBatchSizeChange={handleBatchSizeChange}
-        />
-
-        {/* Appearance */}
-        <AppearanceSection
-          settings={settings}
-          onThemeChange={handleThemeChange}
         />
 
         {/* Sound & Vibration */}

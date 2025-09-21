@@ -222,7 +222,7 @@ export class VocabDatabase extends Dexie {
     const defaultSettings: UserSettings = {
       id: 'default',
       batchSize: 10,
-      theme: 'auto',
+      theme: 'light',
       enableSound: true,
       enableVibration: true,
       autoPlayPronunciation: true,

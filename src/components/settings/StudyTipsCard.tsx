@@ -9,7 +9,7 @@ const StudyTipsCard: React.FC = () => {
         <Pane display="flex" alignItems="center" marginBottom={16}>
           <Lightbulb
             size={20}
-            style={{ marginRight: '8px', color: '#fbbf24' }}
+            style={{ marginRight: '8px', color: '#f7ac15' }}
           />
           <Heading size={400}>Spaced Repetition Schedule</Heading>
         </Pane>

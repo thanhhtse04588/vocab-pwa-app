@@ -10,12 +10,14 @@ interface SettingsState {
   settings: UserSettings | null;
   loading: boolean;
   error: string | null;
+  isDark: boolean;
 }
 
 const initialState: SettingsState = {
   settings: null,
   loading: false,
   error: null,
+  isDark: false,
 };
 
 // Async thunks
@@ -47,6 +49,16 @@ const settingsSlice = createSlice({
     setTheme: (state, action: PayloadAction<'light' | 'dark' | 'auto'>) => {
       if (state.settings) {
         state.settings.theme = action.payload;
+        
+        // Calculate isDark based on theme
+        if (action.payload === 'auto') {
+          const prefersDark = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+          ).matches;
+          state.isDark = prefersDark;
+        } else {
+          state.isDark = action.payload === 'dark';
+        }
       }
     },
     toggleSound: (state) => {
@@ -78,6 +90,14 @@ const settingsSlice = createSlice({
         state.settings.ttsRate = action.payload;
       }
     },
+    updateThemeFromSystem: (state) => {
+      if (state.settings?.theme === 'auto') {
+        const prefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches;
+        state.isDark = prefersDark;
+      }
+    },
     clearError: (state) => {
       state.error = null;
     },
@@ -92,6 +112,18 @@ const settingsSlice = createSlice({
       .addCase(loadSettings.fulfilled, (state, action) => {
         state.loading = false;
         state.settings = action.payload;
+        
+        // Calculate isDark based on loaded theme
+        if (action.payload?.theme) {
+          if (action.payload.theme === 'auto') {
+            const prefersDark = window.matchMedia(
+              '(prefers-color-scheme: dark)'
+            ).matches;
+            state.isDark = prefersDark;
+          } else {
+            state.isDark = action.payload.theme === 'dark';
+          }
+        }
       })
       .addCase(loadSettings.rejected, (state, action) => {
         state.loading = false;
@@ -121,6 +153,7 @@ const settingsSlice = createSlice({
 
 export const {
   setTheme,
+  updateThemeFromSystem,
   toggleSound,
   toggleVibration,
   setBatchSize,

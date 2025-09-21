@@ -309,7 +309,7 @@ class BackupService {
     }
   }
 
-  private readFileAsText(file: File): Promise<string> {
+  public readFileAsText(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 

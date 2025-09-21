@@ -20,6 +20,7 @@ import {
   Spinner,
   Text,
   TextInput,
+  useTheme,
 } from 'evergreen-ui';
 import {
   CloudArrowDown,
@@ -31,6 +32,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 const VocabularyPage: React.FC = () => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const { sets, loading } = useAppSelector((state) => state.vocabulary);
 
   const [showCreatePopup, setShowCreatePopup] = useState(false);
@@ -133,7 +135,7 @@ const VocabularyPage: React.FC = () => {
                 transform="translateY(-50%)"
                 pointerEvents="none"
               >
-                <MagnifyingGlass size={16} color="#8F95B2" />
+                <MagnifyingGlass size={16} color={theme.colors.gray600} />
               </Pane>
             </Pane>
           </Pane>

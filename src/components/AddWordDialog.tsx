@@ -8,6 +8,7 @@ import {
   Spinner,
   Alert,
   Position,
+  useTheme,
 } from 'evergreen-ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
@@ -33,6 +34,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
   editingWord,
 }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const { sets } = useAppSelector((state) => state.vocabulary);
   const [selectedSetId, setSelectedSetId] = useState<string>('');
   const [newWordData, setNewWordData] = useState({
@@ -195,7 +197,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           justifyContent="space-between"
           paddingBottom={16}
           marginBottom={16}
-          borderBottom="1px solid #E4E7EB"
+          borderBottom={`1px solid ${theme.colors.gray200}`}
         >
           <Text size={500} fontWeight={600}>
             {editingWord ? 'Edit Word' : 'Add New Word'}

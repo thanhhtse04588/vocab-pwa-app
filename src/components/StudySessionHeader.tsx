@@ -1,4 +1,11 @@
-import { Pane, Heading, Text, Button, IconButton } from 'evergreen-ui';
+import {
+  Pane,
+  Heading,
+  Text,
+  Button,
+  IconButton,
+  useTheme,
+} from 'evergreen-ui';
 import { ArrowLeft, Gear } from 'phosphor-react';
 import React from 'react';
 
@@ -17,6 +24,8 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
   onBack,
   onSettingsClick,
 }) => {
+  const theme = useTheme();
+
   return (
     <>
       <Pane
@@ -59,7 +68,7 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
       {/* Progress Bar */}
       <Pane
         height={8}
-        backgroundColor="#e4e7eb"
+        backgroundColor={theme.colors.gray200}
         borderRadius={4}
         marginBottom={24}
         overflow="hidden"
@@ -67,7 +76,7 @@ const StudySessionHeader: React.FC<StudySessionHeaderProps> = ({
         <Pane
           height="100%"
           width={`${progress}%`}
-          backgroundColor="#1070ca"
+          backgroundColor={theme.colors.blue500}
           borderRadius={4}
           transition="width 0.3s ease"
         />

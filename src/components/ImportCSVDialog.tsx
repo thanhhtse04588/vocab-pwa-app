@@ -8,6 +8,7 @@ import {
   Badge,
   Alert,
   Position,
+  useTheme,
 } from 'evergreen-ui';
 import { useAppDispatch } from '@/hooks/redux';
 import { importCSVWords } from '@/store/slices/vocabularySlice';
@@ -27,6 +28,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
   setId,
 }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<CSVParseResult | null>(null);
@@ -114,7 +116,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
         <Pane
           maxHeight={300}
           overflowY="auto"
-          border="1px solid #E4E7EB"
+          border={`1px solid ${theme.colors.gray200}`}
           borderRadius={4}
         >
           <Table>
@@ -257,7 +259,7 @@ const ImportCSVDialog: React.FC<ImportCSVDialogProps> = ({
             justifyContent="space-between"
             paddingBottom={16}
             marginBottom={16}
-            borderBottom="1px solid #E4E7EB"
+            borderBottom={`1px solid ${theme.colors.gray200}`}
           >
             <Text size={500} fontWeight={600}>
               {getDialogTitle()}
