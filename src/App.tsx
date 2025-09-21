@@ -20,12 +20,19 @@ import VocabularySetPage from '@/pages/VocabularySetPage';
 import LearnPage from '@/pages/LearnPage';
 import SettingsPage from '@/pages/SettingsPage';
 import UserProfilePage from '@/pages/UserProfilePage';
-import Navigation from '@/components/Navigation';
 import AuthInitializer from '@/components/AuthInitializer';
+import LoadingScreen from '@/components/LoadingScreen';
+import LoginPrompt from '@/components/LoginPrompt';
+import MainContent from '@/components/MainContent';
 import Header from './components/Header';
 
-function AppContent() {
+/**
+ * Main application content component that handles routing and authentication state.
+ * Manages theme, settings, and renders appropriate content based on user state.
+ */
+function AppContent(): JSX.Element {
   const dispatch = useAppDispatch();
+  const { user, loading } = useAppSelector((state) => state.auth);
   const { settings } = useAppSelector((state) => state.settings);
   const { currentPage, theme, isDark, vocabularySetId } = useAppSelector(
     (state) => state.navigation
@@ -83,7 +90,11 @@ function AppContent() {
     });
   }, [currentPage, vocabularySetId]); // Trigger when page or vocabulary set changes
 
-  const renderCurrentPage = () => {
+  /**
+   * Renders the current page based on the navigation state.
+   * @returns JSX element for the current page
+   */
+  const renderCurrentPage = (): JSX.Element => {
     switch (currentPage) {
       case 'home':
         return <HomePage />;
@@ -106,6 +117,22 @@ function AppContent() {
     }
   };
 
+  /**
+   * Renders the main application content based on authentication and loading state.
+   * @returns JSX element for the appropriate app state
+   */
+  const renderAppContent = (): JSX.Element => {
+    if (loading) {
+      return <LoadingScreen />;
+    }
+
+    if (user) {
+      return <MainContent>{renderCurrentPage()}</MainContent>;
+    }
+
+    return <LoginPrompt />;
+  };
+
   return (
     <Pane
       height="100vh"
@@ -118,22 +145,16 @@ function AppContent() {
     >
       <AuthInitializer />
       <Header />
-      <Pane
-        flex={1}
-        overflowX="hidden"
-        overflowY="auto"
-        paddingBottom={80}
-        paddingTop={65}
-        data-scroll-container
-      >
-        {renderCurrentPage()}
-      </Pane>
-      <Navigation />
+      {renderAppContent()}
     </Pane>
   );
 }
 
-function App() {
+/**
+ * Root App component that provides Redux store, persistence, and theme context.
+ * @returns JSX element for the entire application
+ */
+function App(): JSX.Element {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
