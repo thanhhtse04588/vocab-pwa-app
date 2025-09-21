@@ -9,7 +9,7 @@ import {
 } from '@/store/slices/settingsSlice';
 import { setTheme } from '@/store/slices/navigationSlice';
 import { backupService } from '@/services/backupService';
-import { audioCacheService } from '@/services/audioCacheService';
+import { db } from '@/services/database';
 import { toasterService } from '@/services/toasterService';
 import StudySettingsSection from '@/components/settings/StudySettingsSection';
 import AppearanceSection from '@/components/settings/AppearanceSection';
@@ -35,8 +35,8 @@ const SettingsPage: React.FC = () => {
   useEffect(() => {
     const loadCacheStats = async () => {
       try {
-        const stats = await audioCacheService.getCacheStats();
-        const sizeFormatted = await audioCacheService.getCacheSizeFormatted();
+        const stats = await db.getAudioCacheStats();
+        const sizeFormatted = await db.getAudioCacheSizeFormatted();
         setAudioCacheStats(`Cache: ${stats.size} items, ${sizeFormatted}`);
       } catch (error) {
         console.error('Failed to load cache stats:', error);
@@ -69,7 +69,6 @@ const SettingsPage: React.FC = () => {
   const handleBackup = async () => {
     try {
       await backupService.downloadBackup();
-      toasterService.success('Backup downloaded successfully!');
     } catch (error) {
       console.error('Backup failed:', error);
       toasterService.error('Backup failed. Please try again.');
@@ -103,7 +102,6 @@ const SettingsPage: React.FC = () => {
 
     try {
       await backupService.uploadBackup(restoreFile);
-      toasterService.success('Data restored successfully!');
       setShowRestoreConfirm(false);
       setRestoreFile(null);
       // Reload the app to refresh data
@@ -119,16 +117,14 @@ const SettingsPage: React.FC = () => {
   const handleCancelRestore = () => {
     setShowRestoreConfirm(false);
     setRestoreFile(null);
-    toasterService.info('Data restore cancelled.');
   };
 
   const handleClearAudioCache = async () => {
     try {
-      await audioCacheService.clearCache();
-      toasterService.success('Audio cache cleared successfully!');
+      await db.clearAudioCache();
       // Refresh cache stats
-      const stats = await audioCacheService.getCacheStats();
-      const sizeFormatted = await audioCacheService.getCacheSizeFormatted();
+      const stats = await db.getAudioCacheStats();
+      const sizeFormatted = await db.getAudioCacheSizeFormatted();
       setAudioCacheStats(`Cache: ${stats.size} items, ${sizeFormatted}`);
     } catch (error) {
       console.error('Failed to clear audio cache:', error);

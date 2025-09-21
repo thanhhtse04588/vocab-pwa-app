@@ -130,6 +130,32 @@ export interface BackupData {
   studySessions: StudySession[];
   exportedAt: string;
   version: string;
+  checksum: string; // SHA-256 hash for integrity verification
+}
+
+export interface BackupValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+// Audio Cache types
+export interface CachedAudio {
+  key: string;
+  text: string;
+  audioData: string;
+  options: AudioCacheOptions;
+  timestamp: number;
+  size: number;
+}
+
+export interface AudioCacheOptions {
+  languageCode?: string;
+  voiceName?: string;
+  ssmlGender?: 'NEUTRAL' | 'MALE' | 'FEMALE';
+  speakingRate?: number;
+  pitch?: number;
+  volumeGainDb?: number;
 }
 
 // API Response types

@@ -5,7 +5,8 @@
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { ensureFirebase } from './firebaseService';
-import { audioCacheService, type AudioCacheOptions } from './audioCacheService';
+import { db } from './database';
+import type { AudioCacheOptions } from '@/types';
 
 export interface FirebaseTTSOptions {
   languageCode?: string;
@@ -116,10 +117,7 @@ class FirebaseTTSService {
     };
 
     // Check cache first
-    const cachedAudio = await audioCacheService.getCachedAudio(
-      text,
-      cacheOptions
-    );
+    const cachedAudio = await db.getCachedAudio(text, cacheOptions);
     if (cachedAudio) {
       return cachedAudio;
     }
@@ -141,11 +139,7 @@ class FirebaseTTSService {
       }
 
       // Cache the audio data
-      await audioCacheService.setCachedAudio(
-        text,
-        response.audioContent,
-        cacheOptions
-      );
+      await db.setCachedAudio(text, response.audioContent, cacheOptions);
 
       return response.audioContent;
     } catch (error) {

@@ -44,7 +44,7 @@ const DataManagementCard: React.FC<DataManagementCardProps> = ({
               <Pane>
                 <Text fontWeight={500}>Backup data</Text>
                 <Text size={300} color="muted" marginTop={4} display="block">
-                  Export data to JSON file
+                  Export data to backup file
                 </Text>
               </Pane>
             </Pane>
