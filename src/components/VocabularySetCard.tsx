@@ -60,7 +60,20 @@ const VocabularySetCard: React.FC<VocabularySetCardProps> = ({
         justifyContent="center"
       >
         <Pane display="flex" flexDirection="column" gap={8} minWidth={0}>
-          <Text size={500} fontWeight="bold">
+          <Text
+            size={500}
+            fontWeight="bold"
+            style={{
+              wordBreak: 'break-word',
+              whiteSpace: 'normal',
+              overflowWrap: 'break-word',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {set.name}
           </Text>
           <Text size={300} color="muted">

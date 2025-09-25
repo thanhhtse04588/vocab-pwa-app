@@ -38,7 +38,10 @@ export class VocabDatabase extends Dexie {
     this.vocabularySets.hook('creating', function (_primKey, obj) {
       obj.createdAt = new Date().toISOString();
       obj.isActive = true;
-      obj.wordCount = 0;
+      // Only set wordCount to 0 if it's not already set
+      if (obj.wordCount === undefined) {
+        obj.wordCount = 0;
+      }
     });
 
     this.vocabularyWords.hook('creating', function (_primKey, obj) {

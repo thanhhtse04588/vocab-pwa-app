@@ -110,6 +110,7 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
         <Pane display="flex" gap={8} marginBottom={16} alignItems="center">
           <Pane position="relative" flex={1}>
             <AppTextInput
+              autoFocus
               placeholder="Enter your answer..."
               value={userAnswer}
               onChange={onAnswerChange}
@@ -136,7 +137,8 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
             )}
           </Pane>
           <Button
-            appearance={isListening ? 'danger' : 'default'}
+            appearance={isListening ? 'primary' : 'default'}
+            intent={isListening ? 'danger' : 'default'}
             onClick={isListening ? handleStopListening : handleStartListening}
             disabled={isSubmitting || !speechSupported || isProcessingSpeech}
             height={40}
