@@ -109,3 +109,56 @@ export function getDetailedTextDiff(
     userSegments,
   };
 }
+
+/**
+ * Smart character-level diff that highlights only specific mismatched characters
+ * This creates a more granular highlighting where only individual wrong characters are highlighted
+ * Example: "rude" vs "rurde" will highlight only the 'r' in "rurde" and 'd' in "rude"
+ * @param correctAnswer - The correct answer
+ * @param userAnswer - The user's answer
+ * @returns Object with correct and user segments with character-level highlighting
+ */
+export function getSmartCharacterDiff(
+  correctAnswer: string,
+  userAnswer: string
+): {
+  correctSegments: TextDiffSegment[];
+  userSegments: TextDiffSegment[];
+} {
+  const correctSegments: TextDiffSegment[] = [];
+  const userSegments: TextDiffSegment[] = [];
+
+  // Simple character-by-character comparison
+  // Only highlight characters that exist in both strings but are different
+  const maxLength = Math.max(correctAnswer.length, userAnswer.length);
+
+  for (let i = 0; i < maxLength; i++) {
+    const correctChar = correctAnswer[i] || '';
+    const userChar = userAnswer[i] || '';
+
+    // Only highlight if both characters exist and are different
+    const isDifferent =
+      correctChar !== '' && userChar !== '' && correctChar !== userChar;
+
+    // Add correct character (always show, highlight only if different)
+    if (correctChar) {
+      correctSegments.push({
+        text: correctChar,
+        isDifferent: isDifferent,
+      });
+    }
+
+    // Add user character (always show, highlight only if different)
+    if (userChar) {
+      userSegments.push({
+        text: userChar,
+        isDifferent: isDifferent,
+      });
+    }
+  }
+
+  return {
+    correctSegments,
+    userSegments,
+  };
+}

@@ -3,7 +3,7 @@ import HighlightedText from '@/components/HighlightedText';
 import type { VocabularySet, VocabularyWord } from '@/types';
 import { Card, Heading, Pane, Strong, Text } from 'evergreen-ui';
 import React from 'react';
-import { getDetailedTextDiff } from '@/utils/textDiff';
+import { getSmartCharacterDiff } from '@/utils/textDiff';
 
 interface WordCardProps {
   word: VocabularyWord;
@@ -78,7 +78,7 @@ const WordCard: React.FC<WordCardProps> = ({
                 </Text>
                 <HighlightedText
                   segments={
-                    getDetailedTextDiff(word.word, userAnswer).userSegments
+                    getSmartCharacterDiff(word.word, userAnswer).userSegments
                   }
                   size={400}
                   color="muted"
