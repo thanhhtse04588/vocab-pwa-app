@@ -29,13 +29,13 @@ const MemoryLevelChart: React.FC<MemoryLevelChartProps> = ({
   const getMemoryLevelColor = (level: number): string => {
     const colors = [
       '', // Empty for level 0 (not used)
-      theme.colors.orange500, // Orange - Learning
-      theme.colors.blue500, // Blue - Familiar (using blue color)
-      theme.colors.green500, // Green - Known
-      theme.colors.blue500, // Blue - Mastered
-      theme.colors.red500, // Red - Expert
-      theme.colors.green600, // Teal - Native
-      theme.colors.blue600, // Indigo - Perfect
+      theme.colors.green200, // Level 1 - Beginner
+      theme.colors.green300, // Level 2 - Learning
+      theme.colors.green400, // Level 3 - Familiar
+      theme.colors.green500, // Level 4 - Known
+      theme.colors.green600, // Level 5 - Proficient
+      theme.colors.green700, // Level 6 - Advanced
+      theme.colors.green800, // Level 7 - Mastered
     ];
     return colors[level] || theme.colors.gray500;
   };
