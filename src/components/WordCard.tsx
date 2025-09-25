@@ -1,13 +1,16 @@
 import AudioButton from '@/components/AudioButton';
+import HighlightedText from '@/components/HighlightedText';
 import type { VocabularySet, VocabularyWord } from '@/types';
 import { Card, Heading, Pane, Strong, Text } from 'evergreen-ui';
 import React from 'react';
+import { getDetailedTextDiff } from '@/utils/textDiff';
 
 interface WordCardProps {
   word: VocabularyWord;
   showAnswer: boolean;
   isCorrect: boolean | null;
   isMarkedAsTrue: boolean;
+  userAnswer?: string; // User's input answer
   vocabularySet?: VocabularySet; // Optional vocabulary set to get meaningLanguage
 }
 
@@ -16,6 +19,7 @@ const WordCard: React.FC<WordCardProps> = ({
   showAnswer,
   isCorrect,
   isMarkedAsTrue,
+  userAnswer,
   vocabularySet,
 }) => {
   return (
@@ -55,6 +59,34 @@ const WordCard: React.FC<WordCardProps> = ({
                 lang={vocabularySet?.wordLanguage}
               />
             </Pane>
+
+            {/* Show user's answer with highlighting when incorrect */}
+            {!isCorrect && userAnswer && (
+              <Pane
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                gap={8}
+                marginTop={8}
+                padding={12}
+                backgroundColor="#f7f8fa"
+                borderRadius={6}
+                border="1px solid #e4e7eb"
+              >
+                <Text size={400} color="muted">
+                  <Strong>Your answer:</Strong>
+                </Text>
+                <HighlightedText
+                  segments={
+                    getDetailedTextDiff(word.word, userAnswer).userSegments
+                  }
+                  size={400}
+                  color="muted"
+                  highlightColor="danger"
+                  highlightBackgroundColor="#ffebee"
+                />
+              </Pane>
+            )}
 
             {word.pronunciation && (
               <Text color="muted">/ {word.pronunciation} /</Text>
