@@ -18,7 +18,6 @@ import StudySessionSettingsDialog from '@/components/StudySessionSettingsDialog'
 import WordCard from '@/components/WordCard';
 import AnswerInput from '@/components/AnswerInput';
 import ActionButtons from '@/components/ActionButtons';
-import SessionStats from '@/components/SessionStats';
 
 // Helper function to play feedback sound
 const playFeedbackSound = (isCorrect: boolean) => {
@@ -292,6 +291,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         showAnswer={showAnswer}
         isCorrect={isCorrect}
         isMarkedAsTrue={isMarkedAsTrue}
+        userAnswer={userAnswer}
         vocabularySet={currentVocabularySet || undefined}
       />
 
@@ -324,13 +324,6 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
         onMarkAsTrue={handleMarkAsTrue}
         onNextWord={handleNextWord}
       />
-
-      <SessionStats
-        correct={sessionResults.correct}
-        incorrect={sessionResults.incorrect}
-        total={sessionResults.total}
-      />
-
       {/* Settings Dialog */}
       <StudySessionSettingsDialog
         isShown={showSettingsDialog}
