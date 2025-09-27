@@ -14,6 +14,7 @@ export interface AIWordInfo {
 export interface GenerateWordInfoRequest {
   word: string;
   meaningLanguage: string;
+  isReverseTranslation?: boolean;
 }
 
 export interface GenerateWordInfoResponse {
@@ -51,7 +52,8 @@ class CloudFunctionsService {
    */
   async generateWordInfo(
     word: string,
-    meaningLanguage: string = 'Vietnamese'
+    meaningLanguage: string = 'Vietnamese',
+    isReverseTranslation: boolean = false
   ): Promise<AIWordInfo> {
     if (!this.generateWordInfoFunction) {
       throw new Error(
@@ -63,6 +65,7 @@ class CloudFunctionsService {
       const request: GenerateWordInfoRequest = {
         word: word.trim(),
         meaningLanguage,
+        isReverseTranslation,
       };
 
       const result = await this.generateWordInfoFunction(request);

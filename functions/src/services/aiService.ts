@@ -20,8 +20,11 @@ const vertexAI = new VertexAI({
 export const generateWordInfo = onCall(
   { region: 'asia-southeast1' },
   async (request): Promise<GenerateWordInfoResponse> => {
-    const { word, meaningLanguage = 'Vietnamese' } =
-      request.data as GenerateWordInfoRequest;
+    const {
+      word,
+      meaningLanguage = 'Vietnamese',
+      isReverseTranslation = false,
+    } = request.data as GenerateWordInfoRequest;
 
     try {
       // Validate input
@@ -45,27 +48,38 @@ export const generateWordInfo = onCall(
       });
 
       // Create the prompt for word information generation
-      const prompt = `Generate comprehensive information for the word "${word.trim()}" with meaning language "${meaningLanguage}".
+      let prompt;
 
-Please provide the following information in JSON format:
+      if (isReverseTranslation) {
+        // Reverse translation: meaning → word
+        prompt = `Translate "${word.trim()}" (${meaningLanguage}) to English. Return JSON:
 {
-  "meaning": "Simple and concise definition in ${meaningLanguage}",
-  "pronunciation": "Pronunciation guide (optional - use appropriate format for the language: IPA for English, pinyin for Chinese, hiragana/katakana for Japanese, etc.)",
-  "example": "Example sentence using the word in the same language as the word",
-  "wordType": "One of: noun, verb, adjective, adverb, pronoun, preposition, conjunction, interjection, phrase, sentence, other"
+  "meaning": "English word/phrase",
+  "pronunciation": "IPA for English (optional)",
+  "example": "Example sentence in English",
+  "wordType": "noun|verb|adjective|adverb|pronoun|preposition|conjunction|interjection|phrase|sentence|other"
 }
 
-Requirements:
-- Meaning should be simple, concise, and easy to understand in ${meaningLanguage}
-- Pronunciation should be provided only if relevant for the language type (optional):
-  * For English: use IPA format (e.g., /həˈloʊ/)
-  * For Chinese: use pinyin (e.g., nǐ hǎo)
-  * For Japanese: use hiragana/katakana (e.g., こんにちは)
-  * For Korean: use hangul (e.g., 안녕하세요)
-  * For other languages: use the most appropriate phonetic system
-- Example sentence should be in the same language as the word itself (not in ${meaningLanguage})
-- Word type should be one of the specified categories
-- Response should be valid JSON only, no additional text`;
+Rules:
+- Natural English translation
+- Example & pronunciation in English only
+- JSON only, no extra text`;
+      } else {
+        // Normal translation: word → meaning
+        prompt = `Translate "${word.trim()}" to ${meaningLanguage}. Return JSON:
+{
+  "meaning": "Natural translation in ${meaningLanguage}",
+  "pronunciation": "IPA/pinyin/hiragana for original language (optional)",
+  "example": "Example sentence in original language",
+  "wordType": "noun|verb|adjective|adverb|pronoun|preposition|conjunction|interjection|phrase|sentence|other"
+}
+
+Rules:
+- Vietnamese: Use "bạn" for "you", natural conversational style
+- Examples: "book"→"quyển sách", "What's your name?"→"Tên bạn là gì?"
+- Example & pronunciation in original language only
+- JSON only, no extra text`;
+      }
 
       // Generate content using Gemini
       const result = await model.generateContent(prompt);

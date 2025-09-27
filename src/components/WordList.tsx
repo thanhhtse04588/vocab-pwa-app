@@ -31,6 +31,7 @@ interface WordListProps {
   language: string;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  isEditMode?: boolean;
 }
 
 const WordList: React.FC<WordListProps> = ({
@@ -40,6 +41,7 @@ const WordList: React.FC<WordListProps> = ({
   language,
   searchQuery = '',
   onSearchChange,
+  isEditMode = false,
 }) => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
@@ -216,24 +218,26 @@ const WordList: React.FC<WordListProps> = ({
                   Memory Level: {word.memoryLevel}
                 </Text>
 
-                <Pane display="flex" gap={8}>
-                  <IconButton
-                    appearance="minimal"
-                    intent="primary"
-                    icon={<PencilSimple size={16} />}
-                    onClick={() => onEditWord(word)}
-                    size="small"
-                    title="Edit word"
-                  />
-                  <IconButton
-                    appearance="minimal"
-                    intent="danger"
-                    icon={<Trash size={16} />}
-                    onClick={() => handleDeleteWord(word.id)}
-                    size="small"
-                    title="Delete word"
-                  />
-                </Pane>
+                {isEditMode && (
+                  <Pane display="flex" gap={8}>
+                    <IconButton
+                      appearance="minimal"
+                      intent="primary"
+                      icon={<PencilSimple size={16} />}
+                      onClick={() => onEditWord(word)}
+                      size="small"
+                      title="Edit word"
+                    />
+                    <IconButton
+                      appearance="minimal"
+                      intent="danger"
+                      icon={<Trash size={16} />}
+                      onClick={() => handleDeleteWord(word.id)}
+                      size="small"
+                      title="Delete word"
+                    />
+                  </Pane>
+                )}
               </Pane>
             </Pane>
           </Pane>

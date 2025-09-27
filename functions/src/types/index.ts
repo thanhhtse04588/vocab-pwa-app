@@ -24,6 +24,7 @@ export interface TTSResponse {
 export interface GenerateWordInfoRequest {
   word: string;
   meaningLanguage: string;
+  isReverseTranslation?: boolean;
 }
 
 // Interface for AI word generation response

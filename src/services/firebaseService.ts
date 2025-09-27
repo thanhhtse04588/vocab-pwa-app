@@ -11,6 +11,7 @@ import {
   type DocumentData,
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import { isAdminEmail } from '@/utils/adminUtils';
 import {
   getAuth,
   signInWithPopup,
@@ -252,8 +253,8 @@ export async function publishVocabularySet(
     words: words.map((w) => ({
       word: w.word,
       meaning: w.meaning,
-      pronunciation: w.pronunciation,
-      example: w.example,
+      pronunciation: w.pronunciation || '',
+      example: w.example || '',
     })),
     publisherId: user.uid,
     publisherName: user.displayName || user.email || 'Anonymous',
@@ -286,7 +287,12 @@ export async function unpublishVocabularySet(publicId: string): Promise<void> {
   }
 
   const data = docSnap.data() as DocumentData;
-  if (data.publisherId !== user.uid) {
+
+  // Check if user is admin or owns the set
+  const isOwner = data.publisherId === user.uid;
+  const isAdmin = await checkIfUserIsAdmin(user.uid);
+
+  if (!isOwner && !isAdmin) {
     throw new Error('You can only unpublish your own vocabulary sets');
   }
 
@@ -311,4 +317,16 @@ export async function isPublicSetOwner(publicId: string): Promise<boolean> {
 
   const data = docSnap.data() as DocumentData;
   return data.publisherId === user.uid;
+}
+
+// Check if user is admin
+export async function checkIfUserIsAdmin(uid: string): Promise<boolean> {
+  const { auth } = ensureFirebase();
+  const user = auth.currentUser;
+
+  if (!user || user.uid !== uid) {
+    return false;
+  }
+
+  return isAdminEmail(user.email);
 }

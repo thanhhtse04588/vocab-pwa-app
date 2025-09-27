@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Pane } from 'evergreen-ui';
+import { Pane, Button } from 'evergreen-ui';
+import { Plus, FileCsv, PencilSimple } from 'phosphor-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   loadVocabularyWords,
@@ -46,6 +47,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
   const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     if (setId) {
@@ -198,14 +200,43 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
         <VocabularySetHeader
           set={currentSet}
           onBack={handleBackToVocabulary}
-          onAddWord={handleAddWord}
-          onImportCSV={() => setShowImportDialog(true)}
           onResetProgress={() => setShowResetDialog(true)}
           onPublish={handlePublish}
           onUnpublish={handleUnpublish}
           onDelete={handleDelete}
           isPublishing={isPublishing}
         />
+
+        {/* Action Buttons */}
+        <Pane
+          display="flex"
+          gap={12}
+          marginBottom={24}
+          flexWrap="wrap"
+        >
+          <Button
+            iconBefore={<Plus size={16} />}
+            onClick={handleAddWord}
+            intent="primary"
+          >
+            Add Word
+          </Button>
+          <Button
+            iconBefore={<FileCsv size={16} />}
+            onClick={() => setShowImportDialog(true)}
+            appearance="default"
+          >
+            Import CSV
+          </Button>
+          <Button
+            iconBefore={<PencilSimple size={16} />}
+            onClick={() => setIsEditMode(!isEditMode)}
+            appearance={isEditMode ? "primary" : "default"}
+            intent={isEditMode ? "success" : "none"}
+          >
+            {isEditMode ? "Exit Edit" : "Edit"}
+          </Button>
+        </Pane>
 
         {/* Set Info */}
         <SetInfoCard
@@ -225,6 +256,7 @@ const VocabularySetPage: React.FC<VocabularySetPageProps> = ({ setId }) => {
           onEditWord={handleEditWord}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          isEditMode={isEditMode}
         />
       </Pane>
 

@@ -13,9 +13,7 @@ import {
   ArrowClockwise,
   ArrowLeft,
   DotsThreeVertical,
-  FileCsv,
   Globe,
-  Plus,
   Trash,
   XCircle,
 } from 'phosphor-react';
@@ -24,8 +22,6 @@ import React from 'react';
 interface VocabularySetHeaderProps {
   set: VocabularySet;
   onBack?: () => void;
-  onAddWord?: () => void;
-  onImportCSV?: () => void;
   onResetProgress?: () => void;
   onPublish?: () => void;
   onUnpublish?: () => void;
@@ -36,8 +32,6 @@ interface VocabularySetHeaderProps {
 const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
   set,
   onBack,
-  onAddWord,
-  onImportCSV,
   onResetProgress,
   onPublish,
   onUnpublish,
@@ -78,30 +72,6 @@ const VocabularySetHeader: React.FC<VocabularySetHeaderProps> = ({
         content={
           <Menu>
             <Menu.Group>
-              {onAddWord && (
-                <Menu.Item
-                  icon={<Plus size={16} color={theme.colors.gray800} />}
-                  onSelect={() => {
-                    onAddWord();
-                  }}
-                >
-                  Add Word
-                </Menu.Item>
-              )}
-
-              {onImportCSV && (
-                <Menu.Item
-                  icon={<FileCsv size={16} color={theme.colors.gray800} />}
-                  onSelect={() => {
-                    onImportCSV();
-                  }}
-                >
-                  Import CSV
-                </Menu.Item>
-              )}
-
-              {(onAddWord || onImportCSV) && <Menu.Divider />}
-
               {onResetProgress && (
                 <Menu.Item
                   icon={

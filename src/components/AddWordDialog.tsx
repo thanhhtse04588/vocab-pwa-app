@@ -19,6 +19,7 @@ import type { VocabularyWord, WordType } from '@/types';
 import { cloudFunctionsService } from '@/services/vertexAIService';
 import { Sparkles } from 'lucide-react';
 import AppTextInput from './AppTextInput';
+import { IconButton } from 'evergreen-ui';
 
 interface AddWordDialogProps {
   isShown: boolean;
@@ -43,9 +44,9 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
     pronunciation: '',
     example: '',
     wordType: '' as WordType | '',
-    wordLanguage: '',
   });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingMeaning, setIsGeneratingMeaning] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
 
   // Determine if we need to show vocabulary set selection
@@ -65,7 +66,6 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           pronunciation: editingWord.pronunciation || '',
           example: editingWord.example || '',
           wordType: editingWord.wordType || '',
-          wordLanguage: editingWord.wordLanguage || '',
         });
       } else {
         // Clear form for adding new word
@@ -75,7 +75,6 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           pronunciation: '',
           example: '',
           wordType: '',
-          wordLanguage: '',
         });
       }
 
@@ -92,7 +91,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
   ) => {
     setNewWordData({ ...newWordData, [field]: value });
     // Clear AI error when user starts typing
-    if (field === 'word' && aiError) {
+    if ((field === 'word' || field === 'meaning') && aiError) {
       setAiError(null);
     }
   };
@@ -140,6 +139,52 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
     }
   };
 
+  const handleGenerateMeaningWithAI = async () => {
+    if (!newWordData.meaning.trim()) {
+      setAiError('Please enter a meaning first');
+      return;
+    }
+
+    if (showSetSelection && !selectedSetId) {
+      setAiError('Please select a vocabulary set first');
+      return;
+    }
+
+    setIsGeneratingMeaning(true);
+    setAiError(null);
+
+    try {
+      // Get word language from the current set
+      const currentSet = sets.find((set) => set.id === currentSetId);
+      const wordLanguage = currentSet?.wordLanguage || 'English';
+
+      // For reverse translation, we need to generate word in wordLanguage
+      // but example and pronunciation should be in wordLanguage too
+      const aiInfo = await cloudFunctionsService.generateWordInfo(
+        newWordData.meaning.trim(),
+        wordLanguage, // Use wordLanguage for the target word
+        true // isReverseTranslation = true
+      );
+
+      // Update form with AI-generated data (reverse translation)
+      setNewWordData((prev) => ({
+        ...prev,
+        word: aiInfo.meaning || prev.word, // This will be in wordLanguage
+        pronunciation: aiInfo.pronunciation || prev.pronunciation, // In wordLanguage
+        example: aiInfo.example || prev.example, // In wordLanguage
+        wordType: (aiInfo.wordType as WordType) || prev.wordType,
+      }));
+    } catch (error) {
+      setAiError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to generate word information'
+      );
+    } finally {
+      setIsGeneratingMeaning(false);
+    }
+  };
+
   const handleSaveWord = () => {
     if (newWordData.word.trim() && newWordData.meaning.trim() && currentSetId) {
       if (editingWord) {
@@ -153,7 +198,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
               pronunciation: newWordData.pronunciation.trim() || undefined,
               example: newWordData.example.trim() || undefined,
               wordType: newWordData.wordType || undefined,
-              wordLanguage: newWordData.wordLanguage.trim() || undefined,
+              wordLanguage: vocabularySet?.wordLanguage || undefined,
             },
           })
         );
@@ -167,7 +212,7 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
             pronunciation: newWordData.pronunciation.trim() || undefined,
             example: newWordData.example.trim() || undefined,
             wordType: newWordData.wordType || undefined,
-            wordLanguage: newWordData.wordLanguage.trim() || undefined,
+            wordLanguage: vocabularySet?.wordLanguage || undefined,
           })
         );
       }
@@ -177,7 +222,6 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
         pronunciation: '',
         example: '',
         wordType: '',
-        wordLanguage: '',
       });
       onClose();
     }
@@ -229,34 +273,31 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           </Pane>
         )}
 
-        {/* Word Input */}
+        {/* Word Input with AI Button */}
         <Pane marginBottom={16}>
-          <AppTextInput
-            placeholder={'Word (' + vocabularySet?.wordLanguage + ')'}
-            value={newWordData.word}
-            onChange={(value) => handleInputChange('word', value)}
-            width="100%"
-          />
-        </Pane>
-
-        {/* AI Generate Button */}
-        <Pane marginBottom={16}>
-          <Button
-            onClick={handleGenerateWithAI}
-            disabled={
-              !newWordData.word.trim() ||
-              (showSetSelection && !selectedSetId) ||
-              isGenerating
-            }
-            appearance="minimal"
-            intent="primary"
-            size="small"
-            iconBefore={
-              isGenerating ? <Spinner size={12} /> : <Sparkles size={12} />
-            }
-          >
-            {isGenerating ? 'Generating...' : 'Generate with AI'}
-          </Button>
+          <Pane display="flex" alignItems="center" gap={8}>
+            <AppTextInput
+              placeholder={'Word (' + vocabularySet?.wordLanguage + ')'}
+              value={newWordData.word}
+              onChange={(value) => handleInputChange('word', value)}
+              flex={1}
+            />
+            <IconButton
+              onClick={handleGenerateWithAI}
+              disabled={
+                !newWordData.word.trim() ||
+                (showSetSelection && !selectedSetId) ||
+                isGenerating
+              }
+              appearance="minimal"
+              intent="primary"
+              size="small"
+              icon={
+                isGenerating ? <Spinner size={16} /> : <Sparkles size={16} />
+              }
+              title="Generate meaning with AI"
+            />
+          </Pane>
         </Pane>
 
         {/* AI Error Alert */}
@@ -268,13 +309,35 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
           </Pane>
         )}
 
+        {/* Meaning Input with AI Button */}
         <Pane marginBottom={16}>
-          <AppTextInput
-            placeholder={'Meaning (' + vocabularySet?.meaningLanguage + ')'}
-            value={newWordData.meaning}
-            onChange={(value) => handleInputChange('meaning', value)}
-            width="100%"
-          />
+          <Pane display="flex" alignItems="center" gap={8}>
+            <AppTextInput
+              placeholder={'Meaning (' + vocabularySet?.meaningLanguage + ')'}
+              value={newWordData.meaning}
+              onChange={(value) => handleInputChange('meaning', value)}
+              flex={1}
+            />
+            <IconButton
+              onClick={handleGenerateMeaningWithAI}
+              disabled={
+                !newWordData.meaning.trim() ||
+                (showSetSelection && !selectedSetId) ||
+                isGeneratingMeaning
+              }
+              appearance="minimal"
+              intent="primary"
+              size="small"
+              icon={
+                isGeneratingMeaning ? (
+                  <Spinner size={16} />
+                ) : (
+                  <Sparkles size={16} />
+                )
+              }
+              title="Generate word with AI"
+            />
+          </Pane>
         </Pane>
 
         <Pane marginBottom={16}>
@@ -298,15 +361,6 @@ const AddWordDialog: React.FC<AddWordDialogProps> = ({
             <option value="sentence">Sentence (sent)</option>
             <option value="other">Other</option>
           </Select>
-        </Pane>
-
-        <Pane marginBottom={16}>
-          <AppTextInput
-            placeholder="Word Language (optional, e.g., en, vi, ja)"
-            value={newWordData.wordLanguage}
-            onChange={(value) => handleInputChange('wordLanguage', value)}
-            width="100%"
-          />
         </Pane>
 
         <Pane marginBottom={16}>

@@ -211,6 +211,36 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
     }
   };
 
+  const handleDontKnow = async () => {
+    if (!currentWord || isSubmitting) return;
+
+    try {
+      // Mark as incorrect and show answer
+      setIsCorrect(false);
+      setShowAnswer(true);
+      setIsMarkedAsTrue(false);
+
+      // Submit incorrect answer to store
+      await dispatch(
+        submitAnswer({
+          wordId: currentWord.id,
+          isCorrect: false,
+        })
+      ).unwrap();
+
+      // Provide feedback for incorrect answer
+      if (settings?.enableSound) {
+        playFeedbackSound(false);
+      }
+
+      if (settings?.enableVibration) {
+        pwaService.vibrate([200, 100, 200]);
+      }
+    } catch (error) {
+      console.error('Error handling dont know:', error);
+    }
+  };
+
   const handleNextWord = async () => {
     if (currentWordIndex < currentBatch.length - 1) {
       dispatch(nextWord());
@@ -305,6 +335,7 @@ const StudySession: React.FC<StudySessionProps> = ({ onComplete }) => {
           onStopListening={stopListening}
           onClearInput={handleClearInput}
           onSubmitAnswer={handleSubmitAnswer}
+          onDontKnow={handleDontKnow}
           languageCode={
             currentWord?.wordLanguage
               ? getTTSLanguageCode(currentWord.wordLanguage)

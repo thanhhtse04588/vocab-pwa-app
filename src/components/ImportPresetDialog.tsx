@@ -16,6 +16,7 @@ import {
   fetchPublicSets,
   downloadPublicSet,
   unpublishSet,
+  unpublishSetFromFirebase,
 } from '@/store/slices/vocabularySlice';
 import { getCurrentUser } from '@/services/firebaseService';
 import { toasterService } from '@/services/toasterService';
@@ -143,13 +144,16 @@ const ImportPresetDialog: React.FC<ImportPresetDialogProps> = ({
       // Find the local set that has this publicId
       const localSet = sets.find((set) => set.publicId === preset.id);
       if (localSet) {
+        // If local set exists, update its publish status
         await dispatch(unpublishSet(localSet.id)).unwrap();
-
-        // Refresh the public sets list
-        dispatch(fetchPublicSets());
       } else {
-        toasterService.error('Local vocabulary set not found');
+        // If no local set exists, just unpublish from Firebase directly
+        // This handles the case where the user published but doesn't have the local set anymore
+        await dispatch(unpublishSetFromFirebase(preset.id)).unwrap();
       }
+
+      // Refresh the public sets list
+      dispatch(fetchPublicSets());
     } catch (error) {
       console.error('Failed to unpublish vocabulary set:', error);
       const errorMessage =

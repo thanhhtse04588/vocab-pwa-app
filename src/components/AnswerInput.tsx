@@ -23,6 +23,7 @@ interface AnswerInputProps {
   onStopListening: () => void;
   onClearInput: () => void;
   onSubmitAnswer: () => void;
+  onDontKnow: () => void;
   languageCode?: string; // Language code for speech recognition
 }
 
@@ -35,6 +36,7 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
   onStopListening,
   onClearInput,
   onSubmitAnswer,
+  onDontKnow,
   languageCode = 'en-US',
 }) => {
   // State for speech recognition processing
@@ -162,15 +164,26 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
           </Button>
         </Pane>
 
-        <Button
-          appearance="primary"
-          intent="none"
-          onClick={onSubmitAnswer}
-          disabled={!userAnswer.trim() || isSubmitting}
-          width="100%"
-        >
-          {isSubmitting ? 'Checking...' : 'Submit Answer'}
-        </Button>
+        <Pane display="flex" gap={12}>
+          <Button
+            appearance="primary"
+            intent="none"
+            onClick={onSubmitAnswer}
+            disabled={!userAnswer.trim() || isSubmitting}
+            flex={1}
+          >
+            {isSubmitting ? 'Checking...' : 'Submit'}
+          </Button>
+          <Button
+            appearance="default"
+            intent="danger"
+            onClick={onDontKnow}
+            disabled={isSubmitting}
+            flex={1}
+          >
+            Don't know
+          </Button>
+        </Pane>
       </Pane>
     </Card>
   );

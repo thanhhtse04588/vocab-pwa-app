@@ -381,6 +381,17 @@ export const unpublishSet = createAsyncThunk(
   }
 );
 
+// Unpublish a vocabulary set from Firebase only (when no local set exists)
+export const unpublishSetFromFirebase = createAsyncThunk(
+  'vocabulary/unpublishSetFromFirebase',
+  async (publicId: string) => {
+    // Remove from Firebase (permission check is handled in the service)
+    await unpublishVocabularySet(publicId);
+
+    return publicId;
+  }
+);
+
 const vocabularySlice = createSlice({
   name: 'vocabulary',
   initialState,
@@ -583,6 +594,22 @@ const vocabularySlice = createSlice({
         state.loading = false;
         state.error =
           action.error.message || 'Failed to unpublish vocabulary set';
+      })
+
+      // Unpublish set from Firebase only
+      .addCase(unpublishSetFromFirebase.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(unpublishSetFromFirebase.fulfilled, (state) => {
+        state.loading = false;
+        // No local state changes needed since we're only removing from Firebase
+      })
+      .addCase(unpublishSetFromFirebase.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message ||
+          'Failed to unpublish vocabulary set from Firebase';
       });
   },
 });
